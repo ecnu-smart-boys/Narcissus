@@ -1,5 +1,5 @@
 <template>
-  <view>home</view>
+  <view>online</view>
 </template>
 
 <script setup lang="ts"></script>
