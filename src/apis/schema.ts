@@ -11,7 +11,7 @@ export interface Req {
   header?: any;
 }
 
-export function request<T>(req: Req) {
+export function request<T>(req: Req): Promise<T> {
   const { url, method, data, header } = req;
   return new Promise<T>((resolve, reject) => {
     uni.request({
@@ -24,6 +24,10 @@ export function request<T>(req: Req) {
           reject(res);
         }
         const { status, message, data } = res.data as Resp<T>;
+        const header = res.header["x-freud"];
+        if (header) {
+          uni.setStorageSync("accessToken", header);
+        }
         if (status !== 200) {
           reject(message);
         }

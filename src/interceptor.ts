@@ -3,6 +3,9 @@ export function createInterceptors() {
     invoke(args: UniNamespace.RequestOptions) {
       if (args.url[0] === "/") {
         args.url = import.meta.env.VITE_BASIC_URL + args.url;
+        args.header = {
+          "x-freud": uni.getStorageSync("accessToken")
+        };
       }
     },
     fail() {

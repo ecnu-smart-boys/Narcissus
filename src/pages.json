@@ -1,9 +1,9 @@
 {
   "pages": [
     {
-      "path": "pages/first-page/first-page",
+      "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": ""
+        "navigationBarTitleText": "首页"
       }
     },
     {
@@ -13,9 +13,9 @@
       }
     },
     {
-      "path": "pages/index/index",
+      "path": "pages/first-page/first-page",
       "style": {
-        "navigationBarTitleText": "首页"
+        "navigationBarTitleText": ""
       }
     },
     {
@@ -26,6 +26,18 @@
     },
     {
       "path": "pages/online-consult/online-consult",
+      "style": {
+        "navigationBarTitleText": "在线咨询"
+      }
+    },
+    {
+      "path": "pages/online-consult/informed-consent",
+      "style": {
+        "navigationBarTitleText": "在线咨询"
+      }
+    },
+    {
+      "path": "pages/online-consult/consult-list",
       "style": {
         "navigationBarTitleText": "在线咨询"
       }

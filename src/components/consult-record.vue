@@ -1,0 +1,97 @@
+<template>
+  <view class="card">
+    <view class="consult-record-wrapper">
+      <view class="consult-time"> {{ props.time }} </view>
+      <img class="icon-quit" src="/static/quit.png" />
+      <view class="consult-info">
+        <view class="consult-info-left">
+          <img class="consult-avatar" :src="props.avatar" />
+          <text class="consult-name">{{ props.name }}</text>
+        </view>
+        <view class="consult-info-right">
+          <view>咨询用时</view>
+          <view class="consult-info-duration">{{ props.duration }}</view>
+          <view>我的评价</view>
+          <StarsRating :stars-index="props.rate" :is-edit-stars="false" />
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script setup lang="ts">
+import StarsRating from "@/components/stars-rating.vue";
+
+let props = defineProps<{
+  time: string;
+  avatar: string;
+  name: string;
+  duration: string;
+  rate: number;
+}>();
+</script>
+
+<style lang="scss" scoped>
+.card {
+  border-radius: 20rpx;
+  margin: 40rpx 20rpx;
+  display: flex;
+  background-color: white;
+  box-shadow: 0 0 30px rgba(197, 197, 197, 0.5);
+}
+
+.consult-record-wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+
+  .icon-quit {
+    width: 45rpx;
+    height: 45rpx;
+    position: absolute;
+    top: 20rpx;
+    right: 20rpx;
+  }
+
+  .consult-time {
+    padding: 20rpx;
+    box-sizing: border-box;
+    width: 100%;
+    border-bottom: 1px rgba(192, 192, 192, 0.5) solid;
+  }
+
+  .consult-info {
+    display: flex;
+    .consult-info-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 15rpx 0;
+      .consult-avatar {
+        border-radius: 50%;
+        width: 25vw;
+        height: 25vw;
+        margin: 30rpx;
+      }
+      .consult-name {
+        margin: 10rpx 0 20rpx;
+      }
+    }
+    .consult-info-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      view {
+        margin: 8rpx 0;
+        color: grey;
+      }
+      .consult-info-duration {
+        font-size: large;
+        color: black;
+      }
+    }
+  }
+}
+</style>
