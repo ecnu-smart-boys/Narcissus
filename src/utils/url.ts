@@ -5,7 +5,10 @@ export const enum Pages {
   OnlineConsult = "/pages/online-consult/online-consult",
   ConsultRecord = "/pages/consult-record/consult-record",
   InformedConsent = "/pages/online-consult/informed-consent",
-  ConsultList = "/pages/online-consult/consult-list"
+  ConsultList = "/pages/online-consult/consult-list",
+  SelectRecord = "/pages/consult-result/select-record",
+  DeliverRecord = "/pages/consult-result/deliver-record",
+  DetailRecord = "/pages/consult-result/detail-record"
 }
 
 export const enum STATIC {
