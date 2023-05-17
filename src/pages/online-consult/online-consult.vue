@@ -14,6 +14,7 @@
                 :src="item.message"
                 class="msg-img"
                 mode="widthFix"
+                @tap="previewImg(item.message)"
               ></image>
             </view>
           </view>
@@ -27,6 +28,7 @@
                 :src="item.message"
                 class="msg-img"
                 mode="widthFix"
+                @tap="previewImg(item.message)"
               ></image>
             </view>
           </view>
@@ -50,6 +52,7 @@ let msgs = reactive<
     tip: number;
   }[]
 >([]);
+let imgMsg: string[] = [];
 onLoad(() => {
   getMsg();
   console.log(msgs);
@@ -140,8 +143,39 @@ function getMsg() {
     }
   ];
   for (let i = 0; i < msg.length; i++) {
+    if (msg[i].types == 1) {
+      imgMsg.unshift(msg[i].message);
+    }
     msgs.unshift(msg[i]);
   }
+}
+
+function previewImg(e: string) {
+  let index = 0;
+  for (let i = 0; i < imgMsg.length; i++) {
+    if (imgMsg[i] == e) {
+      index = i;
+    }
+  }
+  uni.previewImage({
+    current: index,
+    urls: imgMsg,
+    longPressActions: {
+      itemList: ["发送给朋友", "保存图片", "收藏"],
+      success: function (data) {
+        console.log(
+          "选中了第" +
+            (data.tapIndex + 1) +
+            "个按钮,第" +
+            (data.index + 1) +
+            "张图片"
+        );
+      },
+      fail: function (err) {
+        console.log(err.errMsg);
+      }
+    }
+  });
 }
 </script>
 
