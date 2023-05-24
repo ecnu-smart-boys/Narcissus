@@ -35,12 +35,14 @@
         </view>
       </view>
     </scroll-view>
+    <Submit></Submit>
   </view>
 </template>
 
 <script lang="ts" setup>
 import { onLoad } from "@dcloudio/uni-app";
 import { reactive } from "vue";
+import Submit from "@/components/submit/submit";
 
 let msgs = reactive<
   {
