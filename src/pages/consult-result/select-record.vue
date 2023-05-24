@@ -1,7 +1,7 @@
 <template>
   <view class="list-title">
     <view class="title-name">选择咨询记录</view>
-    <view class="deliver-record" @tap="deliverRecord">发送</view>
+    <view class="deliver-record" @tap="onlineConsult">发送</view>
   </view>
 
   <view class="uni-list">
@@ -30,9 +30,9 @@
 <script setup lang="ts">
 import { Pages } from "@/utils/url";
 import { reactive } from "vue";
-const deliverRecord = function () {
+const onlineConsult = function () {
   uni.navigateTo({
-    url: Pages.DeliverRecord
+    url: Pages.OnlineConsult
   });
 };
 let record = reactive<

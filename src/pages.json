@@ -81,7 +81,8 @@
         "selectedIconPath": "static/home-active.png"
       },
       {
-        "pagePath": "pages/online-consult/online-consult",
+        "//pagePath": "pages/online-consult/online-consult",
+        "pagePath": "pages/consult-result/detail-record",
         "text": "在线咨询",
         "iconPath": "static/message.png",
         "selectedIconPath": "static/message-active.png"
