@@ -35,25 +35,28 @@ const onlineConsult = function () {
     url: Pages.OnlineConsult
   });
 };
+
 let record = reactive<
   {
     id: string;
     time: string;
+    name: string;
     checked: boolean;
   }[]
 >([
   {
     id: "1",
     time: "2023/05/11 22:56",
+    name: "xxx",
     checked: false
   },
   {
     id: "2",
     time: "2023/05/12 10:08",
+    name: "yyy",
     checked: false
   }
 ]);
-
 </script>
 
 <style lang="scss" scoped>

@@ -49,15 +49,15 @@
       }
     },
     {
-      "path": "pages/consult-result/deliver-record",
-      "style": {
-        "navigationBarTitleText": "在线咨询"
-      }
-    },
-    {
       "path": "pages/consult-result/detail-record",
       "style": {
         "navigationBarTitleText": "咨询记录"
+      }
+    },
+    {
+      "path": "pages/personal-information/personal-information",
+      "style": {
+        "navigationBarTitleText": "个人信息"
       }
     }
   ],
@@ -81,7 +81,8 @@
         "selectedIconPath": "static/home-active.png"
       },
       {
-        "pagePath": "pages/online-consult/online-consult",
+        "//pagePath": "pages/online-consult/online-consult",
+        "pagePath": "pages/first-page/register",
         "text": "在线咨询",
         "iconPath": "static/message.png",
         "selectedIconPath": "static/message-active.png"

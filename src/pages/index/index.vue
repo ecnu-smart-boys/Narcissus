@@ -11,7 +11,7 @@
       <view class="consult-wrapper" @tap="startConsult">
         <view class="start-consult">立刻在线咨询</view>
       </view>
-      <img class="icon-edit" src="/static/edit.png" />
+      <img class="icon-edit" src="/static/edit.png" @tap="editPersonalInformation"/>
     </view>
     <template v-for="item of dummy" :key="item.id">
       <consult-record
@@ -64,6 +64,11 @@ const dummy = [
   }
 ];
 
+const editPersonalInformation = function () {
+  uni.navigateTo({
+    url: Pages.EditPersonalInformation
+  });
+};
 const startConsult = function () {
   uni.navigateTo({
     url: Pages.InformedConsent

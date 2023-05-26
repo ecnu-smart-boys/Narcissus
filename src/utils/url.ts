@@ -7,8 +7,8 @@ export const enum Pages {
   InformedConsent = "/pages/online-consult/informed-consent",
   ConsultList = "/pages/online-consult/consult-list",
   SelectRecord = "/pages/consult-result/select-record",
-  DeliverRecord = "/pages/consult-result/deliver-record",
-  DetailRecord = "/pages/consult-result/detail-record"
+  DetailRecord = "/pages/consult-result/detail-record",
+  EditPersonalInformation = "/pages/personal-information/personal-information"
 }
 
 export const enum STATIC {

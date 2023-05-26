@@ -2,7 +2,7 @@
   <view class="card">
     <view class="consult-record-wrapper">
       <view class="consult-time"> {{ props.time }} </view>
-      <img class="icon-quit" src="/static/quit.png" />
+      <img class="icon-quit" src="/static/quit.png" @tap="detailRecord"/>
       <view class="consult-info">
         <view class="consult-info-left">
           <img class="consult-avatar" :src="props.avatar" />
@@ -21,7 +21,12 @@
 
 <script setup lang="ts">
 import StarsRating from "@/components/stars-rating.vue";
-
+import { Pages } from "@/utils/url";
+const detailRecord = function () {
+  uni.navigateTo({
+    url: Pages.DetailRecord
+  });
+};
 let props = defineProps<{
   time: string;
   avatar: string;
