@@ -6,9 +6,12 @@
           <image :src="toc"></image>
         </view>
         <textarea
+          v-model="msg"
           :class="{ displaynone: isrecord }"
           auto-height="true"
           class="chat-send btn"
+          confirm-type="send"
+          @input="inputs"
         ></textarea>
         <view :class="{ displaynone: !isrecord }" class="record btn"
           >按住说话
@@ -24,6 +27,7 @@
           ></image>
         </view>
       </view>
+      <view :class="{ displaynone: !isemoji }" class="emoji">表情</view>
     </view>
   </view>
 </template>
@@ -32,9 +36,11 @@
 import { ref } from "vue";
 
 let isrecord = ref(false);
+let isemoji = ref(false);
 let toc = ref(
   "https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
 );
+let msg = ref("");
 
 function records() {
   if (isrecord.value) {
@@ -47,6 +53,16 @@ function records() {
       "https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/a149d455-4614-444b-beb7-76da9648b12e.png";
   }
 }
+
+function emoji() {
+  isemoji.value = !isemoji.value;
+}
+
+//文字发送
+function inputs(e) {
+  var chatm = e.detail.value;
+  var pos = chatm.indexOf("\n");
+}
 </script>
 
 <style lang="scss" scoped>
@@ -58,6 +74,10 @@ function records() {
   bottom: 0;
   z-index: 100;
   padding-bottom: 10rpx;
+}
+
+.displaynone {
+  display: none;
 }
 
 .submit-chat {
@@ -91,8 +111,11 @@ function records() {
     color: rgba(39, 40, 50, 0.6);
   }
 
-  .displaynone {
-    display: none;
+  .emoji {
+    width: 100%;
+    height: 460rpx;
+    background: rgba(236, 237, 238, 1);
+    box-shadow: 0rpx -1rpx 0rpx 0rpx rgba(0, 0, 0, 0.1);
   }
 }
 </style>
