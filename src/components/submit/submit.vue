@@ -67,7 +67,7 @@ function inputs(e) {
 
 <style lang="scss" scoped>
 .submit {
-  background: rgba(244, 244, 244, 0.96);
+  background: #edf4f9;
   width: 100%;
   border-top: 1px solid white;
   position: fixed;

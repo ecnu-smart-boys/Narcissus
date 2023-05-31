@@ -1,5 +1,8 @@
 <template>
   <view>
+    <view class="head">
+      <chat-top class="head1"></chat-top>
+    </view>
     <scroll-view class="chat" scroll-with-animation="true" scroll-y="true">
       <view class="chat-main">
         <view v-for="(item, index) in msgs" :key="index" class="chat-ls">
@@ -43,6 +46,7 @@
 import { onLoad } from "@dcloudio/uni-app";
 import { reactive } from "vue";
 import Submit from "@/components/submit/submit";
+import ChatTop from "@/components/chat-top/chat-top.vue";
 
 let msgs = reactive<
   {
@@ -182,8 +186,16 @@ function previewImg(e: string) {
 </script>
 
 <style lang="scss" scoped>
+.head1 {
+  width: 100%;
+  position: fixed; /*固定位置*/
+  top: 0;
+  z-index: 9999; /*设置优先级显示，保证不会被覆盖*/
+}
+
 .chat {
   height: 100%;
+  background: #eef2f5;
 
   .chat-main {
     padding: 100rpx 32rpx 120rpx;
@@ -208,7 +220,7 @@ function previewImg(e: string) {
         flex: none;
         width: 100rpx;
         height: 100rpx;
-        border-radius: 10rpx;
+        border-radius: 50rpx;
       }
 
       .message {
