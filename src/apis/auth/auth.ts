@@ -3,7 +3,6 @@ import {
   RegisterWxReq,
   LoginWxResp,
   RegisterWxResp,
-  GetUserInfoResp
 } from "@/apis/auth/auth-interface";
 import { request } from "@/apis/schema";
 

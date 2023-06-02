@@ -124,12 +124,20 @@ const onChooseAvatar = function (e: any) {
 
 userInformation()
   .then((res) => {
-    console.log(res);
+    const userData = res.data.data;
+    console.log(userData);
+    userInfo.age = userData.age;
+    userInfo.avatar = userData.avatar;
+    userInfo.email = userData.email;
+    userInfo.gender = userData.gender;
+    userInfo.name = userData.name;
+    userInfo.phone = userData.phone;
+    console.log("User data:", userData);
   })
   .catch((err) => {
     console.log(err);
     uni.showToast({
-      title: err,
+      title: err.message,
       icon: "error"
     });
   });

@@ -26,7 +26,7 @@ export function userInformation() {
       data: {},
       success(res) {
         if (res) {
-          console.log(res.data.data);
+          console.log(res);
           resolve(res);
         } else {
           reject(res);
