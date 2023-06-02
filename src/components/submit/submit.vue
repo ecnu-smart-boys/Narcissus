@@ -33,8 +33,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { defineEmits, ref } from "vue";
 
+const emit = defineEmits(["inputs", "heights"]);
 let isrecord = ref(false);
 let isemoji = ref(false);
 let toc = ref(
@@ -59,9 +60,25 @@ function emoji() {
 }
 
 //文字发送
-function inputs(e) {
+function inputs(e: { detail: { value: string } }) {
   var chatm = e.detail.value;
   var pos = chatm.indexOf("\n");
+  if (pos != -1 && chatm.length > 0) {
+    emit("inputs", { msg });
+    setTimeout(() => {
+      msg.value = "";
+    }, 0);
+  }
+}
+
+function getElementHeight() {
+  const query = uni.createSelectorQuery().in(this);
+  query
+    .select(".submit")
+    .boundingClientRect((data) => {
+      emit("heights", data.height);
+    })
+    .exec();
 }
 </script>
 
@@ -101,7 +118,7 @@ function inputs(e) {
     background-color: #fff;
     border-radius: 10rpx;
     padding: 20rpx;
-    max-height: 160rpx;
+    max-height: 180rpx;
     margin: 0 10rpx;
   }
 
