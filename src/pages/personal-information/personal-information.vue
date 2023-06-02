@@ -23,7 +23,7 @@
     <view class="update-line">
       <text class="update-label">真实姓名</text>
       <input
-        v-model="updateReq.name"
+        v-model="userInfo.name"
         class="update-input"
         placeholder="请输入真实姓名"
         type="text"
@@ -46,7 +46,7 @@
     <view class="update-line">
       <text class="update-label">年龄</text>
       <input
-        v-model="updateReq.age"
+        v-model="userInfo.age"
         class="update-input"
         placeholder="请输入年龄"
         type="text"
@@ -57,7 +57,7 @@
     <view class="update-line">
       <text class="update-label">联系电话</text>
       <input
-        v-model="updateReq.name"
+        v-model="userInfo.name"
         class="update-input"
         placeholder="请输入电话"
         type="text"
@@ -68,7 +68,7 @@
     <view class="update-line">
       <text class="update-label">紧急联系人</text>
       <input
-        v-model="updateReq.name"
+        v-model="userInfo.name"
         class="update-input"
         placeholder="请输入紧急联系人"
         type="text"
@@ -91,15 +91,18 @@
 </template>
 
 <script setup lang="ts">
-import { UpdateWxReq } from "@/apis/auth/auth-interface";
+import { GetUserInfoReq } from "@/apis/auth/auth-interface";
 import { reactive, ref } from "vue";
-const updateReq: UpdateWxReq = reactive({
-  age: NaN,
+import { userInformation } from "@/apis/weixin/auth";
+import { Pages } from "@/utils/url";
+
+const userInfo: GetUserInfoReq = reactive({
+  age: 0,
   avatar: "",
   email: "",
-  gender: NaN,
+  gender: 0,
   name: "",
-  phone: "",
+  phone: ""
 });
 
 let avatarUrl = ref(
@@ -112,12 +115,24 @@ let nickName = ref(
   uni.getStorageSync("nickName") ? uni.getStorageSync("nickName") : "微信用户"
 );
 const submit = function () {
-  console.log(updateReq.name);
+  console.log(userInfo.name);
 };
 
 const onChooseAvatar = function (e: any) {
   avatarUrl.value = e.detail.avatarUrl;
 };
+
+userInformation()
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => {
+    console.log(err);
+    uni.showToast({
+      title: err,
+      icon: "error"
+    });
+  });
 </script>
 
 <style lang="scss" scoped>

@@ -35,7 +35,7 @@ export interface RegisterWxResp {
   roles: string[];
 }
 
-export interface UpdateWxReq {
+export interface GetUserInfoReq {
   age: number;
   avatar: string;
   email: string;
@@ -44,7 +44,7 @@ export interface UpdateWxReq {
   phone: string;
 }
 
-export interface UpdateWxResp {
+export interface GetUserInfoResp {
   age: number;
   avatar: string;
   disabled: boolean;
