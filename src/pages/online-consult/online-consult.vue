@@ -4,7 +4,7 @@
       <chat-top class="head1"></chat-top>
     </view>
     <scroll-view class="chat" scroll-with-animation="true" scroll-y="true">
-      <view class="chat-main">
+      <view :style="{ paddingBottom: inputh + 'rpx' }" class="chat-main">
         <view v-for="(item, index) in msgs" :key="index" class="chat-ls">
           <view class="chat-time">{{ item.time }}</view>
           <view v-if="item.id != 'b'" class="msg-m msg-left">
@@ -38,16 +38,17 @@
         </view>
       </view>
     </scroll-view>
-    <Submit></Submit>
+    <Submit @inputs="inputs"></Submit>
   </view>
 </template>
 
 <script lang="ts" setup>
 import { onLoad } from "@dcloudio/uni-app";
-import { reactive } from "vue";
-import Submit from "@/components/submit/submit";
+import { reactive, ref } from "vue";
+import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
 
+let inputh = ref("60");
 let msgs = reactive<
   {
     id: string;
@@ -183,6 +184,10 @@ function previewImg(e: string) {
     }
   });
 }
+
+function inputs(e: string) {
+  console.log(e.msg._value);
+}
 </script>
 
 <style lang="scss" scoped>
@@ -198,7 +203,9 @@ function previewImg(e: string) {
   background: #eef2f5;
 
   .chat-main {
-    padding: 100rpx 32rpx 120rpx;
+    padding-top: 100rpx;
+    padding-right: 32rpx;
+    padding-left: 32rpx;
     display: flex;
     flex-direction: column;
   }
