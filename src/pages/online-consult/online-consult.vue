@@ -38,7 +38,7 @@
         </view>
       </view>
     </scroll-view>
-    <Submit @inputs="inputs"></Submit>
+    <Submit @heights="heights" @inputs="inputs"></Submit>
   </view>
 </template>
 
@@ -47,7 +47,49 @@ import { onLoad } from "@dcloudio/uni-app";
 import { reactive, ref } from "vue";
 import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
+// import { loginIM } from "@/utils/im";
+//
+// const userID = "your-userid";
+// const userSig = "your-usersig";
+// const conversationID = "group1";
+// const message = ref("");
+// const messageList = ref([]);
+// // 登录 IM 服务
+// onMounted(() => {
+//   loginIM(userID, userSig).then(() => {
+//     console.log("登录成功");
+//   });
+// });
 
+// 发送消息
+// function sendMessage() {
+//   sendMessage(conversationID, message.value).then(() => {
+//     console.log("消息发送成功");
+//     message.value = "";
+//   });
+// }
+
+// 监听接收到的消息
+// onMessageReceived((list) => {
+//   console.log("接收到新消息", list);
+//   messageList.value.push(...list);
+// });
+// default defineComponent({
+//   name: "Chat",
+//   setup() {
+//
+//
+//
+//
+//
+//
+//     return {
+//       message,
+//       messageList,
+//       sendMessage
+//     };
+//   }
+// });
 let inputh = ref("60");
 let msgs = reactive<
   {
@@ -186,7 +228,21 @@ function previewImg(e: string) {
 }
 
 function inputs(e: string) {
+  let data = {
+    id: "b",
+    imgurl:
+      "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
+    message: e.msg._value,
+    types: 0,
+    time: new Date(1626244865437),
+    tip: 1
+  };
+  msgs.push(data);
   console.log(e.msg._value);
+}
+
+function heights(e: string) {
+  console.log(e);
 }
 </script>
 
