@@ -27,7 +27,18 @@
           ></image>
         </view>
       </view>
-      <view :class="{ displaynone: !isemoji }" class="emoji">表情</view>
+      <view :class="{ displaynone: !isemoji }" class="emoji">
+        <view v-for="(line, i) in emoji1" :key="i" class="emoji-line">
+          <view
+            v-for="(item, index) in line"
+            :key="index"
+            class="emoji-line-item"
+            @tap="clickEmoji(item)"
+          >
+            {{ item }}
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -42,6 +53,20 @@ let toc = ref(
   "https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
 );
 let msg = ref("");
+const emoji1 = [
+  ["😀", "😁", "😂", "🤣", "😃", "😄", "😅", "😆"],
+  ["😉", "😊", "😋", "😎", "😍", "😘", "🥰", "😗"],
+  ["😙", "😚", "🙂", "🤗", "🤩", "🤔", "🤨", "😐"],
+  ["😑", "😶", "🙄", "😏", "😣", "😥", "😮", "🤐"],
+  ["😯", "😪", "😫", "🥱", "😴", "😌", "😛", "😜"],
+  ["😝", "🤤", "😒", "😓", "😔", "😕", "🙃", "🤑"],
+  ["😲", "🙁", "😖", "😞", "😟", "😤", "😢", "😭"],
+  ["😦", "😧", "😨", "😩", "🤯", "😬", "😰", "😱"],
+  ["🥵", "🥶", "😳", "🤪", "😵", "🥴", "😠", "😡"],
+  ["🤬", "😷", "🤒", "🤕", "🤢", "🤮", "🤧", "😇"],
+  ["🥳", "🥺", "🤠", "🤡", "🤥", "🤫", "🤭", "🧐"],
+  ["🤓"]
+];
 
 function records() {
   if (isrecord.value) {
@@ -57,6 +82,7 @@ function records() {
 
 function emoji() {
   isemoji.value = !isemoji.value;
+  // getElementHeight();
 }
 
 //文字发送
@@ -79,6 +105,10 @@ function getElementHeight() {
       emit("heights", data.height);
     })
     .exec();
+}
+
+function clickEmoji(e: any) {
+  console.log(e);
 }
 </script>
 
@@ -127,12 +157,26 @@ function getElementHeight() {
     font-size: 28rpx;
     color: rgba(39, 40, 50, 0.6);
   }
+}
 
-  .emoji {
-    width: 100%;
-    height: 460rpx;
-    background: rgba(236, 237, 238, 1);
-    box-shadow: 0rpx -1rpx 0rpx 0rpx rgba(0, 0, 0, 0.1);
+.emoji {
+  width: 100%;
+  height: 460rpx;
+  padding: 16rpx 12rpx;
+  background: rgba(236, 237, 238, 1);
+  box-shadow: 0rpx -1rpx 0rpx 0rpx rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow: hidden;
+  overflow-y: auto;
+
+  .emoji-line {
+    display: flex;
+
+    .emoji-line-item {
+      flex: 1;
+      text-align: center;
+      font-size: 40rpx;
+    }
   }
 }
 </style>

@@ -27,6 +27,10 @@
     "moment": "^2.29.4",
     "pinia": "^2.0.33",
     "postcss": "^8.0.0",
+    "tim-js-sdk": "^2.27.3",
+    "tim-profanity-filter-plugin": "^0.9.0",
+    "tim-upload-plugin": "^1.2.0",
+    "tim-wx-sdk": "^2.27.3",
     "vue": "3.2.45",
     "vue-i18n": "^9.1.9",
     "vuex": "^4.1.0"
