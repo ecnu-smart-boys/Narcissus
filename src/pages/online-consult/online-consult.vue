@@ -9,9 +9,11 @@
           <view class="chat-time">{{ item.time }}</view>
           <view v-if="item.id != 'b'" class="msg-m msg-left">
             <image :src="item.imgurl" class="user-img"></image>
+            <!--                文字-->
             <view v-if="item.types == 0" class="message">
               <view class="msg-text">{{ item.message }}</view>
             </view>
+            <!--              图片-->
             <view v-if="item.types == 1" class="message">
               <image
                 :src="item.message"
@@ -19,6 +21,19 @@
                 mode="widthFix"
                 @tap="previewImg(item.message)"
               ></image>
+            </view>
+            <!--              语音-->
+            <view v-if="item.types == 2" class="message">
+              <view
+                :style="{ width: item.message.time * 4 + 'rpx' }"
+                class="msg-text voice"
+              >
+                <image
+                  class="voice-img"
+                  src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
+                ></image>
+                {{ item.message.time }}"
+              </view>
             </view>
           </view>
           <view v-if="item.id != 'a'" class="msg-m msg-right">
@@ -33,6 +48,19 @@
                 mode="widthFix"
                 @tap="previewImg(item.message)"
               ></image>
+            </view>
+            <!--              语音-->
+            <view v-if="item.types == 2" class="message">
+              <view
+                :style="{ width: item.message.time * 4 + 'rpx' }"
+                class="msg-text voice"
+              >
+                {{ item.message.time }}"
+                <image
+                  class="voice-img"
+                  src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
+                ></image>
+              </view>
             </view>
           </view>
         </view>
@@ -179,7 +207,30 @@ function getMsg() {
       time: new Date(1626244868888),
       tip: 1
     },
-
+    {
+      id: "a",
+      imgurl:
+        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
+      message: {
+        voice: "a",
+        time: 20
+      },
+      types: 2,
+      time: new Date(1626244868888),
+      tip: 1
+    },
+    {
+      id: "b",
+      imgurl:
+        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
+      message: {
+        voice: "a",
+        time: 60
+      },
+      types: 2,
+      time: new Date(1626244868250),
+      tip: 1
+    },
     {
       id: "b",
       imgurl:
@@ -301,6 +352,16 @@ function heights(e: string) {
         max-width: 400rpx;
         border-radius: 20rpx;
       }
+
+      .voice {
+        min-width: 120rpx;
+        max-width: 400rpx;
+      }
+
+      .voice-img {
+        width: 28rpx;
+        height: 36rpx;
+      }
     }
 
     .msg-left {
@@ -315,6 +376,18 @@ function heights(e: string) {
       .msg-img {
         margin-left: 16rpx;
       }
+
+      .voice {
+        text-align: right;
+      }
+
+      .voice-img {
+        float: left;
+        transform: rotate(180deg);
+        width: 28rpx;
+        height: 36rpx;
+        padding-bottom: 4rpx;
+      }
     }
 
     .msg-right {
@@ -328,6 +401,17 @@ function heights(e: string) {
 
       .msg-img {
         margin-right: 16rpx;
+      }
+
+      .voice {
+        text-align: left;
+      }
+
+      .voice-img {
+        padding-top: 4rpx;
+        float: right;
+        width: 28rpx;
+        height: 36rpx;
       }
     }
   }

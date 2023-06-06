@@ -8,12 +8,18 @@
         <textarea
           v-model="msg"
           :class="{ displaynone: isrecord }"
+          adjust-position="true"
           auto-height="true"
           class="chat-send btn"
           confirm-type="send"
+          @confirm="sendMessage"
           @input="inputs"
         ></textarea>
-        <view :class="{ displaynone: !isrecord }" class="record btn"
+        <view
+          :class="{ displaynone: !isrecord }"
+          class="record btn"
+          @touchend="touchend"
+          @touchstart="touchstart"
           >按住说话
         </view>
         <view class="bt-img" @tap="emoji">
@@ -23,7 +29,8 @@
         </view>
         <view class="bt-img">
           <image
-            src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/feea3a4b-1220-4953-a11b-b40a0c28e8b0.png"
+            src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/8aebbae4-c217-431c-8faf-9b0e1f339fdc.png"
+            @tap="sendImg('album')"
           ></image>
         </view>
       </view>
@@ -46,9 +53,11 @@
 <script lang="ts" setup>
 import { defineEmits, ref } from "vue";
 
+const recorderManager = uni.getRecorderManager();
 const emit = defineEmits(["inputs", "heights"]);
 let isrecord = ref(false);
 let isemoji = ref(false);
+let timer = "";
 let toc = ref(
   "https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
 );
@@ -82,6 +91,9 @@ function records() {
 
 function emoji() {
   isemoji.value = !isemoji.value;
+  isrecord.value = false;
+  toc.value =
+    "https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png";
   // getElementHeight();
 }
 
@@ -97,6 +109,43 @@ function inputs(e: { detail: { value: string } }) {
   }
 }
 
+function sendMessage() {
+  // 在这里调用发送消息的方法，比如：
+  // this.$emit('send-message', this.message)
+  // 或者：
+  // this.$store.dispatch('sendMessage', this.message)
+
+  // 发送完消息后清空输入框
+  // msg.value = "";
+  emit("inputs", { msg });
+  setTimeout(() => {
+    msg.value = "";
+  }, 0);
+}
+
+function touchstart() {
+  console.log("开始");
+  let i = 0;
+  timer = setInterval(() => {
+    i++;
+    console.log(i);
+    if (i > 10) {
+      clearInterval(timer);
+    }
+  }, 1000);
+  recorderManager.start();
+}
+
+function touchend() {
+  console.log("结束");
+  clearInterval(timer);
+  recorderManager.stop();
+  recorderManager.onStop(function (res) {
+    console.log("recorder stop" + JSON.stringify(res));
+    //self.voicePath = res.tempFilePath;
+  });
+}
+
 function getElementHeight() {
   const query = uni.createSelectorQuery().in(this);
   query
@@ -109,6 +158,24 @@ function getElementHeight() {
 
 function clickEmoji(e: any) {
   console.log(e);
+  msg.value = msg.value + e;
+}
+
+function sendImg(e: string) {
+  let count = 9;
+  if (e == "album") {
+    count = 9;
+  } else {
+    count = 1;
+  }
+  uni.chooseImage({
+    count: count, //默认9
+    sizeType: ["original", "compressed"], //可以指定是原图还是压缩图，默认二者都有
+    sourceType: [e], //从相册选择
+    success: function (res) {
+      console.log(JSON.stringify(res.tempFilePaths));
+    }
+  });
 }
 </script>
 
@@ -120,7 +187,7 @@ function clickEmoji(e: any) {
   position: fixed;
   bottom: 0;
   z-index: 100;
-  padding-bottom: 10rpx;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .displaynone {
@@ -150,6 +217,10 @@ function clickEmoji(e: any) {
     padding: 20rpx;
     max-height: 180rpx;
     margin: 0 10rpx;
+  }
+
+  .chat-send {
+    line-height: 44rpx;
   }
 
   .record {
