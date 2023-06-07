@@ -1,4 +1,4 @@
-import TIM from "tim-js-sdk";
+import TIM, { Message } from "tim-js-sdk";
 import TIMUploadPlugin from "tim-upload-plugin";
 
 // import TIMProfanityFilterPlugin from "tim-profanity-filter-plugin";
@@ -20,7 +20,7 @@ tim.registerPlugin({ "tim-upload-plugin": TIMUploadPlugin });
 
 // 注册腾讯云即时通信 IM 本地审核插件
 // tim.registerPlugin({ "tim-profanity-filter-plugin": TIMProfanityFilterPlugin });
-const TUIOfflinePush = uni.requireNativePlugin("TencentCloud-TUIOfflinePush");
+//const TUIOfflinePush = uni.requireNativePlugin("TencentCloud-TUIOfflinePush");
 
 export function loginIM(userID: string, userSig: string) {
   const promise = tim.login({
@@ -46,6 +46,35 @@ export function loginIM(userID: string, userSig: string) {
 //
 //   return promise;
 // }
+export function createTextMessage(toUserId: string, text: string): Message {
+  return tim.createTextMessage({
+    to: toUserId,
+    conversationType: TIM.TYPES.CONV_C2C,
+    payload: {
+      text
+    }
+  });
+}
+
+export function createImageMessage(toUserId: string, file: any): Message {
+  return tim.createImageMessage({
+    to: toUserId,
+    conversationType: TIM.TYPES.CONV_C2C,
+    payload: {
+      file
+    }
+  });
+}
+
+export function createAudioMessage(toUserId: string, file: any) {
+  return tim.createAudioMessage({
+    to: toUserId,
+    conversationType: TIM.TYPES.CONV_C2C,
+    payload: {
+      file
+    }
+  });
+}
 
 export function onMessageReceived(callback: (messageList: any[]) => void) {
   tim.on(TIM.EVENT.MESSAGE_RECEIVED, (event: { data: any }) => {
@@ -53,3 +82,5 @@ export function onMessageReceived(callback: (messageList: any[]) => void) {
     callback(messageList);
   });
 }
+
+export default tim;
