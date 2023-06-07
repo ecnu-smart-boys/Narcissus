@@ -57,7 +57,7 @@
     <view class="update-line">
       <text class="update-label">联系电话</text>
       <input
-        v-model="userInfo.name"
+        v-model="userInfo.phone"
         class="update-input"
         placeholder="请输入电话"
         type="text"
@@ -79,6 +79,7 @@
     <view class="update-line">
       <text class="update-label">紧急联系人电话</text>
       <input
+        v-model="userInfo.name"
         class="update-input"
         placeholder="请输入联系人电话"
         type="text"
@@ -93,8 +94,8 @@
 <script setup lang="ts">
 import { GetUserInfoReq } from "@/apis/auth/auth-interface";
 import { reactive, ref } from "vue";
-import { userInformation } from "@/apis/weixin/auth";
 import { Pages } from "@/utils/url";
+declare const wx: any;
 
 const userInfo: GetUserInfoReq = reactive({
   age: 0,
@@ -104,6 +105,28 @@ const userInfo: GetUserInfoReq = reactive({
   name: "",
   phone: ""
 });
+
+function getUserInformation() {
+  try {
+    const resData = localStorage.getItem("userInfo");
+    console.log(resData);
+    if (resData) {
+      /*userInfo.age = resData.age;
+      userInfo.avatar = resData.avatar;
+      userInfo.email = resData.email;
+      userInfo.gender = resData.gender;
+      userInfo.name = resData.name;
+      userInfo.phone = resData.phone;*/
+    } else {
+      console.log("用户信息不存在");
+      return null;
+    }
+  } catch (error) {
+    console.error("获取用户信息失败:", error);
+    return null;
+  }
+}
+getUserInformation();
 
 let avatarUrl = ref(
   uni.getStorageSync("avatarUrl")
@@ -121,26 +144,6 @@ const submit = function () {
 const onChooseAvatar = function (e: any) {
   avatarUrl.value = e.detail.avatarUrl;
 };
-
-userInformation()
-  .then((res) => {
-    const userData = res.data.data;
-    console.log(userData);
-    userInfo.age = userData.age;
-    userInfo.avatar = userData.avatar;
-    userInfo.email = userData.email;
-    userInfo.gender = userData.gender;
-    userInfo.name = userData.name;
-    userInfo.phone = userData.phone;
-    console.log("User data:", userData);
-  })
-  .catch((err) => {
-    console.log(err);
-    uni.showToast({
-      title: err.message,
-      icon: "error"
-    });
-  });
 </script>
 
 <style lang="scss" scoped>

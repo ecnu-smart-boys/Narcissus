@@ -47,6 +47,7 @@
     <view class="register-line">
       <text class="register-label">年龄</text>
       <input
+        v-model="registerReq.age"
         class="register-input"
         placeholder="请输入年龄"
         type="text"
@@ -57,6 +58,7 @@
     <view class="register-line">
       <text class="register-label">联系电话</text>
       <input
+        v-model="registerReq.phone"
         class="register-input"
         placeholder="请输入电话"
         type="text"
@@ -75,6 +77,7 @@
     <view class="register-line">
       <text class="register-label">紧急联系人</text>
       <input
+        v-model="registerReq.emergencyContact"
         class="register-input"
         placeholder="请输入紧急联系人"
         type="text"
@@ -85,6 +88,7 @@
     <view class="register-line">
       <text class="register-label">紧急联系人电话</text>
       <input
+        v-model="registerReq.emergencyPhone"
         class="register-input"
         placeholder="请输入联系人电话"
         type="text"
@@ -99,6 +103,8 @@
 <script setup lang="ts">
 import { RegisterWxReq } from "@/apis/auth/auth-interface";
 import { reactive, ref } from "vue";
+declare const wx: any;
+
 const registerReq: RegisterWxReq = reactive({
   age: 0,
   emergencyContact: "",
@@ -119,9 +125,41 @@ let nickName = ref(
 );
 const submit = function () {
   console.log(registerReq.name);
-  // uni.switchTab({
-  //   url: Pages.Index
-  // });
+  wx.login({
+    success: function (res: { code: any; errMsg: any }) {
+      if (res.code) {
+        // 使用 wx.login 获取登录凭证
+        wx.request({
+          url: "http://ecnu.xhpolaris.com/auth/register",
+          method: "POST",
+          data: {
+            age: registerReq.age,
+            avatar: "",
+            emergencyContact: registerReq.emergencyContact,
+            emergencyPhone: registerReq.emergencyPhone,
+            gender: registerReq.gender,
+            name: registerReq.name,
+            phone: registerReq.phone,
+            smsCode: "",
+            smsCodeId: "",
+            code: res.code
+          },
+          success: function (response: any) {
+            // 处理注册成功后的逻辑
+            console.log("注册成功", response);
+          },
+          fail: function (error: any) {
+            // 处理注册失败的逻辑
+            console.log("注册失败", error);
+          }
+        });
+      }
+    },
+    fail: function (error: any) {
+      // 处理 wx.login 调用失败的逻辑
+      console.log("登录失败", error);
+    }
+  });
 };
 
 const onChooseAvatar = function (e: any) {

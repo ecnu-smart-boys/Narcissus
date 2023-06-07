@@ -8,7 +8,7 @@ import { request } from "@/apis/schema";
 
 export function loginWx(req: LoginWxReq): Promise<LoginWxResp> {
   return request({
-    url: "/wx/login",
+    url: "/auth/login-wx",
     data: req,
     method: "POST"
   });
@@ -16,7 +16,7 @@ export function loginWx(req: LoginWxReq): Promise<LoginWxResp> {
 
 export function registerWx(req: RegisterWxReq): Promise<RegisterWxResp> {
   return request({
-    url: "/wx/register",
+    url: "/auth/register",
     data: req,
     method: "POST"
   });

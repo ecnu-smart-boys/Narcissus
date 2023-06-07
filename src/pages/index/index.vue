@@ -1,4 +1,7 @@
 <template>
+  <view class="consult-wrapper" @tap="templogin">
+    登录
+  </view>
   <view>
     <view class="card relative">
       <view class="consult-user">
@@ -11,7 +14,11 @@
       <view class="consult-wrapper" @tap="startConsult">
         <view class="start-consult">立刻在线咨询</view>
       </view>
-      <img class="icon-edit" src="/static/edit.png" @tap="editPersonalInformation"/>
+      <img
+        class="icon-edit"
+        src="/static/edit.png"
+        @tap="editPersonalInformation"
+      />
     </view>
     <template v-for="item of dummy" :key="item.id">
       <consult-record
@@ -34,8 +41,8 @@
 import { ref } from "vue";
 import ConsultRecord from "@/components/consult-record.vue";
 import { Pages } from "@/utils/url";
-
 let avatarUrl = ref("../../static/default-avatar.png");
+declare const wx: any;
 
 const dummy = [
   {
@@ -63,7 +70,38 @@ const dummy = [
     id: 3
   }
 ];
-
+const templogin = function () {
+  wx.login({
+    success: function (res: { code: any; errMsg: any }) {
+      if (res.code) {
+        // 调用接口时传递 jscode
+        console.log(res.code);
+        wx.request({
+          url: "http://ecnu.xhpolaris.com/auth/login-wx",
+          method: "POST",
+          data: {
+            code: res.code
+          },
+          success: function (response: any) {
+            // 处理登录成功后的逻辑
+            console.log("登录成功", response);
+            wx.setStorageSync("userInfo", response.data.data);
+          },
+          fail: function (error: any) {
+            // 处理登录失败的逻辑
+            console.log("登录失败", error);
+          }
+        });
+      } else {
+        console.log("登录失败", res.errMsg);
+      }
+    },
+    fail: function (error: any) {
+      // 处理 wx.login 调用失败的逻辑
+      console.log("登录失败", error);
+    }
+  });
+};
 const editPersonalInformation = function () {
   uni.navigateTo({
     url: Pages.EditPersonalInformation
