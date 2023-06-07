@@ -72,22 +72,29 @@
 
 <script lang="ts" setup>
 import { onLoad } from "@dcloudio/uni-app";
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
-// import { loginIM } from "@/utils/im";
-//
-// const userID = "your-userid";
+import { genTestUserSig } from "@/debug";
+import { loginIM } from "@/utils/im";
+
+const userID = "1255_1";
+const userSig = genTestUserSig({
+  SDKAppID: 1400810468,
+  secretKey: "d14df58bc7f5f87424981ca2165867287e2c4ad3ba021709bfdd50edf37daaa0",
+  userID: "1255_1"
+}).userSig;
+
 // const userSig = "your-usersig";
 // const conversationID = "group1";
 // const message = ref("");
 // const messageList = ref([]);
-// // 登录 IM 服务
-// onMounted(() => {
-//   loginIM(userID, userSig).then(() => {
-//     console.log("登录成功");
-//   });
-// });
+//登录 IM 服务
+onMounted(() => {
+  loginIM(userID, userSig).then(() => {
+    console.log("登录成功");
+  });
+});
 
 // 发送消息
 // function sendMessage() {
@@ -310,57 +317,57 @@ function heights(e: string) {
   background: #eef2f5;
 
   .chat-main {
-    padding-top: 100rpx;
-    padding-right: 32rpx;
-    padding-left: 32rpx;
+    padding-top: 100 rpx;
+    padding-right: 32 rpx;
+    padding-left: 32 rpx;
     display: flex;
     flex-direction: column;
   }
 
   .chat-ls {
     .chat-time {
-      font-size: 24rpx;
+      font-size: 24 rpx;
       color: rgba(39, 40, 50, 0.3);
-      line-height: 34rpx;
-      padding: 20rpx 0;
+      line-height: 34 rpx;
+      padding: 20 rpx 0;
       text-align: center;
     }
 
     .msg-m {
       display: flex;
-      padding: 20rpx 0;
+      padding: 20 rpx 0;
 
       .user-img {
         flex: none;
-        width: 100rpx;
-        height: 100rpx;
-        border-radius: 50rpx;
+        width: 100 rpx;
+        height: 100 rpx;
+        border-radius: 50 rpx;
       }
 
       .message {
         flex: none;
-        max-width: 480rpx;
+        max-width: 480 rpx;
       }
 
       .msg-text {
-        font-size: 35rpx;
-        line-height: 44rpx;
-        padding: 15rpx 24rpx;
+        font-size: 35 rpx;
+        line-height: 44 rpx;
+        padding: 15 rpx 24 rpx;
       }
 
       .msg-img {
-        max-width: 400rpx;
-        border-radius: 20rpx;
+        max-width: 400 rpx;
+        border-radius: 20 rpx;
       }
 
       .voice {
-        min-width: 120rpx;
-        max-width: 400rpx;
+        min-width: 120 rpx;
+        max-width: 400 rpx;
       }
 
       .voice-img {
-        width: 28rpx;
-        height: 36rpx;
+        width: 28 rpx;
+        height: 36 rpx;
       }
     }
 
@@ -368,13 +375,13 @@ function heights(e: string) {
       flex-direction: row;
 
       .msg-text {
-        margin-left: 16rpx;
+        margin-left: 16 rpx;
         background-color: #fff;
-        border-radius: 0rpx 20rpx 20rpx 20rpx;
+        border-radius: 0 rpx 20 rpx 20 rpx 20 rpx;
       }
 
       .msg-img {
-        margin-left: 16rpx;
+        margin-left: 16 rpx;
       }
 
       .voice {
@@ -384,9 +391,9 @@ function heights(e: string) {
       .voice-img {
         float: left;
         transform: rotate(180deg);
-        width: 28rpx;
-        height: 36rpx;
-        padding-bottom: 4rpx;
+        width: 28 rpx;
+        height: 36 rpx;
+        padding-bottom: 4 rpx;
       }
     }
 
@@ -394,13 +401,13 @@ function heights(e: string) {
       flex-direction: row-reverse;
 
       .msg-text {
-        margin-right: 16rpx;
+        margin-right: 16 rpx;
         background-color: rgba(255, 228, 49, 0.8);
-        border-radius: 0rpx 20rpx 20rpx 20rpx;
+        border-radius: 0 rpx 20 rpx 20 rpx 20 rpx;
       }
 
       .msg-img {
-        margin-right: 16rpx;
+        margin-right: 16 rpx;
       }
 
       .voice {
@@ -408,10 +415,10 @@ function heights(e: string) {
       }
 
       .voice-img {
-        padding-top: 4rpx;
+        padding-top: 4 rpx;
         float: right;
-        width: 28rpx;
-        height: 36rpx;
+        width: 28 rpx;
+        height: 36 rpx;
       }
     }
   }
