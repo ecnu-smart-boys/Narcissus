@@ -1,6 +1,12 @@
 {
   "pages": [
     {
+      "path": "pages/first-page/first-page",
+      "style": {
+        "navigationBarTitleText": "登录"
+      }
+    },
+    {
       "path": "pages/index/index",
       "style": {
         "navigationBarTitleText": "首页"
@@ -10,12 +16,6 @@
       "path": "pages/first-page/register",
       "style": {
         "navigationBarTitleText": "注册"
-      }
-    },
-    {
-      "path": "pages/first-page/first-page",
-      "style": {
-        "navigationBarTitleText": ""
       }
     },
     {

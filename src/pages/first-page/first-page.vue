@@ -20,13 +20,22 @@ wxLogin()
         url: Pages.Register
       });
     } else {
-      // TODO
+      uni.setStorageSync("userInfo", res);
+      uni.switchTab({
+        url: Pages.Index,
+        success: function () {
+          console.log("跳转到含 TabBar 的页面成功");
+        },
+        fail: function(error) {
+          console.log("跳转到含 TabBar 的页面失败", error);
+        }
+      });
     }
   })
   .catch((err) => {
     console.log(err);
     uni.showToast({
-      title: err,
+      title: err.toString(),
       icon: "error"
     });
   });

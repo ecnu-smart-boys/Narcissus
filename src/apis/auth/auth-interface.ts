@@ -16,11 +16,15 @@ export interface LoginWxResp {
 
 export interface RegisterWxReq {
   age: number;
+  avatar: string;
   emergencyContact: string;
   emergencyPhone: string;
   gender: number;
   name: string;
   phone: string;
+  smsCode: string;
+  smsCodeId: string;
+  code: string;
 }
 
 export interface RegisterWxResp {

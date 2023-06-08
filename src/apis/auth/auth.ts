@@ -2,7 +2,7 @@ import {
   LoginWxReq,
   RegisterWxReq,
   LoginWxResp,
-  RegisterWxResp,
+  RegisterWxResp
 } from "@/apis/auth/auth-interface";
 import { request } from "@/apis/schema";
 

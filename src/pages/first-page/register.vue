@@ -34,7 +34,7 @@
     <view class="div-line"></view>
     <view class="register-line">
       <text class="register-label">性别</text>
-      <radio-group class="register-radio-group">
+      <radio-group class="register-radio-group" @change="handleGenderChange">
         <label class="radio">
           <radio value="1" color="rgb(50, 200, 210)" />男
         </label>
@@ -103,6 +103,9 @@
 <script setup lang="ts">
 import { RegisterWxReq } from "@/apis/auth/auth-interface";
 import { reactive, ref } from "vue";
+import { wxLogin, wxRegister } from "@/apis/weixin/auth";
+import {loginWx, registerWx} from "@/apis/auth/auth";
+import { Pages } from "@/utils/url";
 declare const wx: any;
 
 const registerReq: RegisterWxReq = reactive({
@@ -125,41 +128,40 @@ let nickName = ref(
 );
 const submit = function () {
   console.log(registerReq.name);
-  wx.login({
-    success: function (res: { code: any; errMsg: any }) {
-      if (res.code) {
-        // 使用 wx.login 获取登录凭证
-        wx.request({
-          url: "http://ecnu.xhpolaris.com/auth/register",
-          method: "POST",
-          data: {
-            age: registerReq.age,
-            avatar: "",
-            emergencyContact: registerReq.emergencyContact,
-            emergencyPhone: registerReq.emergencyPhone,
-            gender: registerReq.gender,
-            name: registerReq.name,
-            phone: registerReq.phone,
-            smsCode: "",
-            smsCodeId: "",
-            code: res.code
-          },
-          success: function (response: any) {
-            // 处理注册成功后的逻辑
-            console.log("注册成功", response);
-          },
-          fail: function (error: any) {
-            // 处理注册失败的逻辑
-            console.log("注册失败", error);
-          }
+
+  wxRegister()
+    .then((res) => {
+      return registerWx({
+        age: registerReq.age,
+        avatar: "",
+        emergencyContact: registerReq.emergencyContact,
+        emergencyPhone: registerReq.emergencyPhone,
+        gender: registerReq.gender,
+        name: registerReq.name,
+        phone: registerReq.phone,
+        smsCode: "",
+        smsCodeId: "",
+        code: res.code
+      });
+    })
+    .then((res) => {
+      console.log(res);
+      if (res === null) {
+        console.log("注册失败");
+      } else {
+        uni.setStorageSync("userInfo", res);
+        uni.navigateTo({
+          url: Pages.FirstPage
         });
       }
-    },
-    fail: function (error: any) {
-      // 处理 wx.login 调用失败的逻辑
-      console.log("登录失败", error);
-    }
-  });
+    })
+    .catch((err) => {
+      console.log(err);
+      uni.showToast({
+        title: err.toString(),
+        icon: "error"
+      });
+    });
 };
 
 const onChooseAvatar = function (e: any) {
@@ -168,6 +170,10 @@ const onChooseAvatar = function (e: any) {
 
 const getCaptcha = function () {
   console.log("getCaptcha");
+};
+
+const handleGenderChange = function (e: any) {
+  registerReq.gender = e.detail.value;
 };
 </script>
 

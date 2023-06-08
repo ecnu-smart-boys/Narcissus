@@ -33,7 +33,7 @@
     <view class="div-line"></view>
     <view class="update-line">
       <text class="update-label">性别</text>
-      <radio-group class="update-radio-group">
+      <radio-group class="update-radio-group" @change="handleGenderChange">
         <label class="radio">
           <radio value="1" color="rgb(50, 200, 210)" />男
         </label>
@@ -108,15 +108,15 @@ const userInfo: GetUserInfoReq = reactive({
 
 function getUserInformation() {
   try {
-    const resData = localStorage.getItem("userInfo");
+    const resData = uni.getStorageSync("userInfo");
     console.log(resData);
     if (resData) {
-      /*userInfo.age = resData.age;
+      userInfo.age = resData.age;
       userInfo.avatar = resData.avatar;
       userInfo.email = resData.email;
       userInfo.gender = resData.gender;
       userInfo.name = resData.name;
-      userInfo.phone = resData.phone;*/
+      userInfo.phone = resData.phone;
     } else {
       console.log("用户信息不存在");
       return null;
@@ -126,7 +126,7 @@ function getUserInformation() {
     return null;
   }
 }
-getUserInformation();
+//getUserInformation();
 
 let avatarUrl = ref(
   uni.getStorageSync("avatarUrl")
@@ -143,6 +143,10 @@ const submit = function () {
 
 const onChooseAvatar = function (e: any) {
   avatarUrl.value = e.detail.avatarUrl;
+};
+
+const handleGenderChange = function (e: any) {
+  userInfo.gender = e.detail.value;
 };
 </script>
 
