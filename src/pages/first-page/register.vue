@@ -103,18 +103,21 @@
 <script setup lang="ts">
 import { RegisterWxReq } from "@/apis/auth/auth-interface";
 import { reactive, ref } from "vue";
-import { wxLogin, wxRegister } from "@/apis/weixin/auth";
-import {loginWx, registerWx} from "@/apis/auth/auth";
+import { wxRegister } from "@/apis/weixin/auth";
+import { registerWx } from "@/apis/auth/auth";
 import { Pages } from "@/utils/url";
-declare const wx: any;
 
 const registerReq: RegisterWxReq = reactive({
   age: 0,
+  avatar: "",
   emergencyContact: "",
   emergencyPhone: "",
   gender: 0,
   name: "",
-  phone: ""
+  phone: "",
+  smsCode: "",
+  smsCodeId: "",
+  code: ""
 });
 
 let avatarUrl = ref(
@@ -130,6 +133,7 @@ const submit = function () {
   console.log(registerReq.name);
   wxRegister()
     .then((res) => {
+      console.log(res.code);
       return registerWx({
         age: registerReq.age,
         avatar: "",

@@ -11,7 +11,25 @@ export interface LoginWxResp {
   id: number;
   name: string;
   phone: string;
-  roles: string[];
+  roles: string;
+  username: string;
+  emergencyContact: string;
+  emergencyPhone: string;
+  totalTime: number;
+  idNumber: string;
+  department: string;
+  title: string;
+  qualification: string;
+  qualificationCode: string;
+  arrangement: string;
+  consultTimes: string;
+  consultantList: [
+    {
+      id: string;
+      name: string;
+      avatar: string;
+    }
+  ];
 }
 
 export interface RegisterWxReq {
@@ -36,26 +54,5 @@ export interface RegisterWxResp {
   id: number;
   name: string;
   phone: string;
-  roles: string[];
-}
-
-export interface GetUserInfoReq {
-  age: number;
-  avatar: string;
-  email: string;
-  gender: number;
-  name: string;
-  phone: string;
-}
-
-export interface GetUserInfoResp {
-  age: number;
-  avatar: string;
-  disabled: boolean;
-  email: string;
-  gender: number;
-  id: number;
-  name: string;
-  phone: string;
-  roles: string[];
+  roles: string;
 }

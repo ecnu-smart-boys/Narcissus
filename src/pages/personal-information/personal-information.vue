@@ -33,12 +33,24 @@
     <view class="div-line"></view>
     <view class="update-line">
       <text class="update-label">性别</text>
-      <radio-group class="update-radio-group" @change="handleGenderChange">
+      <radio-group
+        class="update-radio-group"
+        value="userInfo.gender"
+        @change="handleGenderChange"
+      >
         <label class="radio">
-          <radio value="1" color="rgb(50, 200, 210)" />男
+          <radio
+            value="1"
+            :checked="userInfo.gender === 1"
+            color="rgb(50, 200, 210)"
+          />男
         </label>
         <label class="radio">
-          <radio value="2" color="rgb(50, 200, 210)" />女
+          <radio
+            value="2"
+            :checked="userInfo.gender === 2"
+            color="rgb(50, 200, 210)"
+          />女
         </label>
       </radio-group>
     </view>
@@ -92,12 +104,10 @@
 </template>
 
 <script setup lang="ts">
-import { GetUserInfoReq } from "@/apis/auth/auth-interface";
 import { reactive, ref } from "vue";
 import { Pages } from "@/utils/url";
-declare const wx: any;
 
-const userInfo: GetUserInfoReq = reactive({
+let userInfo = reactive({
   age: 0,
   avatar: "",
   email: "",
@@ -105,18 +115,13 @@ const userInfo: GetUserInfoReq = reactive({
   name: "",
   phone: ""
 });
-
+getUserInformation();
 function getUserInformation() {
   try {
     const resData = uni.getStorageSync("userInfo");
     console.log(resData);
     if (resData) {
-      userInfo.age = resData.age;
-      userInfo.avatar = resData.avatar;
-      userInfo.email = resData.email;
-      userInfo.gender = resData.gender;
-      userInfo.name = resData.name;
-      userInfo.phone = resData.phone;
+      userInfo = resData;
     } else {
       console.log("用户信息不存在");
       return null;
@@ -126,7 +131,6 @@ function getUserInformation() {
     return null;
   }
 }
-//getUserInformation();
 
 let avatarUrl = ref(
   uni.getStorageSync("avatarUrl")
@@ -138,7 +142,7 @@ let nickName = ref(
   uni.getStorageSync("nickName") ? uni.getStorageSync("nickName") : "微信用户"
 );
 const submit = function () {
-  console.log(userInfo.name);
+  uni.setStorageSync("userInfo", userInfo);
 };
 
 const onChooseAvatar = function (e: any) {
@@ -146,7 +150,7 @@ const onChooseAvatar = function (e: any) {
 };
 
 const handleGenderChange = function (e: any) {
-  userInfo.gender = e.detail.value;
+  userInfo.gender = parseInt(e.detail.value);
 };
 </script>
 

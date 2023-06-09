@@ -1,12 +1,12 @@
 <template>
-  <view class="consult-wrapper" @tap="tempRegister">注册</view>
+  <view @tap="testRegister">注册</view>
   <view>
     <view class="card relative">
       <view class="consult-user">
         <img class="avatar" :src="avatarUrl" />
         <view class="user-info-wrapper">
-          <view class="user-info-name">111</view>
-          <view class="user-info-phone">15801944258</view>
+          <view class="user-info-name">{{ test.name }}</view>
+          <view class="user-info-phone">{{ test.phone }}</view>
         </view>
       </view>
       <view class="consult-wrapper" @tap="startConsult">
@@ -27,7 +27,7 @@
         :avatar="item.avatar"
       />
     </template>
-    <view v-if="dummy.length == 0" class="no-info-wrapper">
+    <view v-if="dummy.length === 0" class="no-info-wrapper">
       <img src="/static/message.png" class="icon-no-info" />
       <view>暂无咨询内容</view>
       <view>请点击立刻在线咨询</view>
@@ -40,6 +40,8 @@ import { ref } from "vue";
 import ConsultRecord from "@/components/consult-record.vue";
 import { Pages } from "@/utils/url";
 let avatarUrl = ref("../../static/default-avatar.png");
+
+let test = uni.getStorageSync("userInfo");
 
 const dummy = [
   {
@@ -67,15 +69,14 @@ const dummy = [
     id: 3
   }
 ];
-
-const tempRegister = function () {
-  uni.navigateTo({
-    url: Pages.Register
-  });
-};
 const editPersonalInformation = function () {
   uni.navigateTo({
     url: Pages.EditPersonalInformation
+  });
+};
+const testRegister = function () {
+  uni.navigateTo({
+    url: Pages.Register
   });
 };
 const startConsult = function () {
