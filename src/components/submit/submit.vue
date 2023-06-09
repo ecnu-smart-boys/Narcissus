@@ -56,7 +56,7 @@ import tim from "@/utils/im";
 import TIM from "tim-js-sdk";
 
 const recorderManager = uni.getRecorderManager();
-const emit = defineEmits(["inputs", "heights"]);
+const emit = defineEmits(["inputs", "heights", "photo"]);
 let isrecord = ref(false);
 let isemoji = ref(false);
 let timer = "";
@@ -195,6 +195,7 @@ function sendImg(e: string) {
           // 发送失败
           console.warn("sendMessage error:", imError);
         });
+      emit("photo", { message });
     }
   });
   // uni.chooseImage({

@@ -72,7 +72,7 @@
         </view>
       </view>
     </scroll-view>
-    <Submit @heights="heights" @inputs="inputs"></Submit>
+    <Submit @heights="heights" @inputs="inputs" @photo="photo"></Submit>
   </view>
 </template>
 
@@ -130,12 +130,10 @@ import tim, { createTextMessage } from "@/utils/im";
 let inputh = ref("60");
 let msgs = reactive<
   {
-    id: string;
-    imgurl: string;
+    flow: string;
     payload: any;
     types: string;
     time: Date;
-    tip: number;
   }[]
 >([]);
 let imgMsg: string[] = [];
@@ -314,10 +312,10 @@ function previewImg(e: string) {
 
 function inputs(e: any) {
   let data = {
-    id: "b",
-    imgurl:
-      "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-    payload: e.msg._value,
+    flow: "out",
+    payload: {
+      text: e.msg._value
+    },
     types: "TIMTextElem",
     time: new Date(1626244865437),
     tip: 1
@@ -325,8 +323,26 @@ function inputs(e: any) {
   const message = createTextMessage("1255_1", e.msg._value);
   console.log(message);
   tim.sendMessage(message);
-  msgs.push(data);
+  msgs.push(message);
   console.log(e);
+}
+
+function photo(e: any) {
+  console.log("我收到图片啦");
+  console.log(e.message);
+  // let data = {
+  //   flow: "out",
+  //   payload: {
+  //     imageInfoArray: [
+  //       {
+  //         url: e.res.tempFiles[0].tempFilePath
+  //       }
+  //     ]
+  //   },
+  //   types: "TIMImageElem",
+  //   time: Date.now()
+  // };
+  msgs.push(e.message);
 }
 
 function heights(e: string) {
