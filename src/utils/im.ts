@@ -1,4 +1,4 @@
-import TIM, {Message} from "tim-js-sdk";
+import TIM, { Message } from "tim-js-sdk";
 import TIMUploadPlugin from "tim-upload-plugin";
 
 // import TIMProfanityFilterPlugin from "tim-profanity-filter-plugin";
