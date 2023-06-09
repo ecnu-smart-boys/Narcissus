@@ -8,6 +8,7 @@ import { loginWx } from "@/apis/auth/auth";
 import { Pages } from "@/utils/url";
 import { genTestUserSig } from "@/debug";
 import { loginIM } from "@/utils/im";
+import thenElse from "ajv/lib/vocabularies/applicator/thenElse";
 
 const userID = "1255_1";
 const userSig = genTestUserSig({
@@ -24,32 +25,32 @@ wxLogin()
   })
   .then((res) => {
     console.log(res);
-    if (res === null) {
+    uni.setStorageSync("userInfo", res);
+    loginIM(userID, userSig).then(() => {
+      console.log("登录成功");
+    });
+    uni.switchTab({
+      url: Pages.Index,
+      success: function () {
+        console.log("跳转到含 TabBar 的页面成功");
+      },
+      fail: function (error) {
+        console.log("跳转到含 TabBar 的页面失败", error);
+      }
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+    if (err.statusCode == 401) {
       uni.navigateTo({
         url: Pages.Register
       });
     } else {
-      uni.setStorageSync("userInfo", res);
-      loginIM(userID, userSig).then(() => {
-        console.log("登录成功");
-      });
-      uni.switchTab({
-        url: Pages.Index,
-        success: function () {
-          console.log("跳转到含 TabBar 的页面成功");
-        },
-        fail: function (error) {
-          console.log("跳转到含 TabBar 的页面失败", error);
-        }
+      uni.showToast({
+        title: err.toString(),
+        icon: "error"
       });
     }
-  })
-  .catch((err) => {
-    console.log(err);
-    uni.showToast({
-      title: err.toString(),
-      icon: "error"
-    });
   });
 </script>
 

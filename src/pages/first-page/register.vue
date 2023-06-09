@@ -128,7 +128,6 @@ let nickName = ref(
 );
 const submit = function () {
   console.log(registerReq.name);
-
   wxRegister()
     .then((res) => {
       return registerWx({
