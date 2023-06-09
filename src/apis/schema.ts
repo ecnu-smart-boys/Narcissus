@@ -27,6 +27,7 @@ export function request<T>(req: Req): Promise<T> {
         const header = res.header["x-freud"];
         if (header) {
           uni.setStorageSync("accessToken", header);
+          console.log(header);
         }
         if (status !== 200) {
           reject(message);

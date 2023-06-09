@@ -1,3 +1,5 @@
+import exp from "constants";
+
 export interface LoginWxReq {
   code: string;
 }
@@ -46,6 +48,29 @@ export interface RegisterWxReq {
 }
 
 export interface RegisterWxResp {
+  age: number;
+  avatar: string;
+  disabled: boolean;
+  email: string;
+  gender: number;
+  id: number;
+  name: string;
+  phone: string;
+  roles: string;
+}
+
+export interface updateUserInfoWxReq {
+  age: number;
+  avatar: string;
+  email: string;
+  gender: number;
+  name: string;
+  phone: string;
+  emergencyContact: string;
+  emergencyPhone: string;
+}
+
+export interface updateUserInfoWxResp {
   age: number;
   avatar: string;
   disabled: boolean;

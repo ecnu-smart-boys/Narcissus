@@ -80,7 +80,7 @@
     <view class="update-line">
       <text class="update-label">紧急联系人</text>
       <input
-        v-model="userInfo.name"
+        v-model="userInfo.emergencyContact"
         class="update-input"
         placeholder="请输入紧急联系人"
         type="text"
@@ -91,7 +91,7 @@
     <view class="update-line">
       <text class="update-label">紧急联系人电话</text>
       <input
-        v-model="userInfo.name"
+        v-model="userInfo.emergencyPhone"
         class="update-input"
         placeholder="请输入联系人电话"
         type="text"
@@ -106,6 +106,8 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import { Pages } from "@/utils/url";
+import { registerWx, updateUserInfoWx } from "@/apis/auth/auth";
+import { wxRegister } from "@/apis/weixin/auth";
 
 let userInfo = reactive({
   age: 0,
@@ -113,9 +115,35 @@ let userInfo = reactive({
   email: "",
   gender: 0,
   name: "",
-  phone: ""
+  phone: "",
+  emergencyContact: "",
+  emergencyPhone: ""
 });
+
 getUserInformation();
+
+let avatarUrl = ref(
+  uni.getStorageSync("avatarUrl")
+    ? uni.getStorageSync("avatarUrl")
+    : "../../static/default-avatar.png"
+);
+
+let nickName = ref(
+  uni.getStorageSync("nickName") ? uni.getStorageSync("nickName") : "微信用户"
+);
+const submit = function () {
+  uni.setStorageSync("userInfo", userInfo);
+  updateUserInformation();
+};
+
+const onChooseAvatar = function (e: any) {
+  avatarUrl.value = e.detail.avatarUrl;
+};
+
+const handleGenderChange = function (e: any) {
+  userInfo.gender = parseInt(e.detail.value);
+};
+
 function getUserInformation() {
   try {
     const resData = uni.getStorageSync("userInfo");
@@ -132,26 +160,39 @@ function getUserInformation() {
   }
 }
 
-let avatarUrl = ref(
-  uni.getStorageSync("avatarUrl")
-    ? uni.getStorageSync("avatarUrl")
-    : "../../static/default-avatar.png"
-);
-
-let nickName = ref(
-  uni.getStorageSync("nickName") ? uni.getStorageSync("nickName") : "微信用户"
-);
-const submit = function () {
-  uni.setStorageSync("userInfo", userInfo);
-};
-
-const onChooseAvatar = function (e: any) {
-  avatarUrl.value = e.detail.avatarUrl;
-};
-
-const handleGenderChange = function (e: any) {
-  userInfo.gender = parseInt(e.detail.value);
-};
+function updateUserInformation() {
+  wxRegister()
+    .then((res) => {
+      return updateUserInfoWx({
+        age: userInfo.age,
+        avatar: userInfo.avatar,
+        emergencyContact: userInfo.emergencyContact,
+        emergencyPhone: userInfo.emergencyPhone,
+        gender: userInfo.gender,
+        name: userInfo.name,
+        phone: userInfo.phone,
+        email: ""
+      });
+    })
+    .then((res) => {
+      console.log(res);
+      if (res === null) {
+        console.log("更新失败");
+      } else {
+        uni.setStorageSync("userInfo", res);
+        uni.navigateTo({
+          url: Pages.FirstPage
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      uni.showToast({
+        title: err.toString(),
+        icon: "error"
+      });
+    });
+}
 </script>
 
 <style lang="scss" scoped>
