@@ -1,4 +1,4 @@
-import TIM, { Message } from "tim-js-sdk";
+import TIM, {Message} from "tim-js-sdk";
 import TIMUploadPlugin from "tim-upload-plugin";
 
 // import TIMProfanityFilterPlugin from "tim-profanity-filter-plugin";
@@ -23,12 +23,10 @@ tim.registerPlugin({ "tim-upload-plugin": TIMUploadPlugin });
 //const TUIOfflinePush = uni.requireNativePlugin("TencentCloud-TUIOfflinePush");
 
 export function loginIM(userID: string, userSig: string) {
-  const promise = tim.login({
+  return tim.login({
     userID,
     userSig
   });
-
-  return promise;
 }
 
 // export function sendMessage(conversationID: string, message: string) {

@@ -7,14 +7,14 @@
       <view :style="{ paddingBottom: inputh + 'rpx' }" class="chat-main">
         <view v-for="(item, index) in msgs" :key="index" class="chat-ls">
           <view class="chat-time">{{ item.time }}</view>
-          <view v-if="item.flow == 'in'" class="msg-m msg-left">
+          <view v-if="item.flow === 'in'" class="msg-m msg-left">
             <image :src="item.imgurl" class="user-img"></image>
             <!--                文字-->
-            <view v-if="item.type == 'TIMTextElem'" class="message">
+            <view v-if="item.type === 'TIMTextElem'" class="message">
               <view class="msg-text">{{ item.payload.text }}</view>
             </view>
             <!--              图片-->
-            <view v-if="item.type == 'TIMImageElem'" class="message">
+            <view v-if="item.type === 'TIMImageElem'" class="message">
               <image
                 :src="item.payload.imageInfoArray[0].url"
                 class="msg-img"
@@ -23,7 +23,7 @@
               ></image>
             </view>
             <!--              语音-->
-            <view v-if="item.type == 'TIMSoundElem'" class="message">
+            <view v-if="item.type === 'TIMSoundElem'" class="message">
               <view
                 :style="{ width: item.payload.second * 4 + 'rpx' }"
                 class="msg-text voice"
@@ -36,12 +36,12 @@
               </view>
             </view>
           </view>
-          <view v-if="item.flow == 'out'" class="msg-m msg-right">
+          <view v-if="item.flow === 'out'" class="msg-m msg-right">
             <image :src="item.imgurl" class="user-img"></image>
-            <view v-if="item.type == 'TIMTextElem'" class="message">
+            <view v-if="item.type === 'TIMTextElem'" class="message">
               <view class="msg-text">{{ item.payload.text }}</view>
             </view>
-            <view v-if="item.type == 'TIMImageElem'" class="message">
+            <view v-if="item.type === 'TIMImageElem'" class="message">
               <image
                 :src="item.payload.imageInfoArray[0].url"
                 class="msg-img"
@@ -50,7 +50,7 @@
               ></image>
             </view>
             <!--              语音-->
-            <view v-if="item.type == 'TIMSoundElem'" class="message">
+            <view v-if="item.type === 'TIMSoundElem'" class="message">
               <view
                 :style="{ width: item.payload.second * 4 + 'rpx' }"
                 class="msg-text voice"
@@ -72,30 +72,16 @@
 
 <script lang="ts" setup>
 import { onLoad } from "@dcloudio/uni-app";
-import { onMounted, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
-import { genTestUserSig } from "@/debug";
-import tim, { createTextMessage, loginIM } from "@/utils/im";
+import tim, { createTextMessage } from "@/utils/im";
 import TIM from "tim-js-sdk";
-
-const userID = "1255_1";
-const userSig = genTestUserSig({
-  SDKAppID: 1400810468,
-  secretKey: "d14df58bc7f5f87424981ca2165867287e2c4ad3ba021709bfdd50edf37daaa0",
-  userID: "1255_1"
-}).userSig;
 
 // const userSig = "your-usersig";
 // const conversationID = "group1";
 // const message = ref("");
 // const messageList = ref([]);
-//登录 IM 服务
-onMounted(() => {
-  loginIM(userID, userSig).then(() => {
-    console.log("登录成功");
-  });
-});
 const onSdkReady = function (event: any) {
   // const message = tim.createTextMessage({
   //   to: "2_1",
