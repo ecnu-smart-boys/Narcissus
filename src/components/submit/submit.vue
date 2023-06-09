@@ -52,6 +52,8 @@
 
 <script lang="ts" setup>
 import { defineEmits, ref } from "vue";
+import tim from "@/utils/im";
+import TIM from "tim-js-sdk";
 
 const recorderManager = uni.getRecorderManager();
 const emit = defineEmits(["inputs", "heights"]);
@@ -146,15 +148,15 @@ function touchend() {
   });
 }
 
-function getElementHeight() {
-  const query = uni.createSelectorQuery().in(this);
-  query
-    .select(".submit")
-    .boundingClientRect((data) => {
-      emit("heights", data.height);
-    })
-    .exec();
-}
+// function getElementHeight() {
+//   const query = uni.createSelectorQuery().in(this);
+//   query
+//     .select(".submit")
+//     .boundingClientRect((data) => {
+//       emit("heights", data.height);
+//     })
+//     .exec();
+// }
 
 function clickEmoji(e: any) {
   console.log(e);
@@ -162,20 +164,50 @@ function clickEmoji(e: any) {
 }
 
 function sendImg(e: string) {
-  let count = 9;
-  if (e == "album") {
-    count = 9;
-  } else {
-    count = 1;
-  }
-  uni.chooseImage({
-    count: count, //默认9
-    sizeType: ["original", "compressed"], //可以指定是原图还是压缩图，默认二者都有
-    sourceType: [e], //从相册选择
+  // let count = 1;
+  // if (e == "album") {
+  //   count = 1;
+  // } else {
+  //   count = 1;
+  // }
+  uni.chooseMedia({
+    count: 1,
+    mediaType: ["image"], // 图片
+    sizeType: ["original", "compressed"], // 可以指定是原图还是压缩图，默认二者都有
+    sourceType: ["album"], // 从相册选择
     success: function (res) {
-      console.log(JSON.stringify(res.tempFilePaths));
+      let message = tim.createImageMessage({
+        to: "1255_1",
+        conversationType: TIM.TYPES.CONV_C2C,
+        payload: { file: res },
+        onProgress: function (event: any) {
+          console.log("file uploading:", event);
+        }
+      });
+      // 2. 发送消息
+      let promise = tim.sendMessage(message);
+      promise
+        .then(function (imResponse) {
+          // 发送成功
+          console.log("成功" + imResponse);
+        })
+        .catch(function (imError) {
+          // 发送失败
+          console.warn("sendMessage error:", imError);
+        });
     }
   });
+  // uni.chooseImage({
+  //   count: 1, //默认9
+  //   sizeType: ["original", "compressed"], //可以指定是原图还是压缩图，默认二者都有
+  //   sourceType: [e], //从相册选择
+  //   success: function (res) {
+  //     console.log(res.tempFiles[0]);
+  //     const message = createImageMessage("2_1", res.tempFiles[0]);
+  //     console.log(message);
+  //     console.log(JSON.stringify(res.tempFilePaths));
+  //   }
+  // });
 }
 </script>
 
@@ -187,7 +219,7 @@ function sendImg(e: string) {
   position: fixed;
   bottom: 0;
   z-index: 100;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: 10rpx;
 }
 
 .displaynone {

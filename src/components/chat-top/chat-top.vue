@@ -44,6 +44,7 @@ const selectRecord = function () {
   background: #ffffff;
   display: flex;
   flex-direction: row;
+  height: 250rpx;
 }
 
 .user-img {

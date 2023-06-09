@@ -2,19 +2,18 @@
   <view />
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { wxLogin } from "@/apis/weixin/auth";
 import { loginWx } from "@/apis/auth/auth";
 import { Pages } from "@/utils/url";
 import { genTestUserSig } from "@/debug";
 import { loginIM } from "@/utils/im";
-import thenElse from "ajv/lib/vocabularies/applicator/thenElse";
 
-const userID = "1255_1";
+const userID = "2_1";
 const userSig = genTestUserSig({
   SDKAppID: 1400810468,
   secretKey: "d14df58bc7f5f87424981ca2165867287e2c4ad3ba021709bfdd50edf37daaa0",
-  userID: "1255_1"
+  userID: "2_1"
 }).userSig;
 
 wxLogin()

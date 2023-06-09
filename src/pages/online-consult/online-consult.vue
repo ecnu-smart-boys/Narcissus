@@ -8,7 +8,10 @@
         <view v-for="(item, index) in msgs" :key="index" class="chat-ls">
           <view class="chat-time">{{ item.time }}</view>
           <view v-if="item.flow === 'in'" class="msg-m msg-left">
-            <image :src="item.imgurl" class="user-img"></image>
+            <image
+              class="user-img"
+              src="https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg"
+            ></image>
             <!--                文字-->
             <view v-if="item.type === 'TIMTextElem'" class="message">
               <view class="msg-text">{{ item.payload.text }}</view>
@@ -37,7 +40,10 @@
             </view>
           </view>
           <view v-if="item.flow === 'out'" class="msg-m msg-right">
-            <image :src="item.imgurl" class="user-img"></image>
+            <image
+              class="user-img"
+              src="https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg"
+            ></image>
             <view v-if="item.type === 'TIMTextElem'" class="message">
               <view class="msg-text">{{ item.payload.text }}</view>
             </view>
@@ -76,22 +82,30 @@ import { reactive, ref } from "vue";
 import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
 import tim, { createTextMessage } from "@/utils/im";
-import TIM from "tim-js-sdk";
 
+// const userID = "2_1";
+// const userSig = genTestUserSig({
+//   SDKAppID: 1400810468,
+//   secretKey: "d14df58bc7f5f87424981ca2165867287e2c4ad3ba021709bfdd50edf37daaa0",
+//   userID: "2_1"
+// }).userSig;
+// loginIM(userID, userSig).then(() => {
+//   console.log("登录成功");
+// });
 // const userSig = "your-usersig";
 // const conversationID = "group1";
 // const message = ref("");
 // const messageList = ref([]);
-const onSdkReady = function (event: any) {
-  // const message = tim.createTextMessage({
-  //   to: "2_1",
-  //   conversationType: "C2C",
-  //   payload: { text: "Hello world!" }
-  // });
-  // tim.sendMessage(message);
-  getMsg();
-};
-tim.on(TIM.EVENT.SDK_READY, onSdkReady);
+// const onSdkReady = function (event: any) {
+//   // const message = tim.createTextMessage({
+//   //   to: "2_1",
+//   //   conversationType: "C2C",
+//   //   payload: { text: "Hello world!" }
+//   // });
+//   // tim.sendMessage(message);
+//   getMsg();
+// };
+// tim.on(TIM.EVENT.SDK_READY, onSdkReady);
 // 监听接收到的消息
 // onMessageReceived((list) => {
 //   console.log("接收到新消息", list);
@@ -127,6 +141,8 @@ let msgs = reactive<
 let imgMsg: string[] = [];
 onLoad(() => {
   // getMsg();
+
+  getMsg();
   console.log(msgs);
 });
 
@@ -253,7 +269,7 @@ async function getMsg() {
     }
   ];
 
-  let data = await tim.getMessageList({ conversationID: "C2C2_1" });
+  let data = await tim.getMessageList({ conversationID: "C2C1255_1" });
 
   let msg1 = data.data.messageList;
   console.log(msg1);
@@ -306,7 +322,7 @@ function inputs(e: any) {
     time: new Date(1626244865437),
     tip: 1
   };
-  const message = createTextMessage("2_1", e.msg._value);
+  const message = createTextMessage("1255_1", e.msg._value);
   console.log(message);
   tim.sendMessage(message);
   msgs.push(data);
@@ -327,8 +343,9 @@ function heights(e: string) {
 }
 
 .chat {
-  height: 100%;
+  height: 1000rpx;
   background: #eef2f5;
+  margin-top: 220rpx;
 
   .chat-main {
     padding-top: 100rpx;
