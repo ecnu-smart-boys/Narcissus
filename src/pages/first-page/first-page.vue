@@ -24,9 +24,9 @@ wxLogin()
   })
   .then((res) => {
     uni.setStorageSync("userInfo", res);
-    /*loginIM(userID, userSig).then(() => {
+    loginIM(userID, userSig).then(() => {
       console.log("登录成功");
-    });*/
+    });
     uni.switchTab({
       url: Pages.Index,
       success: function () {

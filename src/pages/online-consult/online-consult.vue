@@ -141,145 +141,145 @@ onLoad(() => {
   // getMsg();
 
   getMsg();
-  console.log(msgs);
+  //console.log(msgs);
 });
 
 //获取聊天数据
 async function getMsg() {
-  let msg = [
-    {
-      id: "b",
-      imgurl:
-        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-      payload: { text: "的手机待机" },
-      types: "TIMTextElem",
-      time: new Date(1626244869999),
-      tip: 1
-    },
-    {
-      id: "a",
-      imgurl:
-        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
-      payload: {
-        text: "那边就不是绝对不接受多年时间倒计时倒计时阶段吧年的世界杯的建设北京的三百"
-      },
-      types: "TIMTextElem",
-      time: new Date(1626244869789),
-      tip: 0
-    },
-    {
-      id: "b",
-      imgurl:
-        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-      payload: {
-        text: "干撒干撒干啥干啥被杀uu时的速度多少都会还是仅仅是当今时代简单觉得你"
-      },
-      types: "TIMTextElem",
-      time: new Date(1626244865437),
-      tip: 1
-    },
-    {
-      id: "a",
-      imgurl:
-        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-      payload: {
-        imageInfoArray: [
-          {
-            url: "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/88116a40-c1bc-42e3-8d7f-1c3e66fd06d8.jpg"
-          }
-        ]
-      },
-      types: "TIMImageElem",
-      time: new Date(1626244868250),
-      tip: 1
-    },
-    {
-      id: "a",
-      imgurl:
-        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
-      payload: {
-        text: "和倒计时倒计时的术后读书的的不俗百度搜不到下班时间对不上不得好死年的世界杯的"
-      },
-      types: "TIMTextElem",
-      time: new Date(1626244866838),
-      tip: 1
-    },
-    {
-      id: "b",
-      imgurl:
-        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-      payload: {
-        imageInfoArray: [
-          {
-            url: "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/2eca5681-d17f-44f3-965c-1ba6e43fb50a.jpg"
-          }
-        ]
-      },
-      types: "TIMImageElem",
-      time: new Date(1626244868250),
-      tip: 1
-    },
-    {
-      id: "a",
-      imgurl:
-        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
-      payload: {
-        text: "的手机待机时间的电脑手机电脑是加拿大电脑上的几年时间你手机电脑手机电脑的难度"
-      },
-      types: "TIMTextElem",
-      time: new Date(1626244868888),
-      tip: 1
-    },
-    {
-      id: "a",
-      imgurl:
-        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
-      payload: {
-        url: "a",
-        second: 20
-      },
-      types: "TIMTextElem",
-      time: new Date(1626244868888),
-      tip: 1
-    },
-    {
-      id: "b",
-      imgurl:
-        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-      payload: {
-        url: "a",
-        second: 60
-      },
-      types: "TIMSoundElem",
-      time: new Date(1626244868250),
-      tip: 1
-    },
-    {
-      id: "b",
-      imgurl:
-        "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-      payload: {
-        text: "的失败的话说不定会被北师大版技术大版电脑手机难道就是当年那年暑假绝对加速度难道就是你的就是你的"
-      },
-      types: "TIMTextElem",
-      time: new Date(1626244868250),
-      tip: 1
-    }
-  ];
+  // let msg = [
+  //   {
+  //     id: "b",
+  //     imgurl:
+  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
+  //     payload: { text: "的手机待机" },
+  //     types: "TIMTextElem",
+  //     time: new Date(1626244869999),
+  //     tip: 1
+  //   },
+  //   {
+  //     id: "a",
+  //     imgurl:
+  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
+  //     payload: {
+  //       text: "那边就不是绝对不接受多年时间倒计时倒计时阶段吧年的世界杯的建设北京的三百"
+  //     },
+  //     types: "TIMTextElem",
+  //     time: new Date(1626244869789),
+  //     tip: 0
+  //   },
+  //   {
+  //     id: "b",
+  //     imgurl:
+  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
+  //     payload: {
+  //       text: "干撒干撒干啥干啥被杀uu时的速度多少都会还是仅仅是当今时代简单觉得你"
+  //     },
+  //     types: "TIMTextElem",
+  //     time: new Date(1626244865437),
+  //     tip: 1
+  //   },
+  //   {
+  //     id: "a",
+  //     imgurl:
+  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
+  //     payload: {
+  //       imageInfoArray: [
+  //         {
+  //           url: "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/88116a40-c1bc-42e3-8d7f-1c3e66fd06d8.jpg"
+  //         }
+  //       ]
+  //     },
+  //     types: "TIMImageElem",
+  //     time: new Date(1626244868250),
+  //     tip: 1
+  //   },
+  //   {
+  //     id: "a",
+  //     imgurl:
+  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
+  //     payload: {
+  //       text: "和倒计时倒计时的术后读书的的不俗百度搜不到下班时间对不上不得好死年的世界杯的"
+  //     },
+  //     types: "TIMTextElem",
+  //     time: new Date(1626244866838),
+  //     tip: 1
+  //   },
+  //   {
+  //     id: "b",
+  //     imgurl:
+  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
+  //     payload: {
+  //       imageInfoArray: [
+  //         {
+  //           url: "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/2eca5681-d17f-44f3-965c-1ba6e43fb50a.jpg"
+  //         }
+  //       ]
+  //     },
+  //     types: "TIMImageElem",
+  //     time: new Date(1626244868250),
+  //     tip: 1
+  //   },
+  //   {
+  //     id: "a",
+  //     imgurl:
+  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
+  //     payload: {
+  //       text: "的手机待机时间的电脑手机电脑是加拿大电脑上的几年时间你手机电脑手机电脑的难度"
+  //     },
+  //     types: "TIMTextElem",
+  //     time: new Date(1626244868888),
+  //     tip: 1
+  //   },
+  //   {
+  //     id: "a",
+  //     imgurl:
+  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
+  //     payload: {
+  //       url: "a",
+  //       second: 20
+  //     },
+  //     types: "TIMTextElem",
+  //     time: new Date(1626244868888),
+  //     tip: 1
+  //   },
+  //   {
+  //     id: "b",
+  //     imgurl:
+  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
+  //     payload: {
+  //       url: "a",
+  //       second: 60
+  //     },
+  //     types: "TIMSoundElem",
+  //     time: new Date(1626244868250),
+  //     tip: 1
+  //   },
+  //   {
+  //     id: "b",
+  //     imgurl:
+  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
+  //     payload: {
+  //       text: "的失败的话说不定会被北师大版技术大版电脑手机难道就是当年那年暑假绝对加速度难道就是你的就是你的"
+  //     },
+  //     types: "TIMTextElem",
+  //     time: new Date(1626244868250),
+  //     tip: 1
+  //   }
+  // ];
 
   let data = await tim.getMessageList({ conversationID: "C2C1255_1" });
 
   let msg1 = data.data.messageList;
   console.log(msg1);
   for (let i = 0; i < msg1.length; i++) {
-    if (msg1[i].types == "TIMImageElem") {
+    if (msg1[i].type == "TIMImageElem") {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       imgMsg.push(msg1[i].payload.imageInfoArray[0].url);
     }
     msgs.push(msg1[i]);
-    console.log(msgs);
   }
+  console.log(msgs);
 }
 
 function previewImg(e: string) {
@@ -287,6 +287,7 @@ function previewImg(e: string) {
   for (let i = 0; i < imgMsg.length; i++) {
     if (imgMsg[i] == e) {
       index = i;
+      console.log(imgMsg[i]);
     }
   }
   uni.previewImage({
