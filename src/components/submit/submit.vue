@@ -54,12 +54,15 @@
 import { defineEmits, ref } from "vue";
 import tim from "@/utils/im";
 import TIM from "tim-js-sdk";
-
-const recorderManager = uni.getRecorderManager();
+// 创建录音管理器实例
+let recorderManager = uni.getRecorderManager();
+// 定义计时器变量
+let timer = ref(null);
+// const recorderManager = uni.getRecorderManager();
 const emit = defineEmits(["inputs", "heights", "photo"]);
 let isrecord = ref(false);
 let isemoji = ref(false);
-let timer = "";
+// let timer = "";
 let toc = ref(
   "https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
 );
@@ -125,27 +128,143 @@ function sendMessage() {
   }, 0);
 }
 
+// function touchstart() {
+//   console.log("开始");
+//   let i = 0;
+//   timer.value = setInterval(() => {
+//     i++;
+//     console.log(i);
+//     if (i > 10) {
+//       clearInterval(timer);
+//     }
+//   }, 1000);
+//   recorderManager.start({
+//     duration: 6000, // 录音的时长，单位 ms，最大值 600000（10 分钟）
+//     sampleRate: 44100, // 采样率
+//     numberOfChannels: 1, // 录音通道数
+//     encodeBitRate: 192000, // 编码码率
+//     format: "aac"
+//   });
+// }
+//
+// function touchend() {
+//   console.log("结束");
+//   clearInterval(timer);
+//   recorderManager.stop();
+//   recorderManager.onStop(function (res) {
+//     console.log("recorder stop" + JSON.stringify(res));
+//     //self.voicePath = res.tempFilePath;
+//     console.log(res);
+//     console.log(timer);
+//     sendVoiceMessage(res);
+//   });
+// }
+
+// function sendVoiceMessage(res: any) {
+//   const message = tim.createAudioMessage({
+//     to: "1255_1",
+//     conversationType: TIM.TYPES.CONV_C2C,
+//     payload: {
+//       file: {
+//         file: res.tempFilePath, // 使用文件路径
+//         onProgress: (event: any) => {
+//           console.log("上传进度：", event.percent);
+//         }
+//       }
+//     }
+//   });
+//   console.log(message);
+//   // tim.sendMessage(message);
+//   tim
+//     .sendMessage(message)
+//     .then(function (imResponse) {
+//       // 发送成功
+//       console.log("Send success", imResponse);
+//     })
+//     .catch(function (imError) {
+//       // 发送失败
+//       console.warn("Send error", imError);
+//     });
+// }
+
+// 定义长按开始事件处理函数
 function touchstart() {
   console.log("开始");
   let i = 0;
-  timer = setInterval(() => {
+  timer.value = setInterval(() => {
     i++;
     console.log(i);
     if (i > 10) {
-      clearInterval(timer);
+      clearInterval(timer.value);
     }
   }, 1000);
-  recorderManager.start();
+  recorderManager.start({
+    duration: 6000, // 录音的时长，单位 ms，最大值 600000（10 分钟）
+    sampleRate: 44100, // 采样率
+    numberOfChannels: 1, // 录音通道数
+    encodeBitRate: 192000, // 编码码率
+    format: "aac"
+  });
 }
 
+// 定义长按结束事件处理函数
 function touchend() {
   console.log("结束");
-  clearInterval(timer);
+  clearInterval(timer.value);
   recorderManager.stop();
   recorderManager.onStop(function (res) {
     console.log("recorder stop" + JSON.stringify(res));
     //self.voicePath = res.tempFilePath;
+    console.log(res);
+    console.log(timer.value);
+    //sendVoiceMessage(res);
+    const message = tim.createAudioMessage({
+      to: "1255_1",
+      conversationType: TIM.TYPES.CONV_C2C,
+      payload: {
+        // file: {
+        //   file: res.tempFilePath,
+        //   onProgress: (event: { percent: any }) => {
+        //     console.log("上传进度：", event.percent);
+        //   }
+        // }
+        payload: {
+          file: res
+        }
+      }
+    });
+    console.log(message);
   });
+}
+
+// 定义发送语音消息函数
+function sendVoiceMessage(res: any) {
+  const message = tim.createAudioMessage({
+    to: "1255_1",
+    conversationType: TIM.TYPES.CONV_C2C,
+    payload: {
+      // file: {
+      //   file: res.tempFilePath,
+      //   onProgress: (event: { percent: any }) => {
+      //     console.log("上传进度：", event.percent);
+      //   }
+      // }
+      payload: {
+        file: res
+      }
+    }
+  });
+  console.log(message);
+  tim
+    .sendMessage(message)
+    .then(function (imResponse) {
+      // 发送成功
+      console.log("Send success", imResponse);
+    })
+    .catch(function (imError) {
+      // 发送失败
+      console.warn("Send error", imError);
+    });
 }
 
 // function getElementHeight() {
