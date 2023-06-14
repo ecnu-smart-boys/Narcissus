@@ -55,11 +55,11 @@ import { defineEmits, ref } from "vue";
 import tim from "@/utils/im";
 import TIM from "tim-js-sdk";
 // 创建录音管理器实例
-let recorderManager = uni.getRecorderManager();
+let recorderManager = wx.getRecorderManager();
 // 定义计时器变量
 let timer = ref(null);
 // const recorderManager = uni.getRecorderManager();
-const emit = defineEmits(["inputs", "heights", "photo"]);
+const emit = defineEmits(["inputs", "heights", "photo", "audio"]);
 let isrecord = ref(false);
 let isemoji = ref(false);
 // let timer = "";
@@ -194,8 +194,9 @@ function touchstart() {
   timer.value = setInterval(() => {
     i++;
     console.log(i);
-    if (i > 10) {
-      clearInterval(timer.value);
+    if (i > 60) {
+      //clearInterval(timer.value);
+      touchend();
     }
   }, 1000);
   recorderManager.start({
@@ -212,28 +213,32 @@ function touchend() {
   console.log("结束");
   clearInterval(timer.value);
   recorderManager.stop();
-  recorderManager.onStop(function (res) {
+  recorderManager.onStop(function (res: any) {
     console.log("recorder stop" + JSON.stringify(res));
     //self.voicePath = res.tempFilePath;
-    console.log(res);
+
     console.log(timer.value);
     //sendVoiceMessage(res);
-    const message = tim.createAudioMessage({
-      to: "1255_1",
-      conversationType: TIM.TYPES.CONV_C2C,
-      payload: {
-        // file: {
-        //   file: res.tempFilePath,
-        //   onProgress: (event: { percent: any }) => {
-        //     console.log("上传进度：", event.percent);
-        //   }
-        // }
-        payload: {
-          file: res
-        }
-      }
-    });
-    console.log(message);
+    // const file = {
+    //   tempFilePath: res.tempFilePath,
+    //   second: timer.value
+    // };
+    // console.log(file);
+    // const message = tim.createAudioMessage({
+    //   to: "1255_1",
+    //   conversationType: TIM.TYPES.CONV_C2C,
+    //   payload: {
+    //     // file: {
+    //     //   file: res.tempFilePath,
+    //     //   onProgress: (event: { percent: any }) => {
+    //     //     console.log("上传进度：", event.percent);
+    //     //   }
+    //     // }
+    //     file: res
+    //   }
+    // });
+    // console.log(message);
+    sendVoiceMessage(res);
   });
 }
 
@@ -249,9 +254,7 @@ function sendVoiceMessage(res: any) {
       //     console.log("上传进度：", event.percent);
       //   }
       // }
-      payload: {
-        file: res
-      }
+      file: res
     }
   });
   console.log(message);
@@ -265,6 +268,7 @@ function sendVoiceMessage(res: any) {
       // 发送失败
       console.warn("Send error", imError);
     });
+  emit("audio", { message });
 }
 
 // function getElementHeight() {

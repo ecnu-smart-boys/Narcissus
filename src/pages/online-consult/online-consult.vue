@@ -34,6 +34,7 @@
                 <image
                   class="voice-img"
                   src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
+                  @tap="platVoice(item.payload.url)"
                 ></image>
                 {{ item.payload.second }}"
               </view>
@@ -65,6 +66,7 @@
                 <image
                   class="voice-img"
                   src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
+                  @tap="platVoice(item.payload.url)"
                 ></image>
               </view>
             </view>
@@ -72,7 +74,12 @@
         </view>
       </view>
     </scroll-view>
-    <Submit @heights="heights" @inputs="inputs" @photo="photo"></Submit>
+    <Submit
+      @audio="audio"
+      @heights="heights"
+      @inputs="inputs"
+      @photo="photo"
+    ></Submit>
   </view>
 </template>
 
@@ -311,6 +318,20 @@ function previewImg(e: string) {
   });
 }
 
+//音频播放
+function platVoice(e: string) {
+  const innerAudioContext = uni.createInnerAudioContext();
+  innerAudioContext.autoplay = true;
+  innerAudioContext.src = e;
+  innerAudioContext.onPlay(() => {
+    console.log("开始播放");
+  });
+  // innerAudioContext.onError((res) => {
+  //   console.log(res.errMsg);
+  //   console.log(res.errCode);
+  // });
+}
+
 function inputs(e: any) {
   let data = {
     flow: "out",
@@ -330,6 +351,24 @@ function inputs(e: any) {
 
 function photo(e: any) {
   console.log("我收到图片啦");
+  console.log(e.message);
+  // let data = {
+  //   flow: "out",
+  //   payload: {
+  //     imageInfoArray: [
+  //       {
+  //         url: e.res.tempFiles[0].tempFilePath
+  //       }
+  //     ]
+  //   },
+  //   types: "TIMImageElem",
+  //   time: Date.now()
+  // };
+  msgs.push(e.message);
+}
+
+function audio(e: any) {
+  console.log("我收到音频啦");
   console.log(e.message);
   // let data = {
   //   flow: "out",
