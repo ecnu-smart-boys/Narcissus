@@ -2,10 +2,10 @@
   <view>
     <view class="card relative">
       <view class="consult-user">
-        <img class="avatar" :src="avatarUrl" />
+        <img class="avatar" :src="userInfo.avatar" />
         <view class="user-info-wrapper">
-          <view class="user-info-name">{{ test.name }}</view>
-          <view class="user-info-phone">{{ test.phone }}</view>
+          <view class="user-info-name">{{ userInfo.name }}</view>
+          <view class="user-info-phone">{{ userInfo.phone }}</view>
         </view>
       </view>
       <view class="consult-wrapper" @tap="startConsult">
@@ -40,7 +40,7 @@ import ConsultRecord from "@/components/consult-record.vue";
 import { Pages } from "@/utils/url";
 let avatarUrl = ref("../../static/default-avatar.png");
 
-let test = uni.getStorageSync("userInfo");
+let userInfo;
 
 const dummy = [
   {
@@ -52,7 +52,7 @@ const dummy = [
     id: 1
   },
   {
-    time: "100",
+    time: "123",
     avatar: "/static/default-avatar.png",
     name: "咨询师",
     duration: "1小时",
@@ -60,7 +60,7 @@ const dummy = [
     id: 2
   },
   {
-    time: "100",
+    time: "145",
     avatar: "/static/default-avatar.png",
     name: "咨询师",
     duration: "1小时",
@@ -68,6 +68,25 @@ const dummy = [
     id: 3
   }
 ];
+getUserInformation();
+function getUserInformation() {
+  try {
+    userInfo = uni.getStorageSync("userInfo");
+    console.log(userInfo);
+    if (userInfo) {
+      if (userInfo.avatar === "") {
+        userInfo.avatar = "../../static/default-avatar.png";
+      }
+      console.log(userInfo.avatar);
+    } else {
+      console.log("用户信息不存在");
+      return null;
+    }
+  } catch (error) {
+    console.error("获取用户信息失败:", error);
+    return null;
+  }
+}
 const editPersonalInformation = function () {
   uni.navigateTo({
     url: Pages.EditPersonalInformation

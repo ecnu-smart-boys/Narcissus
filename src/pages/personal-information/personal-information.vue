@@ -6,7 +6,7 @@
         open-type="chooseAvatar"
         @chooseavatar="onChooseAvatar"
       >
-        <img class="avatar" :src="avatarUrl" />
+        <img class="avatar" :src="userInfo.avatar" />
       </button>
     </view>
     <view class="update-line">
@@ -105,9 +105,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { Pages } from "@/utils/url";
 import { updateUserInfoWx } from "@/apis/auth/auth";
-import { wxLogin } from "@/apis/weixin/auth";
 
 let userInfo = reactive({
   age: 0,
@@ -122,22 +120,13 @@ let userInfo = reactive({
 
 getUserInformation();
 
-let avatarUrl = ref(
-  uni.getStorageSync("avatarUrl")
-    ? uni.getStorageSync("avatarUrl")
-    : "../../static/default-avatar.png"
-);
-
-let nickName = ref(
-  uni.getStorageSync("nickName") ? uni.getStorageSync("nickName") : "微信用户"
-);
 const submit = function () {
   uni.setStorageSync("userInfo", userInfo);
   updateUserInformation();
 };
 
 const onChooseAvatar = function (e: any) {
-  avatarUrl.value = e.detail.avatarUrl;
+  userInfo.avatar = e.detail.avatarUrl;
 };
 
 const handleGenderChange = function (e: any) {
@@ -151,6 +140,9 @@ function getUserInformation() {
     if (resData) {
       userInfo = resData;
       userInfo.nickName = resData.name;
+      if (userInfo.avatar === "") {
+        userInfo.avatar = "../../static/default-avatar.png";
+      }
       console.log(userInfo.nickName);
     } else {
       console.log("用户信息不存在");
