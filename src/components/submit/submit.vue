@@ -55,7 +55,7 @@ import { defineEmits, ref } from "vue";
 import tim from "@/utils/im";
 import TIM from "tim-js-sdk";
 // 创建录音管理器实例
-let recorderManager = wx.getRecorderManager();
+let recorderManager = uni.getRecorderManager();
 // 定义计时器变量
 let timer = ref(null);
 // const recorderManager = uni.getRecorderManager();

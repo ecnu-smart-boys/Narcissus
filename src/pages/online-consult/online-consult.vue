@@ -45,10 +45,18 @@
               class="user-img"
               src="https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg"
             ></image>
-            <view v-if="item.type === 'TIMTextElem'" class="message">
+            <view
+              v-if="item.type === 'TIMTextElem'"
+              class="message"
+              @longpress="showRevokingModal(index)"
+            >
               <view class="msg-text">{{ item.payload.text }}</view>
             </view>
-            <view v-if="item.type === 'TIMImageElem'" class="message">
+            <view
+              v-if="item.type === 'TIMImageElem'"
+              class="message"
+              @longpress="showRevokingModal(index)"
+            >
               <image
                 :src="item.payload.imageInfoArray[0].url"
                 class="msg-img"
@@ -57,7 +65,11 @@
               ></image>
             </view>
             <!--              语音-->
-            <view v-if="item.type === 'TIMSoundElem'" class="message">
+            <view
+              v-if="item.type === 'TIMSoundElem'"
+              class="message"
+              @longpress="showRevokingModal(index)"
+            >
               <view
                 :style="{ width: item.payload.second * 4 + 'rpx' }"
                 class="msg-text voice"
@@ -74,6 +86,16 @@
         </view>
       </view>
     </scroll-view>
+    <!--    <van-dialog-->
+    <!--      v-model="isRevokingModalShow"-->
+    <!--      cancel-button-text="取消"-->
+    <!--      confirm-button-text="确定"-->
+    <!--      message="确定要撤回这条消息吗？"-->
+    <!--      show-cancel-button-->
+    <!--      show-confirm-button-->
+    <!--      title="提示"-->
+    <!--      @confirm="revokeMessage"-->
+    <!--    />-->
     <Submit
       @audio="audio"
       @heights="heights"
@@ -88,7 +110,7 @@ import { onLoad } from "@dcloudio/uni-app";
 import { reactive, ref } from "vue";
 import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
-import tim, { createTextMessage } from "@/utils/im";
+import tim, { createTextMessage, onMessageReceived } from "@/utils/im";
 
 // const userID = "2_1";
 // const userSig = genTestUserSig({
@@ -143,13 +165,56 @@ let msgs = reactive<
     time: Date;
   }[]
 >([]);
+// let isRevokingModalShow = ref(false); // 撤回弹窗是否显示
+// let revokeMessageIndex = ref(null); // 需要撤回的消息在消息列表中的索引
 let imgMsg: string[] = [];
 onLoad(() => {
   // getMsg();
 
   getMsg();
   //console.log(msgs);
+  onMessageReceived((data) => {
+    msgs.push(...data);
+  });
 });
+
+// 撤回消息
+function revokeMessage(index: any) {
+  const message = msgs[index];
+  tim
+    .revokeMessage(message)
+    .then(() => {
+      message.isRevoking = true;
+      // isRevokingModalShow.value = false;
+    })
+    .catch(() => {
+      uni.showToast({
+        title: "撤回失败",
+        icon: "error", //将值设置为 success 或者 ''
+        duration: 2000 //持续时间为 2秒
+      });
+      console.log("撤回失败");
+    });
+}
+
+// 显示撤回弹窗
+function showRevokingModal(index: any) {
+  //revokeMessageIndex.value = index;
+  console.log(msgs[index]);
+  // isRevokingModalShow.value = true;
+  // console.log(isRevokingModalShow.value);
+  uni.showModal({
+    title: "提示",
+    content: "确认撤回此消息吗",
+    success: () => {
+      // this.signInFunction(data).then(res=>{
+      //   console.log('res',res);
+      // })
+      revokeMessage(index);
+      console.log("hhj");
+    }
+  });
+}
 
 //获取聊天数据
 async function getMsg() {
@@ -322,6 +387,7 @@ function previewImg(e: string) {
 function platVoice(e: string) {
   const innerAudioContext = uni.createInnerAudioContext();
   innerAudioContext.autoplay = true;
+  //console.log(e);
   innerAudioContext.src = e;
   innerAudioContext.onPlay(() => {
     console.log("开始播放");
