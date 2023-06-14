@@ -38,8 +38,20 @@
 import ConsultRecord from "@/components/consult-record.vue";
 import { Pages } from "@/utils/url";
 import { getConsultations } from "@/apis/auth/auth";
+import { ConsultationsInfo } from "@/apis/auth/auth-interface";
 
-let userInfo, consultations;
+let userInfo;
+let consultations: ConsultationsInfo[] = [
+  {
+    avatar: "",
+    consultantName: "",
+    endTime: "",
+    score: 0,
+    startTime: "",
+    state: 0,
+    id: 0
+  }
+];
 
 const dummy = [
   {
@@ -91,14 +103,40 @@ function getConsultationsInfo() {
   try {
     getConsultations().then((res) => {
       console.log(res);
-      consultations = res;
-
+      let cnt = 0;
+      for (let item of res) {
+        console.log(item);
+        consultations.push({
+          avatar: item.avatar,
+          consultantName: item.consultantName,
+          endTime: formatTimestamp(item.endTime),
+          score: item.score,
+          startTime: formatTimestamp(item.startTime),
+          state: item.state,
+          id: cnt
+        });
+        cnt++;
+      }
     });
   } catch (error) {
     console.error("获取咨询师信息失败:", error);
     return null;
   }
 }
+function formatTimestamp(timestamp: number): string {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = addLeadingZero(date.getMonth() + 1);
+  const day = addLeadingZero(date.getDate());
+  const hours = addLeadingZero(date.getHours());
+  const minutes = addLeadingZero(date.getMinutes());
+  const seconds = addLeadingZero(date.getSeconds());
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+function addLeadingZero(value: number): string {
+  return value < 10 ? `0${value}` : `${value}`;
+}
+
 const editPersonalInformation = function () {
   uni.navigateTo({
     url: Pages.EditPersonalInformation

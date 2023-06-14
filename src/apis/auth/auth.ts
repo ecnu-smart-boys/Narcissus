@@ -5,7 +5,6 @@ import {
   RegisterWxResp,
   UpdateUserInfoWxReq,
   UpdateUserInfoWxResp,
-  ConsultationsWxReq,
   ConsultationsWxResp
 } from "@/apis/auth/auth-interface";
 import { request } from "@/apis/schema";
@@ -39,7 +38,7 @@ export function updateUserInfoWx(
   });
 }
 
-export function getConsultations(): Promise<ConsultationsWxResp> {
+export function getConsultations(): Promise<ConsultationsWxResp[]> {
   return request({
     url: "/conversation/visitor/consultations",
     method: "GET",

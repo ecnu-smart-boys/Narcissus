@@ -81,13 +81,14 @@ export interface UpdateUserInfoWxResp {
   phone: string;
   roles: string;
 }
-export interface ConsultationsWxReq {
+export interface ConsultationsInfo {
   avatar: string;
   consultantName: string;
-  endTime: number;
+  endTime: string;
   score: number;
-  startTime: number;
+  startTime: string;
   state: number;
+  id: number;
 }
 
 export interface ConsultationsWxResp {
