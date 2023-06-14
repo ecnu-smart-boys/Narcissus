@@ -7,7 +7,7 @@
       <view class="time">00:13:13</view>
     </view>
     <view class="right">
-      <view class="shang">
+      <view class="shang" @tap="">
         <image
           class="zixun"
           src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/5ae39900-330c-4676-ac90-6608e4451ea4.png"

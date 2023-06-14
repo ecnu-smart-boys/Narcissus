@@ -3,8 +3,10 @@ import {
   RegisterWxReq,
   LoginWxResp,
   RegisterWxResp,
-  updateUserInfoWxReq,
-  updateUserInfoWxResp
+  UpdateUserInfoWxReq,
+  UpdateUserInfoWxResp,
+  ConsultationsWxReq,
+  ConsultationsWxResp
 } from "@/apis/auth/auth-interface";
 import { request } from "@/apis/schema";
 
@@ -25,12 +27,22 @@ export function registerWx(req: RegisterWxReq): Promise<RegisterWxResp> {
 }
 
 export function updateUserInfoWx(
-  req: updateUserInfoWxReq
-): Promise<updateUserInfoWxResp> {
+  req: UpdateUserInfoWxReq
+): Promise<UpdateUserInfoWxResp> {
   return request({
     url: "/user/info",
     data: req,
     method: "PUT",
+    header: {
+      "x-freud": uni.getStorageSync("accessToken")
+    }
+  });
+}
+
+export function getConsultations(): Promise<ConsultationsWxResp> {
+  return request({
+    url: "/conversation/visitor/consultations",
+    method: "GET",
     header: {
       "x-freud": uni.getStorageSync("accessToken")
     }

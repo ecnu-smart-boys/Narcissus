@@ -19,11 +19,11 @@
     </view>
     <template v-for="item of dummy" :key="item.id">
       <consult-record
-        :duration="item.duration"
-        :rate="item.rate"
-        :name="item.name"
-        :time="item.time"
         :avatar="item.avatar"
+        :consultant-name="item.consultantName"
+        :start-time="item.startTime"
+        :end-time="item.endTime"
+        :score="item.score"
       />
     </template>
     <view v-if="dummy.length === 0" class="no-info-wrapper">
@@ -35,40 +35,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import ConsultRecord from "@/components/consult-record.vue";
 import { Pages } from "@/utils/url";
-let avatarUrl = ref("../../static/default-avatar.png");
+import { getConsultations } from "@/apis/auth/auth";
 
-let userInfo;
+let userInfo, consultations;
 
 const dummy = [
   {
-    time: "100",
     avatar: "/static/default-avatar.png",
-    name: "咨询师",
-    duration: "1小时",
-    rate: 4,
+    consultantName: "咨询师",
+    startTime: "11:15",
+    endTime: "12:01",
+    score: 3,
     id: 1
   },
   {
-    time: "123",
     avatar: "/static/default-avatar.png",
-    name: "咨询师",
-    duration: "1小时",
-    rate: 4,
+    consultantName: "咨询师",
+    startTime: "11:11",
+    endTime: "12:02",
+    score: 4,
     id: 2
   },
   {
-    time: "145",
     avatar: "/static/default-avatar.png",
-    name: "咨询师",
-    duration: "1小时",
-    rate: 4,
+    consultantName: "咨询师",
+    startTime: "11:23",
+    endTime: "12:03",
+    score: 5,
     id: 3
   }
 ];
 getUserInformation();
+getConsultationsInfo();
 function getUserInformation() {
   try {
     userInfo = uni.getStorageSync("userInfo");
@@ -84,6 +84,18 @@ function getUserInformation() {
     }
   } catch (error) {
     console.error("获取用户信息失败:", error);
+    return null;
+  }
+}
+function getConsultationsInfo() {
+  try {
+    getConsultations().then((res) => {
+      console.log(res);
+      consultations = res;
+
+    });
+  } catch (error) {
+    console.error("获取咨询师信息失败:", error);
     return null;
   }
 }

@@ -59,7 +59,7 @@ export interface RegisterWxResp {
   roles: string;
 }
 
-export interface updateUserInfoWxReq {
+export interface UpdateUserInfoWxReq {
   age: number;
   avatar: string;
   email: string;
@@ -70,7 +70,7 @@ export interface updateUserInfoWxReq {
   emergencyPhone: string;
 }
 
-export interface updateUserInfoWxResp {
+export interface UpdateUserInfoWxResp {
   age: number;
   avatar: string;
   disabled: boolean;
@@ -80,4 +80,21 @@ export interface updateUserInfoWxResp {
   nickName: string;
   phone: string;
   roles: string;
+}
+export interface ConsultationsWxReq {
+  avatar: string;
+  consultantName: string;
+  endTime: number;
+  score: number;
+  startTime: number;
+  state: number;
+}
+
+export interface ConsultationsWxResp {
+  avatar: string;
+  consultantName: string;
+  endTime: number;
+  score: number;
+  startTime: number;
+  state: number;
 }

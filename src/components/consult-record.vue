@@ -2,17 +2,23 @@
   <view class="card">
     <view class="consult-record-wrapper">
       <view class="consult-time"> {{ props.time }} </view>
-      <img class="icon-quit" src="/static/quit.png" @tap="detailRecord"/>
+      <img class="icon-quit" src="/static/quit.png" @tap="detailRecord" />
       <view class="consult-info">
         <view class="consult-info-left">
           <img class="consult-avatar" :src="props.avatar" />
-          <text class="consult-name">{{ props.name }}</text>
+          <text class="consult-name">{{ props.consultantName }}</text>
         </view>
         <view class="consult-info-right">
-          <view>咨询用时</view>
-          <view class="consult-info-duration">{{ props.duration }}</view>
+          <view class="time-info">
+            <view>开始时间</view>
+            <view class="consult-info-duration">{{ props.startTime }}</view>
+          </view>
+          <view class="time-info">
+            <view>结束时间</view>
+            <view class="consult-info-duration">{{ props.endTime }}</view>
+          </view>
           <view>我的评价</view>
-          <StarsRating :stars-index="props.rate" :is-edit-stars="false" />
+          <StarsRating :stars-index="props.score" :is-edit-stars="false" />
         </view>
       </view>
     </view>
@@ -28,11 +34,11 @@ const detailRecord = function () {
   });
 };
 let props = defineProps<{
-  time: string;
   avatar: string;
-  name: string;
-  duration: string;
-  rate: number;
+  consultantName: string;
+  startTime: string;
+  endTime: string;
+  score: number;
 }>();
 </script>
 
@@ -87,15 +93,31 @@ let props = defineProps<{
       display: flex;
       flex-direction: column;
       justify-content: center;
-
+      font-size: medium;
       view {
-        margin: 8rpx 0;
+        margin: 8 rpx 0;
         color: grey;
       }
       .consult-info-duration {
-        font-size: large;
         color: black;
       }
+    }
+    .time-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .time-info > view:first-child {
+      margin-right: 10px;
+    }
+
+    .time-info .consult-info-duration {
+      color: black;
+    }
+
+    .consult-info-right > view {
+      margin: 8rpx 0;
+      color: grey;
     }
   }
 }
