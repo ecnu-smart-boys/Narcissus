@@ -3,83 +3,105 @@
     <view class="head">
       <chat-top class="head1"></chat-top>
     </view>
-    <scroll-view class="chat" scroll-with-animation="true" scroll-y="true">
+    <scroll-view
+      class="chat"
+      scroll-with-animation="true"
+      scroll-y="true"
+      @scrolltoupper="nextpageData"
+    >
       <view :style="{ paddingBottom: inputh + 'rpx' }" class="chat-main">
+        <view :class="{ displaynone: isloading }" class="loading">
+          <image
+            :animation="animationData"
+            class="=loading-img"
+            src="https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/18cc645a-8feb-43fb-a131-9f635a69909d.png"
+          ></image>
+        </view>
         <view v-for="(item, index) in msgs" :key="index" class="chat-ls">
-          <view class="chat-time">{{ item.time }}</view>
-          <view v-if="item.flow === 'in'" class="msg-m msg-left">
-            <image
-              class="user-img"
-              src="https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg"
-            ></image>
-            <!--                文字-->
-            <view v-if="item.type === 'TIMTextElem'" class="message">
-              <view class="msg-text">{{ item.payload.text }}</view>
+          <view class="chat-time">{{ timestampToTime(item.time * 1000) }}</view>
+          <view v-if="item.flow === 'in'">
+            <view v-if="item.isRevoked" class="revoke2">
+              <text>对方已撤回一条消息</text>
             </view>
-            <!--              图片-->
-            <view v-if="item.type === 'TIMImageElem'" class="message">
+            <view v-else class="msg-m msg-left">
               <image
-                :src="item.payload.imageInfoArray[0].url"
-                class="msg-img"
-                mode="widthFix"
-                @tap="previewImg(item.payload.imageInfoArray[0].url)"
+                class="user-img"
+                src="https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg"
               ></image>
-            </view>
-            <!--              语音-->
-            <view v-if="item.type === 'TIMSoundElem'" class="message">
-              <view
-                :style="{ width: item.payload.second * 4 + 'rpx' }"
-                class="msg-text voice"
-              >
+              <!--                文字-->
+              <view v-if="item.type === 'TIMTextElem'" class="message">
+                <view class="msg-text">{{ item.payload.text }}</view>
+              </view>
+              <!--              图片-->
+              <view v-if="item.type === 'TIMImageElem'" class="message">
                 <image
-                  class="voice-img"
-                  src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
-                  @tap="platVoice(item.payload.url)"
+                  :src="item.payload.imageInfoArray[0].url"
+                  class="msg-img"
+                  mode="widthFix"
+                  @tap="previewImg(item.payload.imageInfoArray[0].url)"
                 ></image>
-                {{ item.payload.second }}"
+              </view>
+              <!--              语音-->
+              <view v-if="item.type === 'TIMSoundElem'" class="message">
+                <view
+                  :style="{ width: item.payload.second * 10 + 'rpx' }"
+                  class="msg-text voice"
+                >
+                  <image
+                    class="voice-img"
+                    src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
+                    @tap="platVoice(item.payload.url)"
+                  ></image>
+                  {{ item.payload.second }}"
+                </view>
               </view>
             </view>
           </view>
-          <view v-if="item.flow === 'out'" class="msg-m msg-right">
-            <image
-              class="user-img"
-              src="https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg"
-            ></image>
-            <view
-              v-if="item.type === 'TIMTextElem'"
-              class="message"
-              @longpress="showRevokingModal(index)"
-            >
-              <view class="msg-text">{{ item.payload.text }}</view>
+          <view v-if="item.flow === 'out'">
+            <view v-if="item.isRevoked" class="revoke2">
+              <text>你已撤回一条消息</text>
             </view>
-            <view
-              v-if="item.type === 'TIMImageElem'"
-              class="message"
-              @longpress="showRevokingModal(index)"
-            >
+            <view v-else class="msg-m msg-right">
               <image
-                :src="item.payload.imageInfoArray[0].url"
-                class="msg-img"
-                mode="widthFix"
-                @tap="previewImg(item.payload.imageInfoArray[0].url)"
+                class="user-img"
+                src="https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg"
               ></image>
-            </view>
-            <!--              语音-->
-            <view
-              v-if="item.type === 'TIMSoundElem'"
-              class="message"
-              @longpress="showRevokingModal(index)"
-            >
               <view
-                :style="{ width: item.payload.second * 4 + 'rpx' }"
-                class="msg-text voice"
+                v-if="item.type === 'TIMTextElem'"
+                class="message"
+                @longpress="showRevokingModal(index)"
               >
-                {{ item.payload.second }}"
+                <view class="msg-text">{{ item.payload.text }}</view>
+              </view>
+              <view
+                v-if="item.type === 'TIMImageElem'"
+                class="message"
+                @longpress="showRevokingModal(index)"
+              >
                 <image
-                  class="voice-img"
-                  src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
-                  @tap="platVoice(item.payload.url)"
+                  :src="item.payload.imageInfoArray[0].url"
+                  class="msg-img"
+                  mode="widthFix"
+                  @tap="previewImg(item.payload.imageInfoArray[0].url)"
                 ></image>
+              </view>
+              <!--              语音-->
+              <view
+                v-if="item.type === 'TIMSoundElem'"
+                class="message"
+                @longpress="showRevokingModal(index)"
+              >
+                <view
+                  :style="{ width: item.payload.second * 10 + 'rpx' }"
+                  class="msg-text voice"
+                >
+                  {{ item.payload.second }}"
+                  <image
+                    class="voice-img"
+                    src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
+                    @tap="platVoice(item.payload.url)"
+                  ></image>
+                </view>
               </view>
             </view>
           </view>
@@ -112,50 +134,6 @@ import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
 import tim, { createTextMessage, onMessageReceived } from "@/utils/im";
 
-// const userID = "2_1";
-// const userSig = genTestUserSig({
-//   SDKAppID: 1400810468,
-//   secretKey: "d14df58bc7f5f87424981ca2165867287e2c4ad3ba021709bfdd50edf37daaa0",
-//   userID: "2_1"
-// }).userSig;
-// loginIM(userID, userSig).then(() => {
-//   console.log("登录成功");
-// });
-// const userSig = "your-usersig";
-// const conversationID = "group1";
-// const message = ref("");
-// const messageList = ref([]);
-// const onSdkReady = function (event: any) {
-//   // const message = tim.createTextMessage({
-//   //   to: "2_1",
-//   //   conversationType: "C2C",
-//   //   payload: { text: "Hello world!" }
-//   // });
-//   // tim.sendMessage(message);
-//   getMsg();
-// };
-// tim.on(TIM.EVENT.SDK_READY, onSdkReady);
-// 监听接收到的消息
-// onMessageReceived((list) => {
-//   console.log("接收到新消息", list);
-//   messageList.value.push(...list);
-// });
-// default defineComponent({
-//   name: "Chat",
-//   setup() {
-//
-//
-//
-//
-//
-//
-//     return {
-//       message,
-//       messageList,
-//       sendMessage
-//     };
-//   }
-// });
 let inputh = ref("60");
 let msgs = reactive<
   {
@@ -165,6 +143,11 @@ let msgs = reactive<
     time: Date;
   }[]
 >([]);
+let animationData = ref({});
+let nextReqMessageID = ref(0);
+let isCompleted = ref(false);
+let isloading = ref(true);
+let loading = "";
 // let isRevokingModalShow = ref(false); // 撤回弹窗是否显示
 // let revokeMessageIndex = ref(null); // 需要撤回的消息在消息列表中的索引
 let imgMsg: string[] = [];
@@ -176,7 +159,61 @@ onLoad(() => {
   onMessageReceived((data) => {
     msgs.push(...data);
   });
+  // nextpageData();
 });
+
+function timestampToTime(timestamp: any) {
+  timestamp = timestamp ? timestamp : null;
+  let date = new Date(timestamp); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+  let Y = date.getFullYear() + "-";
+  let M =
+    (date.getMonth() + 1 < 10
+      ? "0" + (date.getMonth() + 1)
+      : date.getMonth() + 1) + "-";
+  let D = (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + " ";
+  let h =
+    (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) + ":";
+  let m =
+    (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+    ":";
+  let s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+  return Y + M + D + h + m + s;
+}
+
+function nextpageData() {
+  isloading.value = false;
+  var animation = uni.createAnimation({
+    duration: 1000,
+    timingFunction: "step-start"
+  });
+
+  // animation.scale(2, 2).rotate(45).step();
+  //
+  // animationData.value = animation.export();
+  let i = 1;
+  if (!isCompleted.value) {
+    console.log("wowowo");
+    getMsg1();
+  }
+  loading = setInterval(
+    function () {
+      animation.rotate(i * 30).step();
+      animationData.value = animation.export();
+      i++;
+      if (i > 40) {
+        isloading.value = true;
+      }
+    }.bind(this),
+    100
+  );
+  // setTimeout(
+  //   function () {
+  //     animation.translate(30).step();
+  //     animationData.value = animation.export();
+  //   }.bind(this),
+  //   1000
+  // );
+}
 
 // 撤回消息
 function revokeMessage(index: any) {
@@ -218,130 +255,11 @@ function showRevokingModal(index: any) {
 
 //获取聊天数据
 async function getMsg() {
-  // let msg = [
-  //   {
-  //     id: "b",
-  //     imgurl:
-  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-  //     payload: { text: "的手机待机" },
-  //     types: "TIMTextElem",
-  //     time: new Date(1626244869999),
-  //     tip: 1
-  //   },
-  //   {
-  //     id: "a",
-  //     imgurl:
-  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
-  //     payload: {
-  //       text: "那边就不是绝对不接受多年时间倒计时倒计时阶段吧年的世界杯的建设北京的三百"
-  //     },
-  //     types: "TIMTextElem",
-  //     time: new Date(1626244869789),
-  //     tip: 0
-  //   },
-  //   {
-  //     id: "b",
-  //     imgurl:
-  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-  //     payload: {
-  //       text: "干撒干撒干啥干啥被杀uu时的速度多少都会还是仅仅是当今时代简单觉得你"
-  //     },
-  //     types: "TIMTextElem",
-  //     time: new Date(1626244865437),
-  //     tip: 1
-  //   },
-  //   {
-  //     id: "a",
-  //     imgurl:
-  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-  //     payload: {
-  //       imageInfoArray: [
-  //         {
-  //           url: "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/88116a40-c1bc-42e3-8d7f-1c3e66fd06d8.jpg"
-  //         }
-  //       ]
-  //     },
-  //     types: "TIMImageElem",
-  //     time: new Date(1626244868250),
-  //     tip: 1
-  //   },
-  //   {
-  //     id: "a",
-  //     imgurl:
-  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
-  //     payload: {
-  //       text: "和倒计时倒计时的术后读书的的不俗百度搜不到下班时间对不上不得好死年的世界杯的"
-  //     },
-  //     types: "TIMTextElem",
-  //     time: new Date(1626244866838),
-  //     tip: 1
-  //   },
-  //   {
-  //     id: "b",
-  //     imgurl:
-  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-  //     payload: {
-  //       imageInfoArray: [
-  //         {
-  //           url: "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/2eca5681-d17f-44f3-965c-1ba6e43fb50a.jpg"
-  //         }
-  //       ]
-  //     },
-  //     types: "TIMImageElem",
-  //     time: new Date(1626244868250),
-  //     tip: 1
-  //   },
-  //   {
-  //     id: "a",
-  //     imgurl:
-  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
-  //     payload: {
-  //       text: "的手机待机时间的电脑手机电脑是加拿大电脑上的几年时间你手机电脑手机电脑的难度"
-  //     },
-  //     types: "TIMTextElem",
-  //     time: new Date(1626244868888),
-  //     tip: 1
-  //   },
-  //   {
-  //     id: "a",
-  //     imgurl:
-  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg",
-  //     payload: {
-  //       url: "a",
-  //       second: 20
-  //     },
-  //     types: "TIMTextElem",
-  //     time: new Date(1626244868888),
-  //     tip: 1
-  //   },
-  //   {
-  //     id: "b",
-  //     imgurl:
-  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-  //     payload: {
-  //       url: "a",
-  //       second: 60
-  //     },
-  //     types: "TIMSoundElem",
-  //     time: new Date(1626244868250),
-  //     tip: 1
-  //   },
-  //   {
-  //     id: "b",
-  //     imgurl:
-  //       "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg",
-  //     payload: {
-  //       text: "的失败的话说不定会被北师大版技术大版电脑手机难道就是当年那年暑假绝对加速度难道就是你的就是你的"
-  //     },
-  //     types: "TIMTextElem",
-  //     time: new Date(1626244868250),
-  //     tip: 1
-  //   }
-  // ];
-
   let data = await tim.getMessageList({ conversationID: "C2C1255_1" });
 
   let msg1 = data.data.messageList;
+  nextReqMessageID.value = data.data.nextReqMessageID; // 用于续拉，分页续拉时需传入该字段。
+  isCompleted.value = data.data.isCompleted; // 表示是否已经拉完所有消息。isCompleted 为 true 时，nextReqMessageID 为 ""。
   console.log(msg1);
   for (let i = 0; i < msg1.length; i++) {
     if (msg1[i].type == "TIMImageElem") {
@@ -352,6 +270,36 @@ async function getMsg() {
     msgs.push(msg1[i]);
   }
   console.log(msgs);
+  clearInterval(loading.value);
+  isloading.value = true;
+}
+
+async function getMsg1() {
+  console.log(isCompleted);
+  if (!isCompleted.value) {
+    let nextpage = nextReqMessageID.value;
+    let data = await tim.getMessageList({
+      conversationID: "C2C1255_1",
+      nextReqMessageID: nextpage
+    });
+
+    let msg1 = data.data.messageList;
+    nextReqMessageID.value = data.data.nextReqMessageID; // 用于续拉，分页续拉时需传入该字段。
+    isCompleted.value = data.data.isCompleted; // 表示是否已经拉完所有消息。isCompleted 为 true 时，nextReqMessageID 为 ""。
+    console.log(msg1);
+    msgs.unshift(...msg1);
+    imgMsg.length = 0;
+    for (let i = 0; i < msgs.length; i++) {
+      if (msgs[i].type == "TIMImageElem") {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        imgMsg.push(msgs[i].payload.imageInfoArray[0].url);
+      }
+    }
+    console.log(msgs);
+    clearInterval(loading.value);
+    isloading.value = true;
+  }
 }
 
 function previewImg(e: string) {
@@ -464,10 +412,23 @@ function heights(e: string) {
   z-index: 9999; /*设置优先级显示，保证不会被覆盖*/
 }
 
+.displaynone {
+  display: none;
+}
+
 .chat {
   height: 1000rpx;
   background: #eef2f5;
   margin-top: 220rpx;
+
+  .loading {
+    text-align: center;
+
+    .loading-img {
+      width: 60rpx;
+      height: 60rpx;
+    }
+  }
 
   .chat-main {
     padding-top: 100rpx;
@@ -514,7 +475,7 @@ function heights(e: string) {
       }
 
       .voice {
-        min-width: 120rpx;
+        min-width: 70rpx;
         max-width: 400rpx;
       }
 
@@ -575,5 +536,11 @@ function heights(e: string) {
       }
     }
   }
+}
+
+.revoke2 {
+  color: #999;
+  text-decoration: line-through;
+  text-align: center;
 }
 </style>

@@ -20,7 +20,7 @@
           class="record btn"
           @touchend="touchend"
           @touchstart="touchstart"
-          >按住说话
+          >{{ voice }}
         </view>
         <view class="bt-img" @tap="emoji">
           <image
@@ -67,6 +67,7 @@ let toc = ref(
   "https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
 );
 let msg = ref("");
+let voice = ref("按住说话");
 const emoji1 = [
   ["😀", "😁", "😂", "🤣", "😃", "😄", "😅", "😆"],
   ["😉", "😊", "😋", "😎", "😍", "😘", "🥰", "😗"],
@@ -123,6 +124,7 @@ function sendMessage() {
   // 发送完消息后清空输入框
   // msg.value = "";
   emit("inputs", { msg });
+  isemoji.value = false;
   setTimeout(() => {
     msg.value = "";
   }, 0);
@@ -200,12 +202,13 @@ function touchstart() {
     }
   }, 1000);
   recorderManager.start({
-    duration: 6000, // 录音的时长，单位 ms，最大值 600000（10 分钟）
+    duration: 60000, // 录音的时长，单位 ms，最大值 600000（10 分钟）
     sampleRate: 44100, // 采样率
     numberOfChannels: 1, // 录音通道数
     encodeBitRate: 192000, // 编码码率
     format: "aac"
   });
+  voice.value = "松开取消录音";
 }
 
 // 定义长按结束事件处理函数
@@ -213,6 +216,7 @@ function touchend() {
   console.log("结束");
   clearInterval(timer.value);
   recorderManager.stop();
+  voice.value = "按住说话";
   recorderManager.onStop(function (res: any) {
     console.log("recorder stop" + JSON.stringify(res));
     //self.voicePath = res.tempFilePath;
