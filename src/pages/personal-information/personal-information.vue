@@ -12,7 +12,7 @@
     <view class="update-line">
       <text class="update-label">昵称</text>
       <input
-        v-model="nickName"
+        v-model="userInfo.nickName"
         class="update-input"
         type="nickname"
         placeholder="请输入昵称"
@@ -23,7 +23,7 @@
     <view class="update-line">
       <text class="update-label">真实姓名</text>
       <input
-        v-model="userInfo.name"
+        v-model="userInfo.nickName"
         class="update-input"
         placeholder="请输入真实姓名"
         type="text"
@@ -106,15 +106,15 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import { Pages } from "@/utils/url";
-import { registerWx, updateUserInfoWx } from "@/apis/auth/auth";
-import { wxRegister } from "@/apis/weixin/auth";
+import { updateUserInfoWx } from "@/apis/auth/auth";
+import { wxLogin } from "@/apis/weixin/auth";
 
 let userInfo = reactive({
   age: 0,
   avatar: "",
   email: "",
   gender: 0,
-  name: "",
+  nickName: "",
   phone: "",
   emergencyContact: "",
   emergencyPhone: ""
@@ -150,6 +150,8 @@ function getUserInformation() {
     console.log(resData);
     if (resData) {
       userInfo = resData;
+      userInfo.nickName = resData.name;
+      console.log(userInfo.nickName);
     } else {
       console.log("用户信息不存在");
       return null;
@@ -161,37 +163,16 @@ function getUserInformation() {
 }
 
 function updateUserInformation() {
-  wxRegister()
-    .then((res) => {
-      return updateUserInfoWx({
-        age: userInfo.age,
-        avatar: userInfo.avatar,
-        emergencyContact: userInfo.emergencyContact,
-        emergencyPhone: userInfo.emergencyPhone,
-        gender: userInfo.gender,
-        name: userInfo.name,
-        phone: userInfo.phone,
-        email: ""
-      });
-    })
-    .then((res) => {
-      console.log(res);
-      if (res === null) {
-        console.log("更新失败");
-      } else {
-        uni.setStorageSync("userInfo", res);
-        uni.navigateTo({
-          url: Pages.FirstPage
-        });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      uni.showToast({
-        title: err.toString(),
-        icon: "error"
-      });
-    });
+  updateUserInfoWx({
+    age: userInfo.age,
+    avatar: userInfo.avatar,
+    emergencyContact: userInfo.emergencyContact,
+    emergencyPhone: userInfo.emergencyPhone,
+    gender: userInfo.gender,
+    nickName: userInfo.nickName,
+    phone: userInfo.phone,
+    email: ""
+  });
 }
 </script>
 

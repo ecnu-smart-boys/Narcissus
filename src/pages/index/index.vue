@@ -1,5 +1,4 @@
 <template>
-  <view @tap="testRegister">注册</view>
   <view>
     <view class="card relative">
       <view class="consult-user">
@@ -72,11 +71,6 @@ const dummy = [
 const editPersonalInformation = function () {
   uni.navigateTo({
     url: Pages.EditPersonalInformation
-  });
-};
-const testRegister = function () {
-  uni.navigateTo({
-    url: Pages.Register
   });
 };
 const startConsult = function () {

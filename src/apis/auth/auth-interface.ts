@@ -64,7 +64,7 @@ export interface updateUserInfoWxReq {
   avatar: string;
   email: string;
   gender: number;
-  name: string;
+  nickName: string;
   phone: string;
   emergencyContact: string;
   emergencyPhone: string;
@@ -77,7 +77,7 @@ export interface updateUserInfoWxResp {
   email: string;
   gender: number;
   id: number;
-  name: string;
+  nickName: string;
   phone: string;
   roles: string;
 }
