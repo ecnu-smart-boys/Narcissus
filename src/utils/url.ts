@@ -8,7 +8,8 @@ export const enum Pages {
   ConsultList = "/pages/online-consult/consult-list",
   SelectRecord = "/pages/consult-result/select-record",
   DetailRecord = "/pages/consult-result/detail-record",
-  EditPersonalInformation = "/pages/personal-information/personal-information"
+  EditPersonalInformation = "/pages/personal-information/personal-information",
+  GradeWork = "/pages/online-consult/grade-work"
 }
 
 export const enum STATIC {

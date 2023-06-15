@@ -59,6 +59,12 @@
       "style": {
         "navigationBarTitleText": "个人信息"
       }
+    },
+    {
+      "path": "pages/online-consult/grade-work",
+      "style": {
+        "navigationBarTitleText": "咨询评分"
+      }
     }
   ],
   "globalStyle": {

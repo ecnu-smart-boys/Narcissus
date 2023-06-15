@@ -7,7 +7,7 @@
       <view class="time">00:13:13</view>
     </view>
     <view class="right">
-      <view class="shang" @tap="">
+      <view class="shang" @tap="redirectToEvaluate">
         <image
           class="zixun"
           src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/5ae39900-330c-4676-ac90-6608e4451ea4.png"
@@ -28,6 +28,9 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { Pages } from "@/utils/url";
+const redirectToEvaluate = function () {
+  uni.$emit("tap-event", { data: "open" });
+};
 
 let consultImg = ref(
   "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg"
@@ -37,6 +40,7 @@ const selectRecord = function () {
     url: Pages.SelectRecord
   });
 };
+
 </script>
 
 <style lang="scss" scoped>

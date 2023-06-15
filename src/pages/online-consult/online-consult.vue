@@ -109,7 +109,7 @@
             </view>
           </view>
         </view>
-        <evaluate></evaluate>
+        <evaluate v-if="showEvaluate"></evaluate>
       </view>
     </scroll-view>
     <!--    <van-dialog-->
@@ -133,7 +133,7 @@
 
 <script lang="ts" setup>
 import { onLoad } from "@dcloudio/uni-app";
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted, watchEffect, onUnmounted } from "vue";
 import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
 import tim, { createTextMessage, onMessageReceived } from "@/utils/im";
@@ -166,6 +166,31 @@ onLoad(() => {
   });
   // nextpageData();
 });
+
+let showEvaluate = ref(false);
+
+onMounted(() => {
+  // 监听全局事件
+  watchEffect((onInvalidate) => {
+    // 在 watchEffect 内部添加事件监听
+    uni.$on("tap-event", handleGlobalEvent);
+    // 在组件销毁时取消事件监听
+    onUnmounted(() => {
+      uni.$off("tap-event", handleGlobalEvent);
+    });
+    // 在 watchEffect 内部返回一个清理函数，当组件卸载时会自动调用该函数
+    onInvalidate(() => {
+      uni.$off("tap-event", handleGlobalEvent);
+    });
+  });
+});
+
+function handleGlobalEvent(payload: any) {
+  console.log(payload.data);
+  if (payload.data === "open") {
+    showEvaluate.value = true;
+  }
+}
 
 function timestampToTime(timestamp: any) {
   timestamp = timestamp ? timestamp : null;
