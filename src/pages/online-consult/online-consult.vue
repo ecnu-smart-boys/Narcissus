@@ -42,7 +42,11 @@
                 ></image>
               </view>
               <!--              语音-->
-              <view v-if="item.type === 'TIMSoundElem'" class="message">
+              <view
+                v-if="item.type === 'TIMSoundElem'"
+                class="message"
+                @tap="platVoice(item.payload.url)"
+              >
                 <view
                   :style="{ width: item.payload.second * 10 + 'rpx' }"
                   class="msg-text voice"
@@ -50,7 +54,6 @@
                   <image
                     class="voice-img"
                     src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
-                    @tap="platVoice(item.payload.url)"
                   ></image>
                   {{ item.payload.second }}"
                 </view>
@@ -90,6 +93,7 @@
                 v-if="item.type === 'TIMSoundElem'"
                 class="message"
                 @longpress="showRevokingModal(index)"
+                @tap="platVoice(item.payload.url)"
               >
                 <view
                   :style="{ width: item.payload.second * 10 + 'rpx' }"
@@ -99,13 +103,13 @@
                   <image
                     class="voice-img"
                     src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/234a941d-c1d9-474b-9604-5d33eedc144f.png"
-                    @tap="platVoice(item.payload.url)"
                   ></image>
                 </view>
               </view>
             </view>
           </view>
         </view>
+        <evaluate></evaluate>
       </view>
     </scroll-view>
     <!--    <van-dialog-->
@@ -133,6 +137,7 @@ import { reactive, ref } from "vue";
 import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
 import tim, { createTextMessage, onMessageReceived } from "@/utils/im";
+import Evaluate from "@/components/evaluate/evaluate.vue";
 
 let inputh = ref("60");
 let msgs = reactive<

@@ -116,78 +116,12 @@ function inputs(e: { detail: { value: string } }) {
 }
 
 function sendMessage() {
-  // 在这里调用发送消息的方法，比如：
-  // this.$emit('send-message', this.message)
-  // 或者：
-  // this.$store.dispatch('sendMessage', this.message)
-
-  // 发送完消息后清空输入框
-  // msg.value = "";
   emit("inputs", { msg });
   isemoji.value = false;
   setTimeout(() => {
     msg.value = "";
   }, 0);
 }
-
-// function touchstart() {
-//   console.log("开始");
-//   let i = 0;
-//   timer.value = setInterval(() => {
-//     i++;
-//     console.log(i);
-//     if (i > 10) {
-//       clearInterval(timer);
-//     }
-//   }, 1000);
-//   recorderManager.start({
-//     duration: 6000, // 录音的时长，单位 ms，最大值 600000（10 分钟）
-//     sampleRate: 44100, // 采样率
-//     numberOfChannels: 1, // 录音通道数
-//     encodeBitRate: 192000, // 编码码率
-//     format: "aac"
-//   });
-// }
-//
-// function touchend() {
-//   console.log("结束");
-//   clearInterval(timer);
-//   recorderManager.stop();
-//   recorderManager.onStop(function (res) {
-//     console.log("recorder stop" + JSON.stringify(res));
-//     //self.voicePath = res.tempFilePath;
-//     console.log(res);
-//     console.log(timer);
-//     sendVoiceMessage(res);
-//   });
-// }
-
-// function sendVoiceMessage(res: any) {
-//   const message = tim.createAudioMessage({
-//     to: "1255_1",
-//     conversationType: TIM.TYPES.CONV_C2C,
-//     payload: {
-//       file: {
-//         file: res.tempFilePath, // 使用文件路径
-//         onProgress: (event: any) => {
-//           console.log("上传进度：", event.percent);
-//         }
-//       }
-//     }
-//   });
-//   console.log(message);
-//   // tim.sendMessage(message);
-//   tim
-//     .sendMessage(message)
-//     .then(function (imResponse) {
-//       // 发送成功
-//       console.log("Send success", imResponse);
-//     })
-//     .catch(function (imError) {
-//       // 发送失败
-//       console.warn("Send error", imError);
-//     });
-// }
 
 // 定义长按开始事件处理函数
 function touchstart() {
@@ -219,29 +153,9 @@ function touchend() {
   voice.value = "按住说话";
   recorderManager.onStop(function (res: any) {
     console.log("recorder stop" + JSON.stringify(res));
-    //self.voicePath = res.tempFilePath;
 
     console.log(timer.value);
-    //sendVoiceMessage(res);
-    // const file = {
-    //   tempFilePath: res.tempFilePath,
-    //   second: timer.value
-    // };
-    // console.log(file);
-    // const message = tim.createAudioMessage({
-    //   to: "1255_1",
-    //   conversationType: TIM.TYPES.CONV_C2C,
-    //   payload: {
-    //     // file: {
-    //     //   file: res.tempFilePath,
-    //     //   onProgress: (event: { percent: any }) => {
-    //     //     console.log("上传进度：", event.percent);
-    //     //   }
-    //     // }
-    //     file: res
-    //   }
-    // });
-    // console.log(message);
+
     sendVoiceMessage(res);
   });
 }
@@ -252,12 +166,6 @@ function sendVoiceMessage(res: any) {
     to: "1255_1",
     conversationType: TIM.TYPES.CONV_C2C,
     payload: {
-      // file: {
-      //   file: res.tempFilePath,
-      //   onProgress: (event: { percent: any }) => {
-      //     console.log("上传进度：", event.percent);
-      //   }
-      // }
       file: res
     }
   });
