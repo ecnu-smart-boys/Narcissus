@@ -1,5 +1,5 @@
 <template>
-  <template v-for="item of dummy" :key="item.id">
+  <template v-for="item of consultations" :key="item.id">
     <consult-record
       :avatar="item.avatar"
       :consultant-name="item.consultantName"
@@ -8,7 +8,7 @@
       :score="item.score"
     />
   </template>
-  <view v-if="dummy.length === 0" class="no-info-wrapper">
+  <view v-if="consultations.length === 0" class="no-info-wrapper">
     <img src="/static/message.png" class="icon-no-info" />
     <view>暂无咨询内容</view>
   </view>
@@ -18,43 +18,10 @@
 import ConsultRecord from "@/components/consult-record.vue";
 import { getConsultations } from "@/apis/auth/auth";
 import { ConsultationsInfo } from "@/apis/auth/auth-interface";
-const dummy = [
-  {
-    avatar: "/static/default-avatar.png",
-    consultantName: "咨询师",
-    startTime: "11:15",
-    endTime: "12:01",
-    score: 3,
-    id: 1
-  },
-  {
-    avatar: "/static/default-avatar.png",
-    consultantName: "咨询师",
-    startTime: "11:11",
-    endTime: "12:02",
-    score: 4,
-    id: 2
-  },
-  {
-    avatar: "/static/default-avatar.png",
-    consultantName: "咨询师",
-    startTime: "11:23",
-    endTime: "12:03",
-    score: 5,
-    id: 3
-  }
-];
-let consultations: ConsultationsInfo[] = [
-  {
-    avatar: "",
-    consultantName: "",
-    endTime: "",
-    score: 0,
-    startTime: "",
-    state: 0,
-    id: 0
-  }
-];
+import { ref } from "vue";
+
+let consultations = ref<ConsultationsInfo[]>([]);
+
 getConsultationsInfo();
 function getConsultationsInfo() {
   try {
@@ -62,9 +29,12 @@ function getConsultationsInfo() {
       console.log(res);
       let cnt = 0;
       for (let item of res) {
-        console.log(item);
-        consultations.push({
-          avatar: item.avatar,
+        let tempAvatar = "";
+        if (item.avatar === "") {
+          tempAvatar = "/static/default-avatar.png";
+        }
+        consultations.value.push({
+          avatar: tempAvatar,
           consultantName: item.consultantName,
           endTime: formatTimestamp(item.endTime),
           score: item.score,
@@ -74,6 +44,7 @@ function getConsultationsInfo() {
         });
         cnt++;
       }
+      console.log(consultations);
     });
   } catch (error) {
     console.error("获取咨询师信息失败:", error);
