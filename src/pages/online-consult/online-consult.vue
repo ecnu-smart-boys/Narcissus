@@ -106,11 +106,20 @@
                   ></image>
                 </view>
               </view>
+              <!--              转发记录-->
+              <view
+                v-if="item.type === 'TIMCustomElem'"
+                class="message"
+                @longpress="showRevokingModal(index)"
+              >
+                <share :payload="item.payload"></share>
+              </view>
             </view>
           </view>
         </view>
-        <evaluate v-if="showEvaluate"></evaluate>
       </view>
+      <share></share>
+      <evaluate v-if="showEvaluate"></evaluate>
     </scroll-view>
     <!--    <van-dialog-->
     <!--      v-model="isRevokingModalShow"-->
@@ -133,11 +142,12 @@
 
 <script lang="ts" setup>
 import { onLoad } from "@dcloudio/uni-app";
-import { reactive, ref, onMounted, watchEffect, onUnmounted } from "vue";
+import { onMounted, onUnmounted, reactive, ref, watchEffect } from "vue";
 import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
 import tim, { createTextMessage, onMessageReceived } from "@/utils/im";
 import Evaluate from "@/components/evaluate/evaluate.vue";
+import Share from "@/components/share/share.vue";
 
 let inputh = ref("60");
 let msgs = reactive<
