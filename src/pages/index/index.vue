@@ -2,10 +2,10 @@
   <view>
     <view class="card relative">
       <view class="consult-user">
-        <img class="avatar" :src="userInfo.avatar" />
+        <img class="avatar" :src="loginInfo.avatar" />
         <view class="user-info-wrapper">
-          <view class="user-info-name">{{ userInfo.name }}</view>
-          <view class="user-info-phone">{{ userInfo.phone }}</view>
+          <view class="user-info-name">{{ loginInfo.name }}</view>
+          <view class="user-info-phone">{{ loginInfo.phone }}</view>
         </view>
       </view>
       <view class="consult-wrapper" @tap="startConsult">
@@ -41,20 +41,20 @@ import { getConsultations } from "@/apis/auth/auth";
 import { ConsultationsInfo } from "@/apis/auth/auth-interface";
 import { ref } from "vue";
 
-let userInfo;
+let loginInfo;
 let consultations = ref<ConsultationsInfo[]>([]);
 
-getUserInformation();
+getLoginInformation();
 getConsultationsInfo();
-function getUserInformation() {
+function getLoginInformation() {
   try {
-    userInfo = uni.getStorageSync("userInfo");
-    console.log(userInfo);
-    if (userInfo) {
-      if (userInfo.avatar === "") {
-        userInfo.avatar = "../../static/default-avatar.png";
+    loginInfo = uni.getStorageSync("LoginInfo");
+    console.log(loginInfo);
+    if (loginInfo) {
+      if (loginInfo.avatar === "") {
+        loginInfo.avatar = "../../static/default-avatar.png";
       }
-      console.log(userInfo.avatar);
+      console.log(loginInfo.avatar);
     } else {
       console.log("用户信息不存在");
       return null;
@@ -100,7 +100,7 @@ function formatTimestamp(timestamp: number): string {
   const hours = addLeadingZero(date.getHours());
   const minutes = addLeadingZero(date.getMinutes());
   const seconds = addLeadingZero(date.getSeconds());
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 function addLeadingZero(value: number): string {
   return value < 10 ? `0${value}` : `${value}`;

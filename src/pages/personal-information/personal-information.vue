@@ -105,7 +105,7 @@
 
 <script setup lang="ts">
 import { reactive } from "vue";
-import { updateUserInfoWx } from "@/apis/auth/auth";
+import {getUserInfoWx, updateUserInfoWx} from "@/apis/auth/auth";
 
 let userInfo = reactive({
   age: 0,
@@ -135,6 +135,9 @@ const handleGenderChange = function (e: any) {
 
 function getUserInformation() {
   try {
+    getUserInfoWx({}).then((res) => {
+      uni.setStorageSync("userInfo", res);
+    });
     const resData = uni.getStorageSync("userInfo");
     console.log(resData);
     if (resData) {

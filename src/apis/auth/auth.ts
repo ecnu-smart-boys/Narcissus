@@ -3,6 +3,8 @@ import {
   RegisterWxReq,
   LoginWxResp,
   RegisterWxResp,
+  GetUserInfoWxReq,
+  GetUserInfoWxResp,
   UpdateUserInfoWxReq,
   UpdateUserInfoWxResp,
   ConsultationsWxResp,
@@ -24,6 +26,19 @@ export function registerWx(req: RegisterWxReq): Promise<RegisterWxResp> {
     url: "/auth/register",
     data: req,
     method: "POST"
+  });
+}
+
+export function getUserInfoWx(
+  req: GetUserInfoWxReq
+): Promise<GetUserInfoWxResp> {
+  return request({
+    url: "/user/info",
+    data: req,
+    method: "GET",
+    header: {
+      "x-freud": uni.getStorageSync("accessToken")
+    }
   });
 }
 

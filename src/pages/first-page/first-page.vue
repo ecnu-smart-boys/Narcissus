@@ -23,7 +23,7 @@ wxLogin()
     });
   })
   .then((res) => {
-    uni.setStorageSync("userInfo", res);
+    uni.setStorageSync("LoginInfo", res);
     loginIM(userID, userSig).then(() => {
       console.log("登录成功");
     });

@@ -152,7 +152,6 @@ const submit = function () {
       if (res === null) {
         console.log("注册失败");
       } else {
-        uni.setStorageSync("userInfo", res);
         uni.navigateTo({
           url: Pages.FirstPage
         });

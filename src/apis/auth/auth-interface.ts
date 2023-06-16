@@ -13,25 +13,8 @@ export interface LoginWxResp {
   id: number;
   name: string;
   phone: string;
-  roles: string;
+  role: string;
   username: string;
-  emergencyContact: string;
-  emergencyPhone: string;
-  totalTime: number;
-  idNumber: string;
-  department: string;
-  title: string;
-  qualification: string;
-  qualificationCode: string;
-  arrangement: string;
-  consultTimes: string;
-  consultantList: [
-    {
-      id: string;
-      name: string;
-      avatar: string;
-    }
-  ];
 }
 
 export interface RegisterWxReq {
@@ -59,6 +42,25 @@ export interface RegisterWxResp {
   roles: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface GetUserInfoWxReq {}
+
+export interface GetUserInfoWxResp {
+  age: number;
+  avatar: string;
+  disabled: boolean;
+  email: string;
+  gender: number;
+  id: number;
+  name: string;
+  phone: string;
+  role: string;
+  username: string;
+  emergencyContact: string;
+  emergencyPhone: string;
+}
+
+
 export interface UpdateUserInfoWxReq {
   age: number;
   avatar: string;
@@ -70,17 +72,9 @@ export interface UpdateUserInfoWxReq {
   emergencyPhone: string;
 }
 
-export interface UpdateUserInfoWxResp {
-  age: number;
-  avatar: string;
-  disabled: boolean;
-  email: string;
-  gender: number;
-  id: number;
-  nickName: string;
-  phone: string;
-  roles: string;
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface UpdateUserInfoWxResp {}
+
 export interface ConsultationsInfo {
   avatar: string;
   consultantName: string;
