@@ -17,7 +17,7 @@
               <view class="record-name">咨询师：{{ item.name }}</view>
               <view class="last-record-time">{{ item.time }}</view>
               <view class="record-checkbox">
-                <checkbox :value="item.id" :checked="item.checked" />
+                <checkbox :checked="item.checked" :value="item.id" />
               </view>
             </view>
           </label>
@@ -27,11 +27,12 @@
   </view>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { Pages } from "@/utils/url";
 import { reactive } from "vue";
+
 const onlineConsult = function () {
-  uni.navigateTo({
+  uni.switchTab({
     url: Pages.OnlineConsult
   });
 };
@@ -63,15 +64,18 @@ let record = reactive<
 .relative {
   position: relative;
 }
+
 .list-title {
   display: flex;
   margin: 20rpx auto;
+
   .title-name {
     font-size: 40rpx;
     font-weight: bold;
     text-align: center;
     flex: 1;
   }
+
   .deliver-record {
     font-size: small;
     text-align: right;
@@ -87,21 +91,26 @@ let record = reactive<
   background-color: white;
   box-shadow: 0 0 30px rgba(197, 197, 197, 0.5);
 }
+
 .record-info {
   display: flex;
   flex-direction: column;
   justify-content: center;
+
   .record-name {
     font-size: medium;
     padding: 10rpx;
   }
+
   .last-record-time {
     font-size: medium;
     padding: 10rpx;
   }
+
   .record-checkbox {
     padding: 40rpx;
   }
+
   view {
     color: grey;
   }

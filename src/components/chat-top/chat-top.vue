@@ -41,7 +41,6 @@ const selectRecord = function () {
     url: Pages.SelectRecord
   });
 };
-
 </script>
 
 <style lang="scss" scoped>
