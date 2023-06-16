@@ -5,7 +5,9 @@ import {
   RegisterWxResp,
   UpdateUserInfoWxReq,
   UpdateUserInfoWxResp,
-  ConsultationsWxResp
+  ConsultationsWxResp,
+  VisitorCommentWxReq,
+  VisitorCommentWxResp
 } from "@/apis/auth/auth-interface";
 import { request } from "@/apis/schema";
 
@@ -42,6 +44,19 @@ export function getConsultations(): Promise<ConsultationsWxResp[]> {
   return request({
     url: "/conversation/visitor/consultations",
     method: "GET",
+    header: {
+      "x-freud": uni.getStorageSync("accessToken")
+    }
+  });
+}
+
+export function visitorComment(
+  req: VisitorCommentWxReq
+): Promise<VisitorCommentWxResp> {
+  return request({
+    url: "/conversation/visitorComment",
+    data: req,
+    method: "POST",
     header: {
       "x-freud": uni.getStorageSync("accessToken")
     }

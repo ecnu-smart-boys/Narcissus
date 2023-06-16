@@ -99,3 +99,12 @@ export interface ConsultationsWxResp {
   startTime: number;
   state: number;
 }
+
+export interface VisitorCommentWxReq {
+  conversationId: string;
+  score: number;
+  text: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface VisitorCommentWxResp {}

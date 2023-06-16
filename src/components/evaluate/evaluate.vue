@@ -42,16 +42,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-
+import { ref, provide } from "vue";
+import { visitorComment } from "@/apis/auth/auth";
 let time = ref("00:00:00");
 let star = ref(1);
 let comment = ref("");
-let timesend = ref(21253726267);
+let timeSend = ref(21253726267);
 
 function setStar(num: any) {
   star.value = num;
 }
+const submit = function () {
+  console.log(star.value);
+  visitorComment({
+    conversationId: "C2C1255_1",
+    score: star.value,
+    text: comment.value
+  }).then((res) => {
+    console.log(res);
+  });
+};
 
 function timestampToTime(timestamp: any) {
   timestamp = timestamp ? timestamp : null;

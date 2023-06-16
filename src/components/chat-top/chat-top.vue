@@ -28,6 +28,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { Pages } from "@/utils/url";
+
 const redirectToEvaluate = function () {
   uni.$emit("tap-event", { data: "open" });
 };

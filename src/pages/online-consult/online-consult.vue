@@ -167,8 +167,8 @@ onLoad(() => {
   // nextpageData();
 });
 
+//显示评分
 let showEvaluate = ref(false);
-
 onMounted(() => {
   // 监听全局事件
   watchEffect((onInvalidate) => {
@@ -286,7 +286,6 @@ function showRevokingModal(index: any) {
 //获取聊天数据
 async function getMsg() {
   let data = await tim.getMessageList({ conversationID: "C2C1255_1" });
-
   let msg1 = data.data.messageList;
   nextReqMessageID.value = data.data.nextReqMessageID; // 用于续拉，分页续拉时需传入该字段。
   isCompleted.value = data.data.isCompleted; // 表示是否已经拉完所有消息。isCompleted 为 true 时，nextReqMessageID 为 ""。
@@ -300,7 +299,7 @@ async function getMsg() {
     msgs.push(msg1[i]);
   }
   console.log(msgs);
-  clearInterval(loading.value);
+  clearInterval(loading.valueOf());
   isloading.value = true;
 }
 
