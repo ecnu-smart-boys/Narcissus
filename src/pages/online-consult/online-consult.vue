@@ -24,10 +24,7 @@
               <text>对方已撤回一条消息</text>
             </view>
             <view v-else class="msg-m msg-left">
-              <image
-                class="user-img"
-                src="https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg"
-              ></image>
+              <image :src="yourImg" class="user-img"></image>
               <!--                文字-->
               <view v-if="item.type === 'TIMTextElem'" class="message">
                 <view class="msg-text">{{ item.payload.text }}</view>
@@ -65,10 +62,7 @@
               <text>你已撤回一条消息</text>
             </view>
             <view v-else class="msg-m msg-right">
-              <image
-                class="user-img"
-                src="https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/a3b7b174-b05b-426c-b492-406cdfa93388.jpg"
-              ></image>
+              <image :src="myImg" class="user-img"></image>
               <view
                 v-if="item.type === 'TIMTextElem'"
                 class="message"
@@ -163,12 +157,17 @@ let nextReqMessageID = ref(0);
 let isCompleted = ref(false);
 let isloading = ref(true);
 let loading = "";
+let myImg = ref("../../static/default-avatar.png");
+let yourImg = ref("../../static/default-avatar.png");
 // let isRevokingModalShow = ref(false); // 撤回弹窗是否显示
 // let revokeMessageIndex = ref(null); // 需要撤回的消息在消息列表中的索引
 let imgMsg: string[] = [];
 onLoad(() => {
   // getMsg();
-
+  let loginInfo = uni.getStorageSync("LoginInfo");
+  console.log(loginInfo);
+  myImg.value = loginInfo.avatar;
+  console.log(myImg);
   getMsg();
   //console.log(msgs);
   onMessageReceived((data) => {
