@@ -1,57 +1,54 @@
 <template>
   <view class="list-title">选择咨询师</view>
-  <view class="card relative">
+  <view
+    v-for="item in availableConsultant"
+    :key="item.consultantId"
+    class="card relative"
+  >
     <view class="consult-info">
       <view class="consult-info-left">
-        <img class="consult-avatar" src="/static/default-avatar.png" />
+        <image class="consult-avatar" :src="item.avatar" />
       </view>
       <view class="consult-info-right">
         <view style="display: flex; align-items: center">
-          <view class="consult-name">咨询师</view>
-          <view class="bread">咨询过</view>
+          <view class="consult-name">{{ item.name }}</view>
+          <view class="bread">{{
+            item.hasConsulted == true ? "咨询过" : "未咨询"
+          }}</view>
         </view>
         <view>综合评价</view>
-        <StarsRating :stars-index="4" :is-edit-stars="false" />
+        <StarsRating :stars-index="item.avgComment" :is-edit-stars="false" />
       </view>
     </view>
-    <view class="status status-color">空闲</view>
+    <view
+      :class="item.state == 1 ? 'status-color-green' : 'status-color-red'"
+      >{{ item.state == 1 ? "空闲" : "忙碌" }}</view
+    >
   </view>
-  <view class="card relative">
-    <view class="consult-info">
-      <view class="consult-info-left">
-        <img class="consult-avatar" src="/static/default-avatar.png" />
-      </view>
-      <view class="consult-info-right">
-        <view style="display: flex; align-items: center">
-          <view class="consult-name">咨询师</view>
-          <view class="bread">咨询过</view>
-        </view>
-        <view>综合评价</view>
-        <StarsRating :stars-index="4" :is-edit-stars="false" />
-      </view>
-    </view>
-    <view class="status status-color">空闲</view>
-  </view>
-  <view class="card relative">
-    <view class="consult-info">
-      <view class="consult-info-left">
-        <img class="consult-avatar" src="/static/default-avatar.png" />
-      </view>
-      <view class="consult-info-right">
-        <view style="display: flex; align-items: center">
-          <view class="consult-name">咨询师</view>
-          <view class="bread">咨询过</view>
-        </view>
-        <view>综合评价</view>
-        <StarsRating :stars-index="4" :is-edit-stars="false" />
-      </view>
-    </view>
-    <view class="status status-color">空闲</view>
+  <view v-if="availableConsultant.length == 0" class="no-info-wrapper">
+    <img src="/static/message.png" class="icon-no-info" />
+    <view>暂无在线咨询师</view>
   </view>
 </template>
 
 <script setup lang="ts">
 import StarsRating from "@/components/stars-rating.vue";
+import { onLoad } from "@dcloudio/uni-app";
+import { reactive } from "vue";
+import { getAvailableConsultants } from "@/apis/conversation/conversation";
+import { AvailableConsultant } from "@/apis/conversation/conversation-interface";
+
+const availableConsultant = reactive<AvailableConsultant[]>([]);
+onLoad(async () => {
+  const data = await getAvailableConsultants();
+  data.forEach((i) => {
+    if (i.avatar == "") {
+      i.avatar = "/static/default-avatar.png";
+    }
+  });
+  availableConsultant.splice(0);
+  availableConsultant.push(...data);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -105,7 +102,8 @@ import StarsRating from "@/components/stars-rating.vue";
     }
   }
 }
-.status {
+
+.status-color-green {
   position: absolute;
   top: 0;
   right: 0;
@@ -114,11 +112,36 @@ import StarsRating from "@/components/stars-rating.vue";
   border-bottom-left-radius: 20rpx;
   border-top-right-radius: 20rpx;
   padding: 20rpx;
+  background-color: #3dd58c;
 }
 
-.status-color {
-  background-color: #3dd58c;
-  //background-color: #da2f57;
+.status-color-red {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: white;
+
+  border-bottom-left-radius: 20rpx;
+  border-top-right-radius: 20rpx;
+  padding: 20rpx;
+  background-color: #da2f57;
+}
+
+.no-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  .icon-no-info {
+    width: 30vw;
+    height: 30vw;
+  }
+
+  view {
+    color: #999999;
+  }
 }
 </style>
 <style>
