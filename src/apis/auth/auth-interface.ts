@@ -60,7 +60,6 @@ export interface GetUserInfoWxResp {
   emergencyPhone: string;
 }
 
-
 export interface UpdateUserInfoWxReq {
   age: number;
   avatar: string;
@@ -75,17 +74,8 @@ export interface UpdateUserInfoWxReq {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface UpdateUserInfoWxResp {}
 
-export interface ConsultationsInfo {
-  avatar: string;
-  consultantName: string;
-  endTime: string;
-  score: number;
-  startTime: string;
-  state: number;
-  id: number;
-}
-
 export interface ConsultationsWxResp {
+  conversationId: string;
   avatar: string;
   consultantName: string;
   endTime: number;

@@ -1,7 +1,7 @@
 <template>
   <view class="list-title">
     <view class="title-name">选择咨询记录</view>
-    <view class="deliver-record" @tap="onlineConsult">发送</view>
+    <view class="deliver-record" @tap="handleSend">发送</view>
   </view>
 
   <view class="uni-list">
@@ -30,34 +30,35 @@
 <script lang="ts" setup>
 import { Pages } from "@/utils/url";
 import { reactive } from "vue";
+import { onLoad } from "@dcloudio/uni-app";
+import { getConsultations } from "@/apis/auth/auth";
+import { parseTimestamp } from "@/utils/time";
 
-const onlineConsult = function () {
-  uni.switchTab({
-    url: Pages.OnlineConsult
-  });
-};
-
-let record = reactive<
+const record = reactive<
   {
-    id: string;
+    conversationId: string;
     time: string;
     name: string;
     checked: boolean;
   }[]
->([
-  {
-    id: "1",
-    time: "2023/05/11 22:56",
-    name: "xxx",
-    checked: false
-  },
-  {
-    id: "2",
-    time: "2023/05/12 10:08",
-    name: "yyy",
-    checked: false
-  }
-]);
+>([]);
+onLoad(async () => {
+  const data = await getConsultations();
+  record.splice(0);
+  data.forEach((item) => {
+    record.push({
+      conversationId: item.conversationId,
+      time: parseTimestamp(item.startTime),
+      name: item.consultantName,
+      checked: false
+    });
+  });
+});
+const handleSend = async () => {
+  uni.switchTab({
+    url: Pages.OnlineConsult
+  });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -96,6 +97,7 @@ let record = reactive<
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 100%;
 
   .record-name {
     font-size: medium;
@@ -108,7 +110,7 @@ let record = reactive<
   }
 
   .record-checkbox {
-    padding: 40rpx;
+    padding: 40rpx 20rpx;
   }
 
   view {

@@ -17,12 +17,12 @@
         @tap="editPersonalInformation"
       />
     </view>
-    <template v-for="item of consultations" :key="item.id">
+    <template v-for="item of consultations" :key="item.conversationId">
       <consult-record
         :avatar="item.avatar"
+        :time="parseTimestamp(item.startTime)"
         :consultant-name="item.consultantName"
-        :start-time="item.startTime"
-        :end-time="item.endTime"
+        :duration="formatTime(item.endTime - item.startTime)"
         :score="item.score"
       />
     </template>
@@ -38,23 +38,26 @@
 import ConsultRecord from "@/components/consult-record.vue";
 import { Pages } from "@/utils/url";
 import { getConsultations } from "@/apis/auth/auth";
-import { ConsultationsInfo } from "@/apis/auth/auth-interface";
-import { ref } from "vue";
+import { ConsultationsWxResp } from "@/apis/auth/auth-interface";
+import { reactive, ref } from "vue";
+import { formatTime, parseTimestamp } from "@/utils/time";
+import { onLoad } from "@dcloudio/uni-app";
 
-let loginInfo;
-let consultations = ref<ConsultationsInfo[]>([]);
+let loginInfo = ref();
+let consultations = reactive<ConsultationsWxResp[]>([]);
 
-getLoginInformation();
-getConsultationsInfo();
+onLoad(async () => {
+  getLoginInformation();
+  await getConsultationsInfo();
+});
+
 function getLoginInformation() {
   try {
-    loginInfo = uni.getStorageSync("LoginInfo");
-    console.log(loginInfo);
-    if (loginInfo) {
-      if (loginInfo.avatar === "") {
-        loginInfo.avatar = "../../static/default-avatar.png";
+    loginInfo.value = uni.getStorageSync("LoginInfo");
+    if (loginInfo.value) {
+      if (loginInfo.value.avatar === "") {
+        loginInfo.value.avatar = "/static/default-avatar.png";
       }
-      console.log(loginInfo.avatar);
     } else {
       console.log("用户信息不存在");
       return null;
@@ -64,46 +67,15 @@ function getLoginInformation() {
     return null;
   }
 }
-function getConsultationsInfo() {
-  try {
-    getConsultations().then((res) => {
-      console.log(res);
-      let cnt = 0;
-      for (let item of res) {
-        let tempAvatar = "";
-        if (item.avatar === "") {
-          tempAvatar = "/static/default-avatar.png";
-        }
-        consultations.value.push({
-          avatar: tempAvatar,
-          consultantName: item.consultantName,
-          endTime: formatTimestamp(item.endTime),
-          score: item.score,
-          startTime: formatTimestamp(item.startTime),
-          state: item.state,
-          id: cnt
-        });
-        cnt++;
-      }
-      console.log(consultations);
-    });
-  } catch (error) {
-    console.error("获取咨询师信息失败:", error);
-    return null;
-  }
-}
-function formatTimestamp(timestamp: number): string {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = addLeadingZero(date.getMonth() + 1);
-  const day = addLeadingZero(date.getDate());
-  const hours = addLeadingZero(date.getHours());
-  const minutes = addLeadingZero(date.getMinutes());
-  const seconds = addLeadingZero(date.getSeconds());
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
-function addLeadingZero(value: number): string {
-  return value < 10 ? `0${value}` : `${value}`;
+async function getConsultationsInfo() {
+  const data = await getConsultations();
+  data.forEach((i) => {
+    if (i.avatar == "") {
+      i.avatar = "/static/default-avatar.png";
+    }
+  });
+  consultations.splice(0);
+  consultations.push(...data);
 }
 
 const editPersonalInformation = function () {

@@ -10,12 +10,8 @@
         </view>
         <view class="consult-info-right">
           <view class="time-info">
-            <view>开始时间</view>
-            <view class="consult-info-duration">{{ props.startTime }}</view>
-          </view>
-          <view class="time-info">
-            <view>结束时间</view>
-            <view class="consult-info-duration">{{ props.endTime }}</view>
+            <view>咨询用时</view>
+            <view class="consult-info-duration">{{ props.duration }}</view>
           </view>
           <view>我的评价</view>
           <StarsRating :stars-index="props.score" :is-edit-stars="false" />
@@ -35,9 +31,9 @@ const detailRecord = function () {
 };
 let props = defineProps<{
   avatar: string;
+  time: string;
   consultantName: string;
-  startTime: string;
-  endTime: string;
+  duration: string;
   score: number;
 }>();
 </script>

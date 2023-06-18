@@ -2,9 +2,9 @@
   <template v-for="item of consultations" :key="item.id">
     <consult-record
       :avatar="item.avatar"
+      :time="parseTimestamp(item.startTime)"
       :consultant-name="item.consultantName"
-      :start-time="item.startTime"
-      :end-time="item.endTime"
+      :duration="formatTime(item.endTime - item.startTime)"
       :score="item.score"
     />
   </template>
@@ -17,52 +17,25 @@
 <script setup lang="ts">
 import ConsultRecord from "@/components/consult-record.vue";
 import { getConsultations } from "@/apis/auth/auth";
-import { ConsultationsInfo } from "@/apis/auth/auth-interface";
-import { ref } from "vue";
+import { ConsultationsWxResp } from "@/apis/auth/auth-interface";
+import { reactive } from "vue";
+import { onLoad } from "@dcloudio/uni-app";
+import { formatTime, parseTimestamp } from "@/utils/time";
 
-let consultations = ref<ConsultationsInfo[]>([]);
+let consultations = reactive<ConsultationsWxResp[]>([]);
 
-getConsultationsInfo();
-function getConsultationsInfo() {
-  try {
-    getConsultations().then((res) => {
-      console.log(res);
-      let cnt = 0;
-      for (let item of res) {
-        let tempAvatar = "";
-        if (item.avatar === "") {
-          tempAvatar = "/static/default-avatar.png";
-        }
-        consultations.value.push({
-          avatar: tempAvatar,
-          consultantName: item.consultantName,
-          endTime: formatTimestamp(item.endTime),
-          score: item.score,
-          startTime: formatTimestamp(item.startTime),
-          state: item.state,
-          id: cnt
-        });
-        cnt++;
-      }
-      console.log(consultations);
-    });
-  } catch (error) {
-    console.error("获取咨询师信息失败:", error);
-    return null;
-  }
-}
-function formatTimestamp(timestamp: number): string {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = addLeadingZero(date.getMonth() + 1);
-  const day = addLeadingZero(date.getDate());
-  const hours = addLeadingZero(date.getHours());
-  const minutes = addLeadingZero(date.getMinutes());
-  const seconds = addLeadingZero(date.getSeconds());
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
-function addLeadingZero(value: number): string {
-  return value < 10 ? `0${value}` : `${value}`;
+onLoad(async () => {
+  await getConsultationsInfo();
+});
+async function getConsultationsInfo() {
+  const data = await getConsultations();
+  data.forEach((i) => {
+    if (i.avatar == "") {
+      i.avatar = "/static/default-avatar.png";
+    }
+  });
+  consultations.splice(0);
+  consultations.push(...data);
 }
 </script>
 
