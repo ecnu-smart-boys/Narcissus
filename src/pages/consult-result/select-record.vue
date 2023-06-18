@@ -1,23 +1,22 @@
 <template>
   <view class="list-title">
     <view class="title-name">选择咨询记录</view>
-    <view class="deliver-record" @tap="handleSend">发送</view>
+    <button class="deliver-record" @tap="handleSend">发送</button>
   </view>
 
   <view class="uni-list">
     <view class="card relative">
       <view class="record-info">
-        <checkbox-group>
-          <label
-            v-for="item in record"
-            :key="item.id"
-            class="uni-list-cell uni-list-cell-pd"
-          >
+        <checkbox-group @change="checkboxChange">
+          <label v-for="item in record" :key="item.conversationId">
             <view style="display: flex; align-items: center">
               <view class="record-name">咨询师：{{ item.name }}</view>
               <view class="last-record-time">{{ item.time }}</view>
               <view class="record-checkbox">
-                <checkbox :checked="item.checked" :value="item.id" />
+                <checkbox
+                  :checked="item.checked"
+                  :value="item.conversationId"
+                />
               </view>
             </view>
           </label>
@@ -33,6 +32,11 @@ import { reactive } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import { getConsultations } from "@/apis/auth/auth";
 import { parseTimestamp } from "@/utils/time";
+import { getVisitorConsultationMsg } from "@/apis/conversation/conversation";
+import tim from "@/utils/im";
+import TIM from "tim-js-sdk";
+
+let toId = "";
 
 const record = reactive<
   {
@@ -42,7 +46,9 @@ const record = reactive<
     checked: boolean;
   }[]
 >([]);
-onLoad(async () => {
+onLoad(async (options: any) => {
+  // 从上个页面获得toId
+  toId = options.toId;
   const data = await getConsultations();
   record.splice(0);
   data.forEach((item) => {
@@ -54,8 +60,39 @@ onLoad(async () => {
     });
   });
 });
+const checkboxChange = (e: any) => {
+  const values = e.detail.value;
+  record.forEach((item) => {
+    item.checked = !!values.includes(item.conversationId);
+  });
+};
 const handleSend = async () => {
-  uni.switchTab({
+  const conversationIds = record
+    .filter((i) => i.checked)
+    .map((i) => getVisitorConsultationMsg(i.conversationId));
+  const data = await Promise.all(conversationIds);
+  console.log(toId);
+  const jsonMessages = data
+    .map((i) => {
+      return JSON.stringify({
+        consultationInfo: i.consultationInfo,
+        messageInfo: i.consultation
+      });
+    })
+    .map((i) => {
+      return tim.createCustomMessage({
+        to: toId,
+        conversationType: TIM.TYPES.CONV_C2C,
+        payload: {
+          data: i,
+          description: "",
+          extension: ""
+        }
+      });
+    })
+    .map((i) => tim.sendMessage(i));
+  await Promise.all(jsonMessages);
+  await uni.switchTab({
     url: Pages.OnlineConsult
   });
 };
@@ -81,6 +118,8 @@ const handleSend = async () => {
     font-size: small;
     text-align: right;
     border-radius: 10rpx;
+    color: white;
+    margin-right: 10px;
     background-color: rgb(50, 200, 210);
   }
 }
