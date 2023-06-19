@@ -92,10 +92,11 @@
 
 <script setup lang="ts">
 import { RegisterWxReq } from "@/apis/auth/auth-interface";
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 import { wxRegister } from "@/apis/weixin/auth";
 import { registerWx } from "@/apis/auth/auth";
 import { Pages } from "@/utils/url";
+import { saveAvatar } from "@/apis/cos/cos";
 
 const registerReq: RegisterWxReq = reactive({
   age: 0,
@@ -142,9 +143,11 @@ const submit = () => {
     });
 };
 
-const onChooseAvatar = (e: any) => {
-  // TODO COS
-  registerReq.avatar = e.detail.avatarUrl;
+const onChooseAvatar = async (e: any) => {
+  const cosUrl: any = await saveAvatar({
+    filePath: e.detail.avatarUrl
+  });
+  registerReq.avatar = JSON.parse(cosUrl).message;
 };
 
 const getCaptcha = () => {

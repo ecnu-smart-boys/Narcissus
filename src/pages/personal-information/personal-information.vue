@@ -98,6 +98,7 @@ import { ref } from "vue";
 import { getUserInfoWx, updateUserInfoWx } from "@/apis/auth/auth";
 import { Pages } from "@/utils/url";
 import { onLoad } from "@dcloudio/uni-app";
+import { saveAvatar } from "@/apis/cos/cos";
 
 let userInfo = ref({
   age: 0,
@@ -139,8 +140,11 @@ const submit = async () => {
   }
 };
 
-const onChooseAvatar = function (e: any) {
-  userInfo.value.avatar = e.detail.avatarUrl;
+const onChooseAvatar = async (e: any) => {
+  const cosUrl: any = await saveAvatar({
+    filePath: e.detail.avatarUrl
+  });
+  userInfo.value.avatar = JSON.parse(cosUrl).message;
 };
 
 const handleGenderChange = function (e: any) {
