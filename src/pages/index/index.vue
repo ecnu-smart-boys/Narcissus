@@ -2,10 +2,13 @@
   <view>
     <view class="card relative">
       <view class="consult-user">
-        <img class="avatar" :src="userInfo.avatar" />
+        <img
+          class="avatar"
+          :src="userInfo?.avatar ?? '/static/default-avatar.png'"
+        />
         <view class="user-info-wrapper">
-          <view class="user-info-name">{{ userInfo.name }}</view>
-          <view class="user-info-phone">{{ userInfo.phone }}</view>
+          <view class="user-info-name">{{ userInfo?.name }}</view>
+          <view class="user-info-phone">{{ userInfo?.phone }}</view>
         </view>
       </view>
       <view class="consult-wrapper" @tap="startConsult">

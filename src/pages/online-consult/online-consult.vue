@@ -142,37 +142,53 @@ import ChatTop from "@/components/chat-top/chat-top.vue";
 import tim, { createTextMessage, onMessageReceived } from "@/utils/im";
 import Evaluate from "@/components/evaluate/evaluate.vue";
 import Share from "@/components/share/share.vue";
+import { Message } from "tim-js-sdk";
+import { startConversation } from "@/apis/conversation/conversation";
 
 let inputh = ref("60");
-let msgs = reactive<
-  {
-    flow: string;
-    payload: any;
-    types: string;
-    time: Date;
-  }[]
->([]);
+let msgs = reactive<Message[]>([]);
 let animationData = ref({});
-let nextReqMessageID = ref(0);
+let nextReqMessageID = ref("");
 let isCompleted = ref(false);
 let isloading = ref(true);
-let loading = "";
-let myImg = ref("../../static/default-avatar.png");
-let yourImg = ref("../../static/default-avatar.png");
+let loading: any = null;
+let myImg = ref("/static/default-avatar.png");
+let yourImg = ref("/static/default-avatar.png");
+
+let toId = "";
+// 0 表示正常聊天页面，1 表示排排队，2 表示错误状态
+let currentState = ref(2);
+
 // let isRevokingModalShow = ref(false); // 撤回弹窗是否显示
 // let revokeMessageIndex = ref(null); // 需要撤回的消息在消息列表中的索引
 let imgMsg: string[] = [];
-onLoad(() => {
-  // getMsg();
+onLoad(async (options: any) => {
+  toId = options.toId;
   let userInfo = uni.getStorageSync("UserInfo");
   myImg.value = userInfo.avatar;
-  console.log(myImg);
-  getMsg();
-  //console.log(msgs);
+  if (toId) {
+    try {
+      const data = await startConversation({
+        toId: toId
+      });
+      if (data.conversationId == "-1") {
+        // 排队
+        currentState.value = 1;
+      } else {
+        currentState.value = 0;
+      }
+    } catch (e) {
+      currentState.value = 2;
+    }
+  } else {
+    currentState.value = 2;
+  }
+
+  await firstGetMsg();
+  // 创立监听事件
   onMessageReceived((data) => {
     msgs.push(...data);
   });
-  // nextpageData();
 });
 
 //显示评分
@@ -220,37 +236,22 @@ function timestampToTime(timestamp: any) {
 
 function nextpageData() {
   isloading.value = false;
-  var animation = uni.createAnimation({
+  const animation = uni.createAnimation({
     duration: 1000,
     timingFunction: "step-start"
   });
-
-  // animation.scale(2, 2).rotate(45).step();
-  //
-  // animationData.value = animation.export();
   let i = 1;
   if (!isCompleted.value) {
-    console.log("wowowo");
-    getMsg1();
+    getNewMsg();
   }
-  loading = setInterval(
-    function () {
-      animation.rotate(i * 30).step();
-      animationData.value = animation.export();
-      i++;
-      if (i > 40) {
-        isloading.value = true;
-      }
-    }.bind(this),
-    100
-  );
-  // setTimeout(
-  //   function () {
-  //     animation.translate(30).step();
-  //     animationData.value = animation.export();
-  //   }.bind(this),
-  //   1000
-  // );
+  loading = setInterval(() => {
+    animation.rotate(i * 30).step();
+    animationData.value = animation.export();
+    i++;
+    if (i > 40) {
+      isloading.value = true;
+    }
+  }, 100);
 }
 
 // 撤回消息
@@ -259,7 +260,7 @@ function revokeMessage(index: any) {
   tim
     .revokeMessage(message)
     .then(() => {
-      message.isRevoking = true;
+      message.isRevoked = true;
       // isRevokingModalShow.value = false;
     })
     .catch(() => {
@@ -268,7 +269,6 @@ function revokeMessage(index: any) {
         icon: "error", //将值设置为 success 或者 ''
         duration: 2000 //持续时间为 2秒
       });
-      console.log("撤回失败");
     });
 }
 
@@ -291,50 +291,41 @@ function showRevokingModal(index: any) {
   });
 }
 
-//获取聊天数据
-async function getMsg() {
+// 首次获取聊天数据
+async function firstGetMsg() {
   let data = await tim.getMessageList({ conversationID: "C2C1255_1" });
   let msg1 = data.data.messageList;
   nextReqMessageID.value = data.data.nextReqMessageID; // 用于续拉，分页续拉时需传入该字段。
   isCompleted.value = data.data.isCompleted; // 表示是否已经拉完所有消息。isCompleted 为 true 时，nextReqMessageID 为 ""。
-  console.log(msg1);
   for (let i = 0; i < msg1.length; i++) {
     if (msg1[i].type == "TIMImageElem") {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       imgMsg.push(msg1[i].payload.imageInfoArray[0].url);
     }
     msgs.push(msg1[i]);
   }
-  console.log(msgs);
-  clearInterval(loading.valueOf());
+  clearInterval(loading);
   isloading.value = true;
 }
 
-async function getMsg1() {
-  console.log(isCompleted);
+/// 获取新的聊天数据
+async function getNewMsg() {
   if (!isCompleted.value) {
-    let nextpage = nextReqMessageID.value;
     let data = await tim.getMessageList({
       conversationID: "C2C1255_1",
-      nextReqMessageID: nextpage
+      nextReqMessageID: nextReqMessageID.value
     });
 
     let msg1 = data.data.messageList;
     nextReqMessageID.value = data.data.nextReqMessageID; // 用于续拉，分页续拉时需传入该字段。
     isCompleted.value = data.data.isCompleted; // 表示是否已经拉完所有消息。isCompleted 为 true 时，nextReqMessageID 为 ""。
-    console.log(msg1);
     msgs.unshift(...msg1);
-    imgMsg.length = 0;
+    imgMsg.splice(0);
     for (let i = 0; i < msgs.length; i++) {
       if (msgs[i].type == "TIMImageElem") {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         imgMsg.push(msgs[i].payload.imageInfoArray[0].url);
       }
     }
-    console.log(msgs);
-    clearInterval(loading.value);
+    clearInterval(loading);
     isloading.value = true;
   }
 }
@@ -344,14 +335,14 @@ function previewImg(e: string) {
   for (let i = 0; i < imgMsg.length; i++) {
     if (imgMsg[i] == e) {
       index = i;
-      console.log(imgMsg[i]);
+      break;
     }
   }
   uni.previewImage({
     current: index,
     urls: imgMsg,
     longPressActions: {
-      itemList: ["发送给朋友", "保存图片", "收藏"],
+      itemList: ["保存图片"],
       success: function (data) {
         console.log(
           "选中了第" +
@@ -372,27 +363,13 @@ function previewImg(e: string) {
 function platVoice(e: string) {
   const innerAudioContext = uni.createInnerAudioContext();
   innerAudioContext.autoplay = true;
-  //console.log(e);
   innerAudioContext.src = e;
   innerAudioContext.onPlay(() => {
     console.log("开始播放");
   });
-  // innerAudioContext.onError((res) => {
-  //   console.log(res.errMsg);
-  //   console.log(res.errCode);
-  // });
 }
 
 function inputs(e: any) {
-  let data = {
-    flow: "out",
-    payload: {
-      text: e.msg._value
-    },
-    types: "TIMTextElem",
-    time: new Date(1626244865437),
-    tip: 1
-  };
   const message = createTextMessage("1255_1", e.msg._value);
   console.log(message);
   tim.sendMessage(message);
@@ -403,36 +380,12 @@ function inputs(e: any) {
 function photo(e: any) {
   console.log("我收到图片啦");
   console.log(e.message);
-  // let data = {
-  //   flow: "out",
-  //   payload: {
-  //     imageInfoArray: [
-  //       {
-  //         url: e.res.tempFiles[0].tempFilePath
-  //       }
-  //     ]
-  //   },
-  //   types: "TIMImageElem",
-  //   time: Date.now()
-  // };
   msgs.push(e.message);
 }
 
 function audio(e: any) {
   console.log("我收到音频啦");
   console.log(e.message);
-  // let data = {
-  //   flow: "out",
-  //   payload: {
-  //     imageInfoArray: [
-  //       {
-  //         url: e.res.tempFiles[0].tempFilePath
-  //       }
-  //     ]
-  //   },
-  //   types: "TIMImageElem",
-  //   time: Date.now()
-  // };
   msgs.push(e.message);
 }
 

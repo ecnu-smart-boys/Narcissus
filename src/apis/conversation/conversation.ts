@@ -1,7 +1,10 @@
 import { request } from "@/apis/schema";
 import {
   AllDetailsResp,
-  AvailableConsultant
+  AvailableConsultant,
+  EndConsultReq,
+  LeftConversation,
+  StartConsultReq
 } from "@/apis/conversation/conversation-interface";
 
 export function getAvailableConsultants(): Promise<AvailableConsultant[]> {
@@ -20,6 +23,30 @@ export function getVisitorConsultationMsg(
   return request({
     url: `/im/details/visitorConsultationList?conversationId=${conversationId}`,
     method: "GET",
+    header: {
+      "x-freud": uni.getStorageSync("accessToken")
+    }
+  });
+}
+
+export function startConversation(
+  startConsultReq: StartConsultReq
+): Promise<LeftConversation> {
+  return request({
+    url: `/conversation/consult`,
+    method: "POST",
+    data: startConsultReq,
+    header: {
+      "x-freud": uni.getStorageSync("accessToken")
+    }
+  });
+}
+
+export function endConsultation(endConsultReq: EndConsultReq): Promise<any> {
+  return request({
+    url: `/conversation/endConsultation`,
+    method: "POST",
+    data: endConsultReq,
     header: {
       "x-freud": uni.getStorageSync("accessToken")
     }

@@ -4,6 +4,7 @@
     v-for="item in availableConsultant"
     :key="item.consultantId"
     class="card relative"
+    @tap="handleClick(item)"
   >
     <view class="consult-info">
       <view class="consult-info-left">
@@ -37,6 +38,7 @@ import { onLoad } from "@dcloudio/uni-app";
 import { reactive } from "vue";
 import { getAvailableConsultants } from "@/apis/conversation/conversation";
 import { AvailableConsultant } from "@/apis/conversation/conversation-interface";
+import { Pages } from "@/utils/url";
 
 const availableConsultant = reactive<AvailableConsultant[]>([]);
 onLoad(async () => {
@@ -49,6 +51,12 @@ onLoad(async () => {
   availableConsultant.splice(0);
   availableConsultant.push(...data);
 });
+
+const handleClick = (item: AvailableConsultant) => {
+  uni.switchTab({
+    url: `${Pages.OnlineConsult}?toId=${item.consultantId}`
+  });
+};
 </script>
 
 <style lang="scss" scoped>

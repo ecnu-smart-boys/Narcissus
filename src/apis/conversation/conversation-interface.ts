@@ -39,3 +39,18 @@ export interface MessageInfo {
   time: number;
   revoked: boolean;
 }
+
+export interface StartConsultReq {
+  toId: string;
+}
+
+export interface EndConsultReq {
+  conversationId: string;
+}
+export interface LeftConversation {
+  conversationId: string;
+  userId: string;
+  name: string;
+  avatar: string;
+  isEnd: boolean;
+}
