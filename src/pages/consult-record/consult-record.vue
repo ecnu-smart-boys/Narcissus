@@ -4,7 +4,7 @@
       :avatar="item.avatar"
       :time="parseTimestamp(item.startTime)"
       :consultant-name="item.consultantName"
-      :duration="formatTime(item.endTime - item.startTime)"
+      :duration="formatTime((item.endTime - item.startTime) / 1000)"
       :score="item.score"
       @tap="handleClick(item.conversationId)"
     />
@@ -20,15 +20,12 @@ import ConsultRecord from "@/components/consult-record.vue";
 import { getConsultations } from "@/apis/auth/auth";
 import { ConsultationsWxResp } from "@/apis/auth/auth-interface";
 import { reactive } from "vue";
-import { onLoad } from "@dcloudio/uni-app";
 import { formatTime, parseTimestamp } from "@/utils/time";
 import { Pages } from "@/utils/url";
+import { onPullDownRefresh } from "@dcloudio/uni-app";
 
 let consultations = reactive<ConsultationsWxResp[]>([]);
 
-onLoad(async () => {
-  await getConsultationsInfo();
-});
 async function getConsultationsInfo() {
   const data = await getConsultations();
   data.forEach((i) => {
@@ -38,13 +35,21 @@ async function getConsultationsInfo() {
   });
   consultations.splice(0);
   consultations.push(...data);
+  consultations.reverse();
 }
 
 const handleClick = (conversationId: string) => {
-  uni.switchTab({
+  uni.redirectTo({
     url: `${Pages.DetailRecord}?conversationId=${conversationId}`
   });
 };
+
+onPullDownRefresh(async () => {
+  await getConsultationsInfo();
+  uni.stopPullDownRefresh();
+});
+
+getConsultationsInfo();
 </script>
 
 <style lang="scss" scoped>

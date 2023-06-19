@@ -53,4 +53,11 @@ export interface LeftConversation {
   name: string;
   avatar: string;
   isEnd: boolean;
+  startTime: number;
+}
+
+export interface ConversationState {
+  state: number;
+  conversation: LeftConversation;
+  startTime: number;
 }

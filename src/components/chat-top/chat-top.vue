@@ -2,11 +2,13 @@
   <view class="page">
     <image :src="consultImg" class="user-img"></image>
     <view class="info">
-      <view class="name">咨询师</view>
-      <view class="status">当前正在咨询中</view>
-      <view class="time">00:13:13</view>
+      <view class="name">{{ name }}</view>
+      <view class="status">{{
+        status == 1 ? "正在咨询中" : status == 2 ? "排队中" : "会话已结束"
+      }}</view>
+      <view class="time">{{ parseTime(realTime / 1000) }}</view>
     </view>
-    <view class="right">
+    <view v-if="status == 1" class="right">
       <view class="shang" @tap="redirectToEvaluate">
         <image
           class="zixun"
@@ -26,13 +28,52 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { onUnmounted, ref, watchEffect } from "vue";
 import { Pages } from "@/utils/url";
+import { parseTime } from "@/utils/time";
+
+const props = defineProps<{
+  status: number; // 1 正常会话，2 排队，0 会话结束
+  conversationId: string;
+  name: string;
+  avatar: string;
+  startTime: number;
+}>();
 
 const redirectToEvaluate = function () {
   uni.$emit("tap-event", { data: "open" });
 };
 
+let realTime = ref(0);
+let timer: any = null;
+
+const init = () => {
+  clearInterval(timer);
+  if (props.status == 1 || props.status == 2) {
+    // 正常会话或排队，需要判断是否有startTime，如果没有则从当前时间算起
+    let nowTime = new Date().getTime();
+    if (props.startTime == 0) {
+      nowTime = new Date().getTime();
+    } else {
+      nowTime = props.startTime;
+    }
+    timer = setInterval(() => {
+      realTime.value = new Date().getTime() - nowTime;
+    }, 1000);
+  } else if (props.status == 0) {
+    realTime.value = 0;
+  }
+};
+
+watchEffect(() => {
+  init();
+});
+
+init();
+
+onUnmounted(() => {
+  clearInterval(timer);
+});
 let consultImg = ref(
   "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg"
 );

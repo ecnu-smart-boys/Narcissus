@@ -36,7 +36,10 @@
 import StarsRating from "@/components/stars-rating.vue";
 import { onLoad } from "@dcloudio/uni-app";
 import { reactive } from "vue";
-import { getAvailableConsultants } from "@/apis/conversation/conversation";
+import {
+  getAvailableConsultants,
+  startConversation
+} from "@/apis/conversation/conversation";
 import { AvailableConsultant } from "@/apis/conversation/conversation-interface";
 import { Pages } from "@/utils/url";
 
@@ -52,9 +55,12 @@ onLoad(async () => {
   availableConsultant.push(...data);
 });
 
-const handleClick = (item: AvailableConsultant) => {
-  uni.switchTab({
-    url: `${Pages.OnlineConsult}?toId=${item.consultantId}`
+const handleClick = async (item: AvailableConsultant) => {
+  await startConversation({
+    toId: item.consultantId
+  });
+  await uni.redirectTo({
+    url: Pages.OnlineConsult
   });
 };
 </script>

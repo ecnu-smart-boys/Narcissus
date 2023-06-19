@@ -1,12 +1,20 @@
 <template>
-  <view>
+  <view v-if="currentState != 0">
     <view class="head">
-      <chat-top class="head1"></chat-top>
+      <chat-top
+        class="head1"
+        :conversation-id="toId"
+        :status="currentState"
+        :name="name"
+        :avatar="avatar"
+        :start-time="startTime"
+      ></chat-top>
     </view>
     <scroll-view
       class="chat"
       scroll-with-animation="true"
       scroll-y="true"
+      :scroll-top="scrollTop"
       @scrolltoupper="nextpageData"
     >
       <view :style="{ paddingBottom: inputh + 'rpx' }" class="chat-main">
@@ -112,8 +120,8 @@
           </view>
         </view>
       </view>
-      <share></share>
-      <evaluate v-if="showEvaluate"></evaluate>
+      <!--      <share></share>-->
+      <!--      <evaluate v-if="showEvaluate"></evaluate>-->
     </scroll-view>
     <!--    <van-dialog-->
     <!--      v-model="isRevokingModalShow"-->
@@ -126,25 +134,41 @@
     <!--      @confirm="revokeMessage"-->
     <!--    />-->
     <Submit
+      v-if="currentState == 1"
+      :to-id="toId"
       @audio="audio"
       @heights="heights"
       @inputs="inputs"
       @photo="photo"
     ></Submit>
   </view>
+  <view v-if="currentState == 0" class="no-info-wrapper">
+    <img src="/static/message.png" class="icon-no-info" />
+    <view>暂无在线会话</view>
+  </view>
 </template>
 
 <script lang="ts" setup>
-import { onLoad } from "@dcloudio/uni-app";
-import { onMounted, onUnmounted, reactive, ref, watchEffect } from "vue";
+import { onLoad, onShow } from "@dcloudio/uni-app";
+import {
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  watchEffect,
+  watch,
+  nextTick
+} from "vue";
 import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
 import tim, { createTextMessage, onMessageReceived } from "@/utils/im";
 import Evaluate from "@/components/evaluate/evaluate.vue";
 import Share from "@/components/share/share.vue";
 import { Message } from "tim-js-sdk";
-import { startConversation } from "@/apis/conversation/conversation";
+import { conversationState } from "@/apis/conversation/conversation";
+import { WebSocketResponse } from "@/apis/schema";
 
+let scrollTop = ref(9999);
 let inputh = ref("60");
 let msgs = reactive<Message[]>([]);
 let animationData = ref({});
@@ -155,42 +179,83 @@ let loading: any = null;
 let myImg = ref("/static/default-avatar.png");
 let yourImg = ref("/static/default-avatar.png");
 
-let toId = "";
-// 0 表示正常聊天页面，1 表示排排队，2 表示错误状态
-let currentState = ref(2);
+// 聊天基本信息
+let toId = ref("");
+// 1 表示正常聊天页面，2 表示排排队，0 表示会话已结束/没有会话
+let currentState = ref(0);
+let name = ref("咨询师");
+let avatar = ref("/static/default-avatar.png");
+let startTime = ref(0);
 
 // let isRevokingModalShow = ref(false); // 撤回弹窗是否显示
 // let revokeMessageIndex = ref(null); // 需要撤回的消息在消息列表中的索引
 let imgMsg: string[] = [];
-onLoad(async (options: any) => {
-  toId = options.toId;
+
+onShow(async () => {
   let userInfo = uni.getStorageSync("UserInfo");
   myImg.value = userInfo.avatar;
-  if (toId) {
-    try {
-      const data = await startConversation({
-        toId: toId
-      });
-      if (data.conversationId == "-1") {
-        // 排队
-        currentState.value = 1;
-      } else {
-        currentState.value = 0;
+  const state = await conversationState();
+  currentState.value = state.state;
+  if (state.state == 1 || state.state == 2) {
+    startTime.value = state.startTime;
+    toId.value = state.conversation.userId;
+    avatar.value = state.conversation.avatar;
+    yourImg.value = state.conversation.avatar;
+    const wsTask = uni.connectSocket({
+      url:
+        "ws://192.168.31.62:5508/api/ws?x-freud=" +
+        uni.getStorageSync("accessToken"),
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      complete: () => {}
+    });
+    wsTask.onMessage(async (e) => {
+      if (e.data !== "") {
+        try {
+          const data = JSON.parse(e.data) as WebSocketResponse;
+          if (data.type == "start") {
+            currentState.value = 1;
+          } else if (data.type == "endConsultation") {
+            // TODO 评价
+            currentState.value = 0;
+            try {
+              await tim.deleteConversation(`C2C${toId.value}`);
+            } catch (e) {
+              /* empty */
+            }
+          }
+        } catch (ignored) {
+          /* empty */
+        }
       }
-    } catch (e) {
-      currentState.value = 2;
-    }
-  } else {
-    currentState.value = 2;
+    });
   }
-
-  await firstGetMsg();
-  // 创立监听事件
-  onMessageReceived((data) => {
-    msgs.push(...data);
-  });
 });
 
+watch(
+  () => currentState,
+  async () => {
+    if (currentState.value == 1) {
+      // 开始IM
+      await firstGetMsg();
+      // 创立IM监听事件
+      onMessageReceived((data) => {
+        msgs.push(...data);
+        data.forEach((i) => {
+          if (i.type == "TIMImageElem") {
+            imgMsg.push(i.payload.imageInfoArray[0].url);
+          }
+        });
+        nextTick(() => {
+          scrollTop.value = scrollTop.value + 1;
+        });
+      });
+    }
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+);
 //显示评分
 let showEvaluate = ref(false);
 onMounted(() => {
@@ -293,7 +358,7 @@ function showRevokingModal(index: any) {
 
 // 首次获取聊天数据
 async function firstGetMsg() {
-  let data = await tim.getMessageList({ conversationID: "C2C1255_1" });
+  let data = await tim.getMessageList({ conversationID: `C2C${toId.value}` });
   let msg1 = data.data.messageList;
   nextReqMessageID.value = data.data.nextReqMessageID; // 用于续拉，分页续拉时需传入该字段。
   isCompleted.value = data.data.isCompleted; // 表示是否已经拉完所有消息。isCompleted 为 true 时，nextReqMessageID 为 ""。
@@ -305,13 +370,16 @@ async function firstGetMsg() {
   }
   clearInterval(loading);
   isloading.value = true;
+  await nextTick(() => {
+    scrollTop.value = scrollTop.value + 1;
+  });
 }
 
 /// 获取新的聊天数据
 async function getNewMsg() {
   if (!isCompleted.value) {
     let data = await tim.getMessageList({
-      conversationID: "C2C1255_1",
+      conversationID: `C2C${toId.value}`,
       nextReqMessageID: nextReqMessageID.value
     });
 
@@ -370,11 +438,12 @@ function platVoice(e: string) {
 }
 
 function inputs(e: any) {
-  const message = createTextMessage("1255_1", e.msg._value);
-  console.log(message);
+  const message = createTextMessage(toId.value, e.msg._value);
   tim.sendMessage(message);
   msgs.push(message);
-  console.log(e);
+  nextTick(() => {
+    scrollTop.value = scrollTop.value + 1;
+  });
 }
 
 function photo(e: any) {
@@ -532,5 +601,22 @@ function heights(e: string) {
   color: #999;
   text-decoration: line-through;
   text-align: center;
+}
+
+.no-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  .icon-no-info {
+    width: 30vw;
+    height: 30vw;
+  }
+
+  view {
+    color: #999999;
+  }
 }
 </style>

@@ -25,7 +25,7 @@
         :avatar="item.avatar"
         :time="parseTimestamp(item.startTime)"
         :consultant-name="item.consultantName"
-        :duration="formatTime(item.endTime - item.startTime)"
+        :duration="formatTime((item.endTime - item.startTime) / 1000)"
         :score="item.score"
         @tap="handleClick(item.conversationId)"
       />
@@ -49,6 +49,8 @@ import {
 import { reactive, ref } from "vue";
 import { formatTime, parseTimestamp } from "@/utils/time";
 import { onShow } from "@dcloudio/uni-app";
+import { conversationState } from "@/apis/conversation/conversation";
+import { ConversationState } from "@/apis/conversation/conversation-interface";
 
 const userInfo = ref<GetUserInfoWxResp>();
 const consultations = reactive<ConsultationsWxResp[]>([]);
@@ -89,21 +91,29 @@ async function getConsultationsInfo() {
   });
   consultations.splice(0);
   consultations.push(...data);
+  consultations.reverse();
 }
 
-const editPersonalInformation = function () {
+const editPersonalInformation = () => {
   uni.navigateTo({
     url: Pages.EditPersonalInformation
   });
 };
-const startConsult = function () {
-  uni.navigateTo({
-    url: Pages.InformedConsent
-  });
+const startConsult = async () => {
+  const state = await conversationState();
+  if (state.state == 1 || state.state == 2) {
+    await uni.redirectTo({
+      url: Pages.OnlineConsult
+    });
+  } else {
+    await uni.navigateTo({
+      url: Pages.InformedConsent
+    });
+  }
 };
 
 const handleClick = (conversationId: string) => {
-  uni.switchTab({
+  uni.redirectTo({
     url: `${Pages.DetailRecord}?conversationId=${conversationId}`
   });
 };

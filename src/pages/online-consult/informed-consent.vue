@@ -35,7 +35,7 @@ const interval = setInterval(() => {
 }, 1000);
 
 const submit = function () {
-  uni.navigateTo({
+  uni.redirectTo({
     url: Pages.ConsultList
   });
 };

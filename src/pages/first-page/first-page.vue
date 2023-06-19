@@ -10,14 +10,6 @@ import { genTestUserSig } from "@/debug";
 import { loginIM } from "@/utils/im";
 import { onLoad } from "@dcloudio/uni-app";
 
-// TODO userId
-const userID = "2_1";
-const userSig = genTestUserSig({
-  SDKAppID: 1400810468,
-  secretKey: "d14df58bc7f5f87424981ca2165867287e2c4ad3ba021709bfdd50edf37daaa0",
-  userID: "2_1"
-}).userSig;
-
 onLoad(async () => {
   try {
     const wxRes = await wxLogin();
@@ -26,7 +18,16 @@ onLoad(async () => {
     });
     const userInfo = await getUserInfoWx();
     uni.setStorageSync("UserInfo", userInfo);
-    await loginIM(userID, userSig);
+
+    const userID = userInfo.id;
+    const userSig = genTestUserSig({
+      SDKAppID: 1400810468,
+      secretKey:
+        "d14df58bc7f5f87424981ca2165867287e2c4ad3ba021709bfdd50edf37daaa0",
+      userID: userID
+    }).userSig;
+
+    await loginIM(String(userID), userSig);
     await uni.switchTab({
       url: Pages.Index
     });

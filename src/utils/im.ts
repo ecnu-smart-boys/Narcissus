@@ -77,6 +77,7 @@ export function createAudioMessage(toUserId: string, file: any) {
 export function onMessageReceived(callback: (messageList: any[]) => void) {
   tim.on(TIM.EVENT.MESSAGE_RECEIVED, (event: { data: any }) => {
     const messageList = event.data;
+    console.log(messageList);
     callback(messageList);
   });
 }

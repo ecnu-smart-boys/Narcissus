@@ -54,10 +54,14 @@
 import { defineEmits, ref } from "vue";
 import tim from "@/utils/im";
 import TIM from "tim-js-sdk";
+
+const props = defineProps<{
+  toId: string;
+}>();
 // 创建录音管理器实例
 let recorderManager = uni.getRecorderManager();
 // 定义计时器变量
-let timer = ref(null);
+let timer: any = null;
 // const recorderManager = uni.getRecorderManager();
 const emit = defineEmits(["inputs", "heights", "photo", "audio"]);
 let isrecord = ref(false);
@@ -105,8 +109,8 @@ function emoji() {
 
 //文字发送
 function inputs(e: { detail: { value: string } }) {
-  var chatm = e.detail.value;
-  var pos = chatm.indexOf("\n");
+  let chatm = e.detail.value;
+  let pos = chatm.indexOf("\n");
   if (pos != -1 && chatm.length > 0) {
     emit("inputs", { msg });
     setTimeout(() => {
@@ -127,7 +131,7 @@ function sendMessage() {
 function touchstart() {
   console.log("开始");
   let i = 0;
-  timer.value = setInterval(() => {
+  timer = setInterval(() => {
     i++;
     console.log(i);
     if (i > 60) {
@@ -148,14 +152,10 @@ function touchstart() {
 // 定义长按结束事件处理函数
 function touchend() {
   console.log("结束");
-  clearInterval(timer.value);
+  clearInterval(timer);
   recorderManager.stop();
   voice.value = "按住说话";
   recorderManager.onStop(function (res: any) {
-    console.log("recorder stop" + JSON.stringify(res));
-
-    console.log(timer.value);
-
     sendVoiceMessage(res);
   });
 }
@@ -163,13 +163,12 @@ function touchend() {
 // 定义发送语音消息函数
 function sendVoiceMessage(res: any) {
   const message = tim.createAudioMessage({
-    to: "1255_1",
+    to: props.toId,
     conversationType: TIM.TYPES.CONV_C2C,
     payload: {
       file: res
     }
   });
-  console.log(message);
   tim
     .sendMessage(message)
     .then(function (imResponse) {
@@ -199,12 +198,6 @@ function clickEmoji(e: any) {
 }
 
 function sendImg(e: string) {
-  // let count = 1;
-  // if (e == "album") {
-  //   count = 1;
-  // } else {
-  //   count = 1;
-  // }
   uni.chooseMedia({
     count: 1,
     mediaType: ["image"], // 图片
@@ -212,16 +205,13 @@ function sendImg(e: string) {
     sourceType: ["album"], // 从相册选择
     success: function (res) {
       let message = tim.createImageMessage({
-        to: "1255_1",
+        to: props.toId,
         conversationType: TIM.TYPES.CONV_C2C,
-        payload: { file: res },
-        onProgress: function (event: any) {
-          console.log("file uploading:", event);
-        }
+        payload: { file: res }
       });
       // 2. 发送消息
-      let promise = tim.sendMessage(message);
-      promise
+      tim
+        .sendMessage(message)
         .then(function (imResponse) {
           // 发送成功
           console.log("成功" + imResponse);
@@ -233,17 +223,6 @@ function sendImg(e: string) {
       emit("photo", { message });
     }
   });
-  // uni.chooseImage({
-  //   count: 1, //默认9
-  //   sizeType: ["original", "compressed"], //可以指定是原图还是压缩图，默认二者都有
-  //   sourceType: [e], //从相册选择
-  //   success: function (res) {
-  //     console.log(res.tempFiles[0]);
-  //     const message = createImageMessage("2_1", res.tempFiles[0]);
-  //     console.log(message);
-  //     console.log(JSON.stringify(res.tempFilePaths));
-  //   }
-  // });
 }
 </script>
 

@@ -2,6 +2,8 @@ import { request } from "@/apis/schema";
 import {
   AllDetailsResp,
   AvailableConsultant,
+  ConsultationInfo,
+  ConversationState,
   EndConsultReq,
   LeftConversation,
   StartConsultReq
@@ -42,11 +44,31 @@ export function startConversation(
   });
 }
 
+export function getConversation(): Promise<LeftConversation> {
+  return request({
+    url: `/conversation/currentConsultation`,
+    method: "GET",
+    header: {
+      "x-freud": uni.getStorageSync("accessToken")
+    }
+  });
+}
+
 export function endConsultation(endConsultReq: EndConsultReq): Promise<any> {
   return request({
     url: `/conversation/endConsultation`,
     method: "POST",
     data: endConsultReq,
+    header: {
+      "x-freud": uni.getStorageSync("accessToken")
+    }
+  });
+}
+
+export function conversationState(): Promise<ConversationState> {
+  return request({
+    url: `/conversation/onlineState`,
+    method: "GET",
     header: {
       "x-freud": uni.getStorageSync("accessToken")
     }

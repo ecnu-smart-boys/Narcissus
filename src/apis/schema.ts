@@ -11,6 +11,11 @@ export interface Req {
   header?: any;
 }
 
+export interface WebSocketResponse {
+  type: string;
+  content: any;
+}
+
 export function request<T>(req: Req): Promise<T> {
   const { url, method, data, header } = req;
   return new Promise<T>((resolve, reject) => {

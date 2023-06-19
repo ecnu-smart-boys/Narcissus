@@ -92,7 +92,7 @@ const handleSend = async () => {
     })
     .map((i) => tim.sendMessage(i));
   await Promise.all(jsonMessages);
-  await uni.switchTab({
+  await uni.redirectTo({
     url: Pages.OnlineConsult
   });
 };
