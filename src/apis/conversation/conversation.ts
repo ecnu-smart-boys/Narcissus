@@ -2,7 +2,6 @@ import { request } from "@/apis/schema";
 import {
   AllDetailsResp,
   AvailableConsultant,
-  ConsultationInfo,
   ConversationState,
   EndConsultReq,
   LeftConversation,

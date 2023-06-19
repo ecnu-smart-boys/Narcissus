@@ -27,6 +27,7 @@
         :consultant-name="item.consultantName"
         :duration="formatTime((item.endTime - item.startTime) / 1000)"
         :score="item.score"
+        :state="item.state"
         @tap="handleClick(item.conversationId)"
       />
     </template>
@@ -48,9 +49,8 @@ import {
 } from "@/apis/auth/auth-interface";
 import { reactive, ref } from "vue";
 import { formatTime, parseTimestamp } from "@/utils/time";
-import { onShow } from "@dcloudio/uni-app";
+import { onPullDownRefresh, onShow } from "@dcloudio/uni-app";
 import { conversationState } from "@/apis/conversation/conversation";
-import { ConversationState } from "@/apis/conversation/conversation-interface";
 
 const userInfo = ref<GetUserInfoWxResp>();
 const consultations = reactive<ConsultationsWxResp[]>([]);
@@ -58,6 +58,11 @@ const consultations = reactive<ConsultationsWxResp[]>([]);
 onShow(async () => {
   getLoginInformation();
   await getConsultationsInfo();
+});
+
+onPullDownRefresh(async () => {
+  await getConsultationsInfo();
+  uni.stopPullDownRefresh();
 });
 
 function getLoginInformation() {

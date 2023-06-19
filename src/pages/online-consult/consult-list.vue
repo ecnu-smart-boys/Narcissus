@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import StarsRating from "@/components/stars-rating.vue";
-import { onLoad } from "@dcloudio/uni-app";
+import { onLoad, onPullDownRefresh } from "@dcloudio/uni-app";
 import { reactive } from "vue";
 import {
   getAvailableConsultants,
@@ -53,6 +53,18 @@ onLoad(async () => {
   });
   availableConsultant.splice(0);
   availableConsultant.push(...data);
+});
+
+onPullDownRefresh(async () => {
+  const data = await getAvailableConsultants();
+  data.forEach((i) => {
+    if (i.avatar == "") {
+      i.avatar = "/static/default-avatar.png";
+    }
+  });
+  availableConsultant.splice(0);
+  availableConsultant.push(...data);
+  uni.stopPullDownRefresh();
 });
 
 const handleClick = async (item: AvailableConsultant) => {

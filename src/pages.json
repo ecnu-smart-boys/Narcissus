@@ -9,7 +9,8 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "首页"
+        "navigationBarTitleText": "首页",
+        "enablePullDownRefresh": true
       }
     },
     {
@@ -40,7 +41,8 @@
     {
       "path": "pages/online-consult/consult-list",
       "style": {
-        "navigationBarTitleText": "在线咨询"
+        "navigationBarTitleText": "在线咨询",
+        "enablePullDownRefresh": true
       }
     },
     {

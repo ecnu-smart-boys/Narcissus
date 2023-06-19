@@ -6,6 +6,7 @@
       :consultant-name="item.consultantName"
       :duration="formatTime((item.endTime - item.startTime) / 1000)"
       :score="item.score"
+      :state="item.state"
       @tap="handleClick(item.conversationId)"
     />
   </template>

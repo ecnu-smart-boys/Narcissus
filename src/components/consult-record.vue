@@ -16,6 +16,9 @@
           <view>我的评价</view>
           <StarsRating :stars-index="props.score" :is-edit-stars="false" />
         </view>
+        <view :class="state == 1 ? 'status-color-green' : 'status-color-red'">{{
+          state == 1 ? "在线" : state == 0 ? "离线" : "忙碌"
+        }}</view>
       </view>
     </view>
   </view>
@@ -35,10 +38,35 @@ let props = defineProps<{
   consultantName: string;
   duration: string;
   score: number;
+  state: number;
 }>();
 </script>
 
 <style lang="scss" scoped>
+.status-color-green {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  color: white;
+
+  border-bottom-right-radius: 20rpx;
+  border-top-left-radius: 20rpx;
+  padding: 20rpx;
+  background-color: #3dd58c;
+}
+
+.status-color-red {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  color: white;
+
+  border-bottom-right-radius: 20rpx;
+  border-top-left-radius: 20rpx;
+  padding: 20rpx;
+  background-color: #da2f57;
+}
+
 .card {
   border-radius: 20rpx;
   margin: 40rpx 20rpx;
