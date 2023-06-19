@@ -4,11 +4,13 @@
 
 <script lang="ts" setup>
 import { wxLogin } from "@/apis/weixin/auth";
-import { loginWx } from "@/apis/auth/auth";
+import { getUserInfoWx, loginWx } from "@/apis/auth/auth";
 import { Pages } from "@/utils/url";
 import { genTestUserSig } from "@/debug";
 import { loginIM } from "@/utils/im";
+import { onLoad } from "@dcloudio/uni-app";
 
+// TODO userId
 const userID = "2_1";
 const userSig = genTestUserSig({
   SDKAppID: 1400810468,
@@ -16,40 +18,31 @@ const userSig = genTestUserSig({
   userID: "2_1"
 }).userSig;
 
-wxLogin()
-  .then((res) => {
-    return loginWx({
-      code: res.code
+onLoad(async () => {
+  try {
+    const wxRes = await wxLogin();
+    await loginWx({
+      code: wxRes.code
     });
-  })
-  .then((res) => {
-    uni.setStorageSync("LoginInfo", res);
-    loginIM(userID, userSig).then(() => {
-      console.log("登录成功");
+    const userInfo = await getUserInfoWx();
+    uni.setStorageSync("UserInfo", userInfo);
+    await loginIM(userID, userSig);
+    await uni.switchTab({
+      url: Pages.Index
     });
-    uni.switchTab({
-      url: Pages.Index,
-      success: function () {
-        console.log("跳转到含 TabBar 的页面成功");
-      },
-      fail: function (error) {
-        console.log("跳转到含 TabBar 的页面失败", error);
-      }
-    });
-  })
-  .catch((err) => {
-    console.log(err);
+  } catch (err: any) {
     if (err.statusCode == 401) {
-      uni.navigateTo({
+      await uni.navigateTo({
         url: Pages.Register
       });
     } else {
-      uni.showToast({
+      await uni.showToast({
         title: err.toString(),
         icon: "error"
       });
     }
-  });
+  }
+});
 </script>
 
 <style lang="scss" scoped></style>

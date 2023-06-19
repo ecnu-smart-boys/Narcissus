@@ -6,19 +6,9 @@
         open-type="chooseAvatar"
         @chooseavatar="onChooseAvatar"
       >
-        <img class="avatar" :src="avatarUrl" />
+        <img class="avatar" :src="registerReq.avatar" />
       </button>
       <text class="tip-text">请完善个人信息</text>
-    </view>
-    <view class="register-line">
-      <text class="register-label">昵称</text>
-      <input
-        v-model="nickName"
-        class="register-input"
-        type="nickname"
-        placeholder="请输入昵称"
-        maxlength="20"
-      />
     </view>
     <view class="div-line"></view>
     <view class="register-line">
@@ -109,7 +99,7 @@ import { Pages } from "@/utils/url";
 
 const registerReq: RegisterWxReq = reactive({
   age: 0,
-  avatar: "",
+  avatar: "/static/default-avatar.png",
   emergencyContact: "",
   emergencyPhone: "",
   gender: 0,
@@ -120,23 +110,15 @@ const registerReq: RegisterWxReq = reactive({
   code: ""
 });
 
-let avatarUrl = ref(
-  uni.getStorageSync("avatarUrl")
-    ? uni.getStorageSync("avatarUrl")
-    : "../../static/default-avatar.png"
-);
-
-let nickName = ref(
-  uni.getStorageSync("nickName") ? uni.getStorageSync("nickName") : "微信用户"
-);
-const submit = function () {
-  console.log(registerReq.name);
+const submit = () => {
   wxRegister()
     .then((res) => {
-      console.log(res.code);
       return registerWx({
         age: registerReq.age,
-        avatar: "",
+        avatar:
+          registerReq.avatar == "/static/default-avatar.png"
+            ? ""
+            : registerReq.avatar,
         emergencyContact: registerReq.emergencyContact,
         emergencyPhone: registerReq.emergencyPhone,
         gender: registerReq.gender,
@@ -147,18 +129,12 @@ const submit = function () {
         code: res.code
       });
     })
-    .then((res) => {
-      console.log(res);
-      if (res === null) {
-        console.log("注册失败");
-      } else {
-        uni.navigateTo({
-          url: Pages.FirstPage
-        });
-      }
+    .then(() => {
+      uni.navigateTo({
+        url: Pages.FirstPage
+      });
     })
     .catch((err) => {
-      console.log(err);
       uni.showToast({
         title: err.toString(),
         icon: "error"
@@ -166,15 +142,17 @@ const submit = function () {
     });
 };
 
-const onChooseAvatar = function (e: any) {
-  avatarUrl.value = e.detail.avatarUrl;
+const onChooseAvatar = (e: any) => {
+  // TODO COS
+  registerReq.avatar = e.detail.avatarUrl;
 };
 
-const getCaptcha = function () {
+const getCaptcha = () => {
+  // TODO CAPTCHA
   console.log("getCaptcha");
 };
 
-const handleGenderChange = function (e: any) {
+const handleGenderChange = (e: any) => {
   registerReq.gender = e.detail.value;
 };
 </script>

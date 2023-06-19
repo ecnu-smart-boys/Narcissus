@@ -3,10 +3,8 @@ import {
   RegisterWxReq,
   LoginWxResp,
   RegisterWxResp,
-  GetUserInfoWxReq,
   GetUserInfoWxResp,
   UpdateUserInfoWxReq,
-  UpdateUserInfoWxResp,
   ConsultationsWxResp,
   VisitorCommentWxReq,
   VisitorCommentWxResp
@@ -29,12 +27,9 @@ export function registerWx(req: RegisterWxReq): Promise<RegisterWxResp> {
   });
 }
 
-export function getUserInfoWx(
-  req: GetUserInfoWxReq
-): Promise<GetUserInfoWxResp> {
+export function getUserInfoWx(): Promise<GetUserInfoWxResp> {
   return request({
     url: "/user/info",
-    data: req,
     method: "GET",
     header: {
       "x-freud": uni.getStorageSync("accessToken")
@@ -42,9 +37,7 @@ export function getUserInfoWx(
   });
 }
 
-export function updateUserInfoWx(
-  req: UpdateUserInfoWxReq
-): Promise<UpdateUserInfoWxResp> {
+export function updateUserInfoWx(req: UpdateUserInfoWxReq): Promise<any> {
   return request({
     url: "/user/info",
     data: req,

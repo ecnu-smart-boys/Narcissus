@@ -2,10 +2,10 @@
   <view>
     <view class="card relative">
       <view class="consult-user">
-        <img class="avatar" :src="loginInfo.avatar" />
+        <img class="avatar" :src="userInfo.avatar" />
         <view class="user-info-wrapper">
-          <view class="user-info-name">{{ loginInfo.name }}</view>
-          <view class="user-info-phone">{{ loginInfo.phone }}</view>
+          <view class="user-info-name">{{ userInfo.name }}</view>
+          <view class="user-info-phone">{{ userInfo.phone }}</view>
         </view>
       </view>
       <view class="consult-wrapper" @tap="startConsult">
@@ -24,6 +24,7 @@
         :consultant-name="item.consultantName"
         :duration="formatTime(item.endTime - item.startTime)"
         :score="item.score"
+        @tap="handleClick(item.conversationId)"
       />
     </template>
     <view v-if="consultations.length === 0" class="no-info-wrapper">
@@ -38,32 +39,41 @@
 import ConsultRecord from "@/components/consult-record.vue";
 import { Pages } from "@/utils/url";
 import { getConsultations } from "@/apis/auth/auth";
-import { ConsultationsWxResp } from "@/apis/auth/auth-interface";
+import {
+  ConsultationsWxResp,
+  GetUserInfoWxResp
+} from "@/apis/auth/auth-interface";
 import { reactive, ref } from "vue";
 import { formatTime, parseTimestamp } from "@/utils/time";
-import { onLoad } from "@dcloudio/uni-app";
+import { onShow } from "@dcloudio/uni-app";
 
-let loginInfo = ref();
-let consultations = reactive<ConsultationsWxResp[]>([]);
+const userInfo = ref<GetUserInfoWxResp>();
+const consultations = reactive<ConsultationsWxResp[]>([]);
 
-onLoad(async () => {
+onShow(async () => {
   getLoginInformation();
   await getConsultationsInfo();
 });
 
 function getLoginInformation() {
   try {
-    loginInfo.value = uni.getStorageSync("LoginInfo");
-    if (loginInfo.value) {
-      if (loginInfo.value.avatar === "") {
-        loginInfo.value.avatar = "/static/default-avatar.png";
+    userInfo.value = uni.getStorageSync("UserInfo");
+    if (userInfo.value) {
+      if (userInfo.value.avatar == "") {
+        userInfo.value.avatar = "/static/default-avatar.png";
       }
     } else {
-      console.log("用户信息不存在");
+      uni.showToast({
+        title: "用户信息不存在",
+        icon: "error"
+      });
       return null;
     }
   } catch (error) {
-    console.error("获取用户信息失败:", error);
+    uni.showToast({
+      title: "获取用户信息失败",
+      icon: "error"
+    });
     return null;
   }
 }
@@ -86,6 +96,12 @@ const editPersonalInformation = function () {
 const startConsult = function () {
   uni.navigateTo({
     url: Pages.InformedConsent
+  });
+};
+
+const handleClick = (conversationId: string) => {
+  uni.switchTab({
+    url: `${Pages.DetailRecord}?conversationId=${conversationId}`
   });
 };
 </script>

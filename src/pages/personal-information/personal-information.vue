@@ -9,21 +9,11 @@
         <img class="avatar" :src="userInfo.avatar" />
       </button>
     </view>
-    <view class="update-line">
-      <text class="update-label">昵称</text>
-      <input
-        v-model="userInfo.nickName"
-        class="update-input"
-        type="nickname"
-        placeholder="请输入昵称"
-        maxlength="20"
-      />
-    </view>
     <view class="div-line"></view>
     <view class="update-line">
       <text class="update-label">真实姓名</text>
       <input
-        v-model="userInfo.nickName"
+        v-model="userInfo.name"
         class="update-input"
         placeholder="请输入真实姓名"
         type="text"
@@ -104,70 +94,79 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from "vue";
-import {getUserInfoWx, updateUserInfoWx} from "@/apis/auth/auth";
+import { ref } from "vue";
+import { getUserInfoWx, updateUserInfoWx } from "@/apis/auth/auth";
+import { Pages } from "@/utils/url";
+import { onLoad } from "@dcloudio/uni-app";
 
-let userInfo = reactive({
+let userInfo = ref({
   age: 0,
   avatar: "",
   email: "",
   gender: 0,
-  nickName: "",
+  name: "",
   phone: "",
   emergencyContact: "",
   emergencyPhone: ""
 });
 
-getUserInformation();
+onLoad(() => {
+  getUserInformation();
+});
 
-const submit = function () {
-  uni.setStorageSync("userInfo", userInfo);
-  updateUserInformation();
+const submit = async () => {
+  try {
+    await updateUserInfoWx({
+      age: userInfo.value.age,
+      avatar: userInfo.value.avatar,
+      emergencyContact: userInfo.value.emergencyContact,
+      emergencyPhone: userInfo.value.emergencyPhone,
+      gender: userInfo.value.gender,
+      nickName: userInfo.value.name,
+      phone: userInfo.value.phone,
+      email: ""
+    });
+    const newUserInfo = await getUserInfoWx();
+    uni.setStorageSync("UserInfo", newUserInfo);
+    await uni.switchTab({
+      url: Pages.Index
+    });
+  } catch (e: any) {
+    await uni.showToast({
+      title: e.data.message,
+      icon: "error"
+    });
+  }
 };
 
 const onChooseAvatar = function (e: any) {
-  userInfo.avatar = e.detail.avatarUrl;
+  userInfo.value.avatar = e.detail.avatarUrl;
 };
 
 const handleGenderChange = function (e: any) {
-  userInfo.gender = parseInt(e.detail.value);
+  userInfo.value.gender = parseInt(e.detail.value);
 };
 
 function getUserInformation() {
   try {
-    getUserInfoWx({}).then((res) => {
-      uni.setStorageSync("userInfo", res);
-    });
-    const resData = uni.getStorageSync("userInfo");
-    console.log(resData);
+    const resData = uni.getStorageSync("UserInfo");
     if (resData) {
-      userInfo = resData;
-      userInfo.nickName = resData.name;
-      if (userInfo.avatar === "") {
-        userInfo.avatar = "../../static/default-avatar.png";
+      userInfo.value = resData;
+      if (userInfo.value.avatar === "") {
+        userInfo.value.avatar = "/static/default-avatar.png";
       }
-      console.log(userInfo.nickName);
     } else {
-      console.log("用户信息不存在");
-      return null;
+      uni.showToast({
+        title: "用户信息不存在",
+        icon: "error"
+      });
     }
   } catch (error) {
-    console.error("获取用户信息失败:", error);
-    return null;
+    uni.showToast({
+      title: "获取用户信息失败",
+      icon: "error"
+    });
   }
-}
-
-function updateUserInformation() {
-  updateUserInfoWx({
-    age: userInfo.age,
-    avatar: userInfo.avatar,
-    emergencyContact: userInfo.emergencyContact,
-    emergencyPhone: userInfo.emergencyPhone,
-    gender: userInfo.gender,
-    nickName: userInfo.nickName,
-    phone: userInfo.phone,
-    email: ""
-  });
 }
 </script>
 

@@ -164,9 +164,8 @@ let yourImg = ref("../../static/default-avatar.png");
 let imgMsg: string[] = [];
 onLoad(() => {
   // getMsg();
-  let loginInfo = uni.getStorageSync("LoginInfo");
-  console.log(loginInfo);
-  myImg.value = loginInfo.avatar;
+  let userInfo = uni.getStorageSync("UserInfo");
+  myImg.value = userInfo.avatar;
   console.log(myImg);
   getMsg();
   //console.log(msgs);

@@ -6,6 +6,7 @@
       :consultant-name="item.consultantName"
       :duration="formatTime(item.endTime - item.startTime)"
       :score="item.score"
+      @tap="handleClick(item.conversationId)"
     />
   </template>
   <view v-if="consultations.length === 0" class="no-info-wrapper">
@@ -21,6 +22,7 @@ import { ConsultationsWxResp } from "@/apis/auth/auth-interface";
 import { reactive } from "vue";
 import { onLoad } from "@dcloudio/uni-app";
 import { formatTime, parseTimestamp } from "@/utils/time";
+import { Pages } from "@/utils/url";
 
 let consultations = reactive<ConsultationsWxResp[]>([]);
 
@@ -37,6 +39,12 @@ async function getConsultationsInfo() {
   consultations.splice(0);
   consultations.push(...data);
 }
+
+const handleClick = (conversationId: string) => {
+  uni.switchTab({
+    url: `${Pages.DetailRecord}?conversationId=${conversationId}`
+  });
+};
 </script>
 
 <style lang="scss" scoped>

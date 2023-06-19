@@ -40,9 +40,6 @@ export interface RegisterWxResp {
   roles: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface GetUserInfoWxReq {}
-
 export interface GetUserInfoWxResp {
   age: number;
   avatar: string;
@@ -68,9 +65,6 @@ export interface UpdateUserInfoWxReq {
   emergencyContact: string;
   emergencyPhone: string;
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface UpdateUserInfoWxResp {}
 
 export interface ConsultationsWxResp {
   conversationId: string;
