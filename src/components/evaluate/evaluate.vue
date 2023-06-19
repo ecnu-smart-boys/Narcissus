@@ -8,7 +8,9 @@
       <view class="content">
         <view class="row">
           <text class="label">总共用时：</text>
-          <text>{{ time }}</text>
+          <text>{{
+            parseTime((new Date().getTime() - startTime) / 1000)
+          }}</text>
         </view>
         <view class="row">
           <text class="label">我的评价：</text>
@@ -44,23 +46,34 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { visitorComment } from "@/apis/auth/auth";
-let time = ref("00:00:00");
+import { parseTime } from "@/utils/time";
+
+const props = defineProps<{
+  conversationId: string;
+  startTime: number;
+}>();
+
+const emits = defineEmits<{
+  (event: "onSubmit"): void;
+}>();
 let star = ref(1);
 let comment = ref("");
-let timeSend = ref(21253726267);
 
 function setStar(num: any) {
   star.value = num;
 }
-const submit = function () {
-  console.log(star.value);
-  visitorComment({
-    conversationId: "C2C1255_1",
+
+let isDisabled = false;
+const submit = async () => {
+  if (isDisabled) return;
+  isDisabled = true;
+  await visitorComment({
+    conversationId: props.conversationId,
     score: star.value,
     text: comment.value
-  }).then((res) => {
-    console.log(res);
   });
+  emits("onSubmit");
+  isDisabled = false;
 };
 
 function timestampToTime(timestamp: any) {

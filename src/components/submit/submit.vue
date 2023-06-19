@@ -171,15 +171,15 @@ function sendVoiceMessage(res: any) {
   });
   tim
     .sendMessage(message)
-    .then(function (imResponse) {
-      // 发送成功
-      console.log("Send success", imResponse);
+    .then(() => {
+      emit("audio", { message });
     })
-    .catch(function (imError) {
-      // 发送失败
-      console.warn("Send error", imError);
+    .catch((e) => {
+      uni.showToast({
+        title: "发送语音失败",
+        icon: "error"
+      });
     });
-  emit("audio", { message });
 }
 
 // function getElementHeight() {
@@ -193,7 +193,6 @@ function sendVoiceMessage(res: any) {
 // }
 
 function clickEmoji(e: any) {
-  console.log(e);
   msg.value = msg.value + e;
 }
 
@@ -212,15 +211,15 @@ function sendImg(e: string) {
       // 2. 发送消息
       tim
         .sendMessage(message)
-        .then(function (imResponse) {
-          // 发送成功
-          console.log("成功" + imResponse);
+        .then(() => {
+          emit("photo", { message });
         })
-        .catch(function (imError) {
-          // 发送失败
-          console.warn("sendMessage error:", imError);
+        .catch((e) => {
+          uni.showToast({
+            title: "发送图片失败",
+            icon: "error"
+          });
         });
-      emit("photo", { message });
     }
   });
 }

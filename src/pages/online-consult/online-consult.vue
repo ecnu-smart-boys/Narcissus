@@ -8,6 +8,7 @@
         :name="name"
         :avatar="avatar"
         :start-time="startTime"
+        :should-stop="shouldStop"
         :to-id="toId"
       ></chat-top>
     </view>
@@ -120,7 +121,12 @@
             </view>
           </view>
         </view>
-        <evaluate v-if="showEvaluate"></evaluate>
+        <evaluate
+          v-if="showEvaluate"
+          :conversation-id="conversationId"
+          :start-time="startTime"
+          @on-submit="handleSubmit"
+        ></evaluate>
       </view>
     </scroll-view>
     <!--    <van-dialog-->
@@ -165,7 +171,10 @@ import tim, { createTextMessage, onMessageReceived } from "@/utils/im";
 import Evaluate from "@/components/evaluate/evaluate.vue";
 import Share from "@/components/share/share.vue";
 import { Message } from "tim-js-sdk";
-import { conversationState } from "@/apis/conversation/conversation";
+import {
+  conversationState,
+  endConsultation
+} from "@/apis/conversation/conversation";
 import { WebSocketResponse } from "@/apis/schema";
 
 let scrollTop = ref(9999);
@@ -178,7 +187,7 @@ let isloading = ref(true);
 let loading: any = null;
 let myImg = ref("/static/default-avatar.png");
 let yourImg = ref("/static/default-avatar.png");
-
+let shouldStop = ref(false);
 // 聊天基本信息
 let toId = ref("");
 // 1 表示正常聊天页面，2 表示排排队，0 表示会话已结束/没有会话
@@ -186,6 +195,7 @@ let currentState = ref(0);
 let name = ref("咨询师");
 let avatar = ref("/static/default-avatar.png");
 let startTime = ref(0);
+let conversationId = ref("");
 
 // let isRevokingModalShow = ref(false); // 撤回弹窗是否显示
 // let revokeMessageIndex = ref(null); // 需要撤回的消息在消息列表中的索引
@@ -206,13 +216,11 @@ onLoad(() => {
         if (data.type == "start") {
           currentState.value = 1;
         } else if (data.type == "endConsultation") {
-          // TODO 评价
-          currentState.value = 0;
-          try {
-            await tim.deleteConversation(`C2C${toId.value}`);
-          } catch (e) {
-            /* empty */
-          }
+          shouldStop.value = true;
+          showEvaluate.value = true;
+          await nextTick(() => {
+            scrollTop.value = scrollTop.value + 1;
+          });
         }
       } catch (ignored) {
         /* empty */
@@ -220,6 +228,7 @@ onLoad(() => {
     }
   });
 });
+
 onShow(async () => {
   let userInfo = uni.getStorageSync("UserInfo");
   myImg.value = userInfo.avatar;
@@ -228,10 +237,26 @@ onShow(async () => {
   if (state.state == 1 || state.state == 2) {
     startTime.value = state.startTime;
     toId.value = state.conversation.userId;
-    avatar.value = state.conversation.avatar;
-    yourImg.value = state.conversation.avatar;
+    avatar.value =
+      state.conversation.avatar == ""
+        ? "/static/default-avatar.png"
+        : state.conversation.avatar;
+    yourImg.value = avatar.value;
+    name.value = state.conversation.name;
+    conversationId.value = state.conversation.conversationId;
   }
 });
+
+const handleSubmit = async () => {
+  try {
+    await tim.deleteConversation(`C2C${toId.value}`);
+  } catch (e) {
+    /* empty */
+  }
+  setTimeout(() => {
+    currentState.value = 0;
+  }, 3000);
+};
 
 watch(
   () => currentState,
@@ -276,10 +301,16 @@ onMounted(() => {
   });
 });
 
-function handleGlobalEvent(payload: any) {
-  console.log(payload.data);
+async function handleGlobalEvent(payload: any) {
   if (payload.data === "open") {
+    shouldStop.value = true;
+    await endConsultation({
+      conversationId: conversationId.value
+    });
     showEvaluate.value = true;
+    await nextTick(() => {
+      scrollTop.value = scrollTop.value + 1;
+    });
   }
 }
 
@@ -439,25 +470,27 @@ function platVoice(e: string) {
   });
 }
 
-function inputs(e: any) {
+async function inputs(e: any) {
   const message = createTextMessage(toId.value, e.msg._value);
-  tim.sendMessage(message);
+  await tim.sendMessage(message);
   msgs.push(message);
-  nextTick(() => {
+  await nextTick(() => {
     scrollTop.value = scrollTop.value + 1;
   });
 }
 
 function photo(e: any) {
-  console.log("我收到图片啦");
-  console.log(e.message);
   msgs.push(e.message);
+  nextTick(() => {
+    scrollTop.value = scrollTop.value + 1;
+  });
 }
 
 function audio(e: any) {
-  console.log("我收到音频啦");
-  console.log(e.message);
   msgs.push(e.message);
+  nextTick(() => {
+    scrollTop.value = scrollTop.value + 1;
+  });
 }
 
 function heights(e: string) {

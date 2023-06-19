@@ -42,6 +42,7 @@ const props = defineProps<{
   name: string;
   avatar: string;
   startTime: number;
+  shouldStop: boolean;
 }>();
 
 const redirectToEvaluate = () => {
@@ -68,6 +69,11 @@ const init = () => {
     realTime.value = 0;
   }
 };
+watchEffect(() => {
+  if (props.shouldStop) {
+    clearInterval(timer);
+  }
+});
 
 watchEffect(() => {
   init();
