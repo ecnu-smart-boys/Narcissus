@@ -8,7 +8,7 @@
       <view class="content">
         <view class="row">
           <text class="label">总共用时：</text>
-          <text class="value">{{ time }}</text>
+          <text>{{ time }}</text>
         </view>
         <view class="row">
           <text class="label">我的评价：</text>
@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, provide } from "vue";
+import { ref } from "vue";
 import { visitorComment } from "@/apis/auth/auth";
 let time = ref("00:00:00");
 let star = ref(1);
@@ -93,9 +93,8 @@ function timestampToTime(timestamp: any) {
 
 .card {
   padding: 20px;
-  background-color: (255, 255, 255);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
+  background-color: #a6e860;
+  border-radius: 20rpx;
 }
 
 .header {
@@ -123,31 +122,12 @@ function timestampToTime(timestamp: any) {
   width: 120px;
 }
 
-.value {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.stars {
-  display: flex;
-}
-
-.star {
-  font-size: 24px;
-  color: #fadb14;
-  margin-right: 10px;
-}
-
-.star:last-child {
-  margin-right: 0;
-}
-
 .comment {
   width: 100%;
   height: 80px;
   padding: 30rpx;
-  border-radius: 4px;
-  border: solid 1px #d9d9d9;
+  border-radius: 10rpx;
+  background-color: white;
 }
 
 .footer {
@@ -158,25 +138,22 @@ function timestampToTime(timestamp: any) {
 .submit {
   width: 100%;
   height: 120rpx;
-  background-color: #1890ff;
+  background-color: #368d00;
   color: #fff;
-  border-radius: 4px;
+  border-radius: 20rpx;
   padding: 10px 20px;
 }
 
 .evaluate {
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #333333;
   height: 100rpx;
-  border-top: 1rpx solid #e5e5e5;
-  margin-top: 30rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .img {
     width: 43rpx;
     height: 43rpx;
-    margin-left: 30rpx;
-    margin-bottom: 10rpx;
+    margin-right: 30rpx;
   }
 }
 </style>

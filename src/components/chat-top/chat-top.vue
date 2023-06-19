@@ -1,6 +1,9 @@
 <template>
   <view class="page">
-    <image :src="consultImg" class="user-img"></image>
+    <image
+      :src="avatar == '' ? '/static/default-avatar.png' : avatar"
+      class="user-img"
+    ></image>
     <view class="info">
       <view class="name">{{ name }}</view>
       <view class="status">{{
@@ -34,13 +37,14 @@ import { parseTime } from "@/utils/time";
 
 const props = defineProps<{
   status: number; // 1 正常会话，2 排队，0 会话结束
+  toId: string;
   conversationId: string;
   name: string;
   avatar: string;
   startTime: number;
 }>();
 
-const redirectToEvaluate = function () {
+const redirectToEvaluate = () => {
   uni.$emit("tap-event", { data: "open" });
 };
 
@@ -74,12 +78,10 @@ init();
 onUnmounted(() => {
   clearInterval(timer);
 });
-let consultImg = ref(
-  "https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/8125c34d-f5cb-448b-b47b-21d72c7044b5.jpg"
-);
+
 const selectRecord = function () {
   uni.navigateTo({
-    url: Pages.SelectRecord
+    url: `${Pages.SelectRecord}?toId=${props.toId}`
   });
 };
 </script>

@@ -8,6 +8,7 @@
         :name="name"
         :avatar="avatar"
         :start-time="startTime"
+        :to-id="toId"
       ></chat-top>
     </view>
     <scroll-view
@@ -114,14 +115,13 @@
                 class="message"
                 @longpress="showRevokingModal(index)"
               >
-                <share :payload="item.payload"></share>
+                <share :payload="item.payload" />
               </view>
             </view>
           </view>
         </view>
+        <evaluate v-if="showEvaluate"></evaluate>
       </view>
-      <!--      <share></share>-->
-      <!--      <evaluate v-if="showEvaluate"></evaluate>-->
     </scroll-view>
     <!--    <van-dialog-->
     <!--      v-model="isRevokingModalShow"-->
@@ -191,6 +191,35 @@ let startTime = ref(0);
 // let revokeMessageIndex = ref(null); // 需要撤回的消息在消息列表中的索引
 let imgMsg: string[] = [];
 
+onLoad(() => {
+  const wsTask = uni.connectSocket({
+    url:
+      "ws://192.168.31.62:5508/api/ws?x-freud=" +
+      uni.getStorageSync("accessToken"),
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    complete: () => {}
+  });
+  wsTask.onMessage(async (e) => {
+    if (e.data !== "") {
+      try {
+        const data = JSON.parse(e.data) as WebSocketResponse;
+        if (data.type == "start") {
+          currentState.value = 1;
+        } else if (data.type == "endConsultation") {
+          // TODO 评价
+          currentState.value = 0;
+          try {
+            await tim.deleteConversation(`C2C${toId.value}`);
+          } catch (e) {
+            /* empty */
+          }
+        }
+      } catch (ignored) {
+        /* empty */
+      }
+    }
+  });
+});
 onShow(async () => {
   let userInfo = uni.getStorageSync("UserInfo");
   myImg.value = userInfo.avatar;
@@ -201,33 +230,6 @@ onShow(async () => {
     toId.value = state.conversation.userId;
     avatar.value = state.conversation.avatar;
     yourImg.value = state.conversation.avatar;
-    const wsTask = uni.connectSocket({
-      url:
-        "ws://192.168.31.62:5508/api/ws?x-freud=" +
-        uni.getStorageSync("accessToken"),
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      complete: () => {}
-    });
-    wsTask.onMessage(async (e) => {
-      if (e.data !== "") {
-        try {
-          const data = JSON.parse(e.data) as WebSocketResponse;
-          if (data.type == "start") {
-            currentState.value = 1;
-          } else if (data.type == "endConsultation") {
-            // TODO 评价
-            currentState.value = 0;
-            try {
-              await tim.deleteConversation(`C2C${toId.value}`);
-            } catch (e) {
-              /* empty */
-            }
-          }
-        } catch (ignored) {
-          /* empty */
-        }
-      }
-    });
   }
 });
 
@@ -575,8 +577,8 @@ function heights(e: string) {
 
       .msg-text {
         margin-right: 16rpx;
-        background-color: rgba(255, 228, 49, 0.8);
-        border-radius: 0rpx 20rpx 20rpx 20rpx;
+        background-color: #a6e860;
+        border-radius: 20rpx 0rpx 20rpx 20rpx;
       }
 
       .msg-img {

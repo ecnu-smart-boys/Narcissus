@@ -1,31 +1,15 @@
 <template>
-  <view>
-    <!--    <view-->
-    <!--      v-for="(record, index) in forwardingRecords"-->
-    <!--      :key="index"-->
-    <!--      class="forwarding-card"-->
-    <!--    >-->
+  <view @tap="handleClick">
     <view class="forwarding-card">
       <view class="record-header">
         <view class="record-title"
-          >{{ info?.consultationInfo.consultantName }}123
+          >{{ info?.consultationInfo.consultantName }}
         </view>
         <view class="record-time"
-          >{{ info?.consultationInfo.startTime }}456
+          >{{ timestampToTime(info?.consultationInfo.startTime) }}
         </view>
       </view>
       <view class="record-content">
-        <!--        <view-->
-        <!--          v-for="(message, messageIndex) in record.messages.slice(0, 2)"-->
-        <!--          :key="messageIndex"-->
-        <!--        >-->
-        <!--          <view class="message-sender">{{ message.sender }}</view>-->
-        <!--          <view class="message-content">{{ message.content }}</view>-->
-        <!--        </view>-->
-        <!--        <view v-if="record.messages.length === 1">-->
-        <!--          <view class="message-sender">{{ record.messages[0].sender }}</view>-->
-        <!--          <view class="message-content">{{ record.messages[0].content }}</view>-->
-        <!--        </view>-->
         <view>{{ excerpt }}</view>
       </view>
     </view>
@@ -41,10 +25,12 @@ const props = defineProps<{
     description: string;
     extension: string;
   };
-  shouldLoop: boolean;
 }>();
-const excerpt = ref("667");
+const excerpt = ref("");
 
+const handleClick = () => {
+  // TODO
+};
 interface MessageList {
   ID?: string;
   atUserList?: any[];
@@ -166,24 +152,6 @@ onMounted(async () => {
     }
   });
 });
-let forwardingRecords = reactive([
-  {
-    title: "与小明的聊天记录",
-    time: "2023-06-15 10:20",
-    messages: [
-      { sender: "我", content: "你好啊" },
-      { sender: "小明", content: "你好，最近怎么样？" }
-    ]
-  },
-  {
-    title: "与小李的聊天记录",
-    time: "2023-06-16 14:50",
-    messages: [
-      { sender: "我", content: "下午好" },
-      { sender: "小李", content: "下午好，你有时间帮我看一下这个问题吗？" }
-    ]
-  }
-]);
 
 function timestampToTime(timestamp: any) {
   timestamp = timestamp ? timestamp : null;
@@ -260,10 +228,10 @@ function messageAdapter(message: MessageInfo, myId: string): MessageList {
 
 <style lang="scss" scoped>
 .forwarding-card {
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
-  padding: 10px;
+  margin-right: 16rpx;
+  background-color: #a6e860;
+  border-radius: 20rpx 0rpx 20rpx 20rpx;
+  padding: 16rpx;
 }
 
 .record-header {
@@ -280,8 +248,17 @@ function messageAdapter(message: MessageInfo, myId: string): MessageList {
 
 .record-content {
   margin-top: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  white-space: pre-wrap;
 }
-
+.record-time {
+  font-size: small;
+  margin-left: 30rpx;
+}
 .message-sender {
   font-weight: bold;
 }
