@@ -118,6 +118,70 @@ const registerReq: RegisterWxReq = reactive({
 });
 
 const submit = () => {
+  if (registerReq.name.length == 0) {
+    uni.showToast({
+      title: "请输入真实姓名",
+      icon: "error"
+    });
+    return;
+  }
+  if (registerReq.gender == 0) {
+    uni.showToast({
+      title: "请选择性别",
+      icon: "error"
+    });
+    return;
+  }
+  if (registerReq.phone.length == 0) {
+    uni.showToast({
+      title: "请输入联系电话",
+      icon: "error"
+    });
+    return;
+  }
+  if (
+    !/^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$/.test(
+      registerReq.phone
+    )
+  ) {
+    uni.showToast({
+      title: "手机号格式错误",
+      icon: "error"
+    });
+    return;
+  }
+  if (registerReq.smsCode.length == 0) {
+    uni.showToast({
+      title: "请输入验证码",
+      icon: "error"
+    });
+    return;
+  }
+  if (registerReq.emergencyPhone.length == 0) {
+    uni.showToast({
+      title: "请输入紧急联系人电话",
+      icon: "error"
+    });
+    return;
+  }
+  if (
+    !/^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$/.test(
+      registerReq.emergencyPhone
+    )
+  ) {
+    uni.showToast({
+      title: "手机号格式错误",
+      icon: "error"
+    });
+    return;
+  }
+  if (registerReq.emergencyContact.length == 0) {
+    uni.showToast({
+      title: "请输入紧急联系人",
+      icon: "error"
+    });
+    return;
+  }
   wxRegister()
     .then((res) => {
       return registerWx({
@@ -157,7 +221,30 @@ const onChooseAvatar = async (e: any) => {
 };
 
 const getCaptcha = async () => {
-  await sendSMS();
+  if (registerReq.phone == "") {
+    await uni.showToast({
+      title: "手机号不能为空",
+      icon: "error"
+    });
+    return;
+  } else if (
+    !/^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$/.test(
+      registerReq.phone
+    )
+  ) {
+    await uni.showToast({
+      title: "手机号格式错误",
+      icon: "error"
+    });
+    return;
+  }
+  await sendSMS({
+    phone: registerReq.phone
+  });
+  await uni.showToast({
+    title: "验证码发送成功",
+    icon: "success"
+  });
 };
 
 const handleGenderChange = (e: any) => {
