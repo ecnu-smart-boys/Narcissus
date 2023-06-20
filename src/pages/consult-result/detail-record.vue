@@ -1,23 +1,21 @@
 <template>
-  <!--  <view class="list-title">-->
-  <!--    <view class="title-name">2020/11/24 12:20:09</view>-->
-  <!--  </view>-->
-  <scroll-view
-    class="chat"
-    scroll-with-animation="true"
-    scroll-y="true"
-    @scrolltoupper="nextpageData"
-  >
+  <view class="head">
+    <chat-top
+      class="head1"
+      :conversation-id="conversationId"
+      :status="0"
+      :name="allDetailsResp?.consultationInfo.consultantName"
+      :avatar="yourImg"
+      :start-time="allDetailsResp?.consultationInfo.startTime"
+      :end-time="allDetailsResp?.consultationInfo.lastTime"
+      :should-stop="true"
+      :to-id="allDetailsResp?.consultationInfo.consultationId ?? ''"
+    ></chat-top>
+  </view>
+  <scroll-view class="chat" scroll-with-animation="true" scroll-y="true">
     <view :style="{ paddingBottom: inputh + 'rpx' }" class="chat-main">
-      <view :class="{ displaynone: isloading }" class="loading">
-        <image
-          :animation="animationData"
-          class="=loading-img"
-          src="https://mp-4dc08b2f-eb0d-40fc-8b5f-e5ab2e09218f.cdn.bspapp.com/cloudstorage/18cc645a-8feb-43fb-a131-9f635a69909d.png"
-        ></image>
-      </view>
-      <view v-for="(item, index) in msgs" :key="index" class="chat-ls">
-        <view class="chat-time">{{ timestampToTime(item.time * 1000) }}</view>
+      <view v-for="(item, index) in allMsg" :key="index" class="chat-ls">
+        <view class="chat-time">{{ timestampToTime(item.time) }}</view>
         <view v-if="item.flow === 'in'">
           <view v-if="item.isRevoked" class="revoke2">
             <text>对方已撤回一条消息</text>
@@ -97,64 +95,57 @@
           </view>
         </view>
       </view>
+      <evaluate
+        :conversation-id="conversationId"
+        :editable="false"
+        :start-time="allDetailsResp?.consultationInfo.startTime"
+        :end-time="allDetailsResp?.consultationInfo.lastTime"
+      ></evaluate>
     </view>
   </scroll-view>
-  <!--  <label-->
-  <!--    v-for="item in record"-->
-  <!--    :key="item.id"-->
-  <!--    class="uni-list-cell uni-list-cell-pd"-->
-  <!--  >-->
-  <!--    <view class="card relative">-->
-  <!--      <view class="consult-info">-->
-  <!--        <view class="consult-info-left">-->
-  <!--          <image class="consult-avatar" :src="item.avatar" />-->
-  <!--        </view>-->
-  <!--        <view class="consult-info-right">-->
-  <!--          <view style="display: flex; align-items: center">-->
-  <!--            <view class="consult-name">咨询师：{{ item.name }}</view>-->
-  <!--            <view class="consult-time">{{ item.time }}</view>-->
-  <!--          </view>-->
-  <!--          <view class="consult-detail">{{ item.detail }}</view>-->
-  <!--        </view>-->
-  <!--      </view>-->
-  <!--    </view>-->
-  <!--  </label>-->
 </template>
 
 <script lang="ts" setup>
 import { onLoad } from "@dcloudio/uni-app";
 import { onMounted, onUnmounted, reactive, ref, watchEffect } from "vue";
-import tim, { onMessageReceived } from "@/utils/im";
 import Share from "@/components/share/share.vue";
+import { getVisitorConsultationMsg } from "@/apis/conversation/conversation";
+import { AllDetailsResp } from "@/apis/conversation/conversation-interface";
+import { messageAdapter } from "@/utils/message";
+import ChatTop from "@/components/chat-top/chat-top.vue";
+import Evaluate from "@/components/evaluate/evaluate.vue";
 
 let inputh = ref("60");
-let msgs = reactive<
-  {
-    flow: string;
-    payload: any;
-    types: string;
-    time: Date;
-  }[]
->([]);
-let animationData = ref({});
-let nextReqMessageID = ref(0);
-let isCompleted = ref(false);
-let isloading = ref(true);
-let loading = "";
 let imgMsg: string[] = [];
-let myImg = ref("../../static/default-avatar.png");
-let yourImg = ref("../../static/default-avatar.png");
-onLoad(() => {
-  // getMsg();
+let myImg = ref("/static/default-avatar.png");
+let yourImg = ref("/static/default-avatar.png");
+
+const allDetailsResp = ref<AllDetailsResp>();
+const allMsg = reactive<any[]>([]);
+const conversationId = ref("");
+onLoad(async (option: any) => {
+  console.log(option);
+  conversationId.value = option.conversationId;
   let userInfo = uni.getStorageSync("UserInfo");
   myImg.value = userInfo.avatar;
-  console.log(myImg);
-  getMsg();
-  //console.log(msgs);
-  onMessageReceived((data) => {
-    msgs.push(...data);
+  allDetailsResp.value = await getVisitorConsultationMsg(option.conversationId);
+  if (allDetailsResp.value.consultationInfo.consultantAvatar != "") {
+    yourImg.value = allDetailsResp.value.consultationInfo.consultantAvatar;
+  }
+  const data: any[] =
+    (allDetailsResp.value?.consultation ?? []).map((i) =>
+      messageAdapter(
+        i,
+        <string>allDetailsResp.value?.consultationInfo.consultantId
+      )
+    ) ?? [];
+  allMsg.splice(0);
+  allMsg.push(...data);
+  data.forEach((i) => {
+    if (i.type == "TIMImageElem") {
+      imgMsg.push(i.payload.imageInfoArray[0].url);
+    }
   });
-  // nextpageData();
 });
 
 //显示评分
@@ -176,7 +167,6 @@ onMounted(() => {
 });
 
 function handleGlobalEvent(payload: any) {
-  console.log(payload.data);
   if (payload.data === "open") {
     showEvaluate.value = true;
   }
@@ -200,103 +190,19 @@ function timestampToTime(timestamp: any) {
   return Y + M + D + h + m + s;
 }
 
-function nextpageData() {
-  console.log("jjj");
-  isloading.value = false;
-  var animation = uni.createAnimation({
-    duration: 1000,
-    timingFunction: "step-start"
-  });
-
-  // animation.scale(2, 2).rotate(45).step();
-  //
-  // animationData.value = animation.export();
-  let i = 1;
-  if (!isCompleted.value) {
-    console.log("wowowo");
-    getMsg1();
-  }
-  loading = setInterval(
-    function () {
-      animation.rotate(i * 30).step();
-      animationData.value = animation.export();
-      i++;
-      if (i > 40) {
-        isloading.value = true;
-      }
-    }.bind(this),
-    100
-  );
-  // setTimeout(
-  //   function () {
-  //     animation.translate(30).step();
-  //     animationData.value = animation.export();
-  //   }.bind(this),
-  //   1000
-  // );
-}
-
-//获取聊天数据
-async function getMsg() {
-  let data = await tim.getMessageList({ conversationID: "C2C1255_1" });
-  let msg1 = data.data.messageList;
-  nextReqMessageID.value = data.data.nextReqMessageID; // 用于续拉，分页续拉时需传入该字段。
-  isCompleted.value = data.data.isCompleted; // 表示是否已经拉完所有消息。isCompleted 为 true 时，nextReqMessageID 为 ""。
-  console.log(msg1);
-  for (let i = 0; i < msg1.length; i++) {
-    if (msg1[i].type == "TIMImageElem") {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      imgMsg.push(msg1[i].payload.imageInfoArray[0].url);
-    }
-    msgs.push(msg1[i]);
-  }
-  console.log(msgs);
-  clearInterval(loading.valueOf());
-  isloading.value = true;
-}
-
-async function getMsg1() {
-  console.log(isCompleted);
-  if (!isCompleted.value) {
-    let nextpage = nextReqMessageID.value;
-    let data = await tim.getMessageList({
-      conversationID: "C2C1255_1",
-      nextReqMessageID: nextpage
-    });
-
-    let msg1 = data.data.messageList;
-    nextReqMessageID.value = data.data.nextReqMessageID; // 用于续拉，分页续拉时需传入该字段。
-    isCompleted.value = data.data.isCompleted; // 表示是否已经拉完所有消息。isCompleted 为 true 时，nextReqMessageID 为 ""。
-    console.log(msg1);
-    msgs.unshift(...msg1);
-    imgMsg.length = 0;
-    for (let i = 0; i < msgs.length; i++) {
-      if (msgs[i].type == "TIMImageElem") {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        imgMsg.push(msgs[i].payload.imageInfoArray[0].url);
-      }
-    }
-    console.log(msgs);
-    clearInterval(loading.value);
-    isloading.value = true;
-  }
-}
-
 function previewImg(e: string) {
   let index = 0;
   for (let i = 0; i < imgMsg.length; i++) {
     if (imgMsg[i] == e) {
       index = i;
-      console.log(imgMsg[i]);
+      break;
     }
   }
   uni.previewImage({
     current: index,
     urls: imgMsg,
     longPressActions: {
-      itemList: ["发送给朋友", "保存图片", "收藏"],
+      itemList: ["保存图片"],
       success: function (data) {
         console.log(
           "选中了第" +
@@ -317,51 +223,25 @@ function previewImg(e: string) {
 function platVoice(e: string) {
   const innerAudioContext = uni.createInnerAudioContext();
   innerAudioContext.autoplay = true;
-  //console.log(e);
   innerAudioContext.src = e;
   innerAudioContext.onPlay(() => {
     console.log("开始播放");
   });
-  // innerAudioContext.onError((res) => {
-  //   console.log(res.errMsg);
-  //   console.log(res.errCode);
-  // });
 }
-
-// let record = reactive<
-//   {
-//     avatar: string;
-//     id: string;
-//     time: string;
-//     name: string;
-//     detail: string;
-//   }[]
-// >([
-//   {
-//     avatar: "/static/default-avatar.png",
-//     id: "1",
-//     time: "2023/05/11 22:56",
-//     name: "xxx",
-//     detail: "北冥有鱼，其名为鲲。"
-//   },
-//   {
-//     avatar: "/static/default-avatar.png",
-//     id: "2",
-//     time: "2023/05/12 10:08",
-//     name: "yyy",
-//     detail: "鲲之大，不知其几千里也。"
-//   }
-// ]);
 </script>
 
 <style lang="scss" scoped>
-.displaynone {
-  display: none;
+.head1 {
+  width: 100%;
+  position: fixed; /*固定位置*/
+  top: 0;
+  z-index: 9999; /*设置优先级显示，保证不会被覆盖*/
 }
 
 .chat {
-  height: 1500rpx;
+  height: calc(100% - 220rpx);
   background: #eef2f5;
+  margin-top: 220rpx;
 
   .loading {
     text-align: center;
@@ -458,8 +338,8 @@ function platVoice(e: string) {
 
       .msg-text {
         margin-right: 16rpx;
-        background-color: rgba(255, 228, 49, 0.8);
-        border-radius: 0rpx 20rpx 20rpx 20rpx;
+        background-color: #a6e860;
+        border-radius: 20rpx 0rpx 20rpx 20rpx;
       }
 
       .msg-img {
@@ -482,7 +362,6 @@ function platVoice(e: string) {
 
 .revoke2 {
   color: #999;
-  text-decoration: line-through;
   text-align: center;
 }
 
@@ -542,8 +421,8 @@ function platVoice(e: string) {
   }
 }
 </style>
-<!--<style>-->
-<!--page {-->
-<!--  background-color: #f3f3f3;-->
-<!--}-->
-<!--</style>-->
+<style>
+page {
+  background-color: #f3f3f3;
+}
+</style>

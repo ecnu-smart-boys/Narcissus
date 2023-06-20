@@ -42,6 +42,7 @@ const props = defineProps<{
   name: string;
   avatar: string;
   startTime: number;
+  endTime?: number;
   shouldStop: boolean;
 }>();
 
@@ -54,6 +55,10 @@ let timer: any = null;
 
 const init = () => {
   clearInterval(timer);
+  if (props.endTime) {
+    realTime.value = props.endTime - props.startTime;
+    return;
+  }
   if (props.status == 1 || props.status == 2) {
     // 正常会话或排队，需要判断是否有startTime，如果没有则从当前时间算起
     let nowTime = new Date().getTime();

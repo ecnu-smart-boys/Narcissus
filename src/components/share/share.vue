@@ -18,6 +18,13 @@
 
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from "vue";
+import {
+  ConsultationInfo,
+  MessageBackend,
+  MessageInfo,
+  TextElem
+} from "@/apis/conversation/conversation-interface";
+import { Pages } from "@/utils/url";
 
 const props = defineProps<{
   payload: {
@@ -25,105 +32,15 @@ const props = defineProps<{
     description: string;
     extension: string;
   };
+  conversationId: string;
 }>();
 const excerpt = ref("");
 
 const handleClick = () => {
-  // TODO
+  uni.navigateTo({
+    url: `${Pages.DetailRecord}?conversationId=${props.conversationId}`
+  });
 };
-interface MessageList {
-  ID?: string;
-  atUserList?: any[];
-  avatar?: string;
-  clientSequence?: number;
-  clientTime: number;
-  cloudCustomData?: string;
-  conversationID: string;
-  conversationSubType?: any;
-  conversationType?: string;
-  flow: string;
-  from: string;
-  isBroadcastMessage?: boolean;
-  isDeleted?: boolean;
-  isModified?: boolean;
-  isPeerRead?: boolean;
-  isPlaceMessage?: number;
-  isRead: boolean;
-  isResend?: boolean;
-  isRevoked: boolean;
-  isSupportExtension?: boolean;
-  isSystemMessage?: boolean;
-  nameCard?: string;
-  needReadReceipt?: boolean;
-  nick?: string;
-  payload: any;
-  priority?: string;
-  protocol?: string;
-  random?: number;
-  readReceiptInfo?: any;
-  revoker?: null | any;
-  senderTinyID?: string;
-  sequence?: number;
-  status?: string;
-  time: number;
-  to: string;
-  type: string;
-  version?: number;
-}
-
-interface MessageInfo {
-  fromId: string;
-  toId: string;
-  msgBody: string;
-  time: number;
-  revoked: boolean;
-  iterator: number;
-}
-
-interface ConsultationInfo {
-  consultantName: string;
-  consultantAvatar: string;
-  consultantId: string;
-  phone: string;
-  visitorName: string;
-  visitorAvatar: string;
-  visitorId: string;
-  startTime: number;
-  lastTime: number;
-  end: boolean;
-  consultationId: number;
-}
-
-interface ImageInfo {
-  URL: string;
-  Size: number;
-  Type: number;
-  Width: number;
-  Height: number;
-}
-
-interface ImageElem {
-  UUID: string;
-  ImageFormat: number;
-  ImageInfoArray: ImageInfo[];
-}
-
-interface SoundElem {
-  Url: string;
-  Size: number;
-  UUID: number;
-  Second: number;
-  Download_Flag: number;
-}
-
-interface MessageBackend {
-  MsgType: string;
-  MsgContent: ImageElem | SoundElem | TextElem;
-}
-
-interface TextElem {
-  Text: string;
-}
 
 const info = ref<{
   consultationInfo: ConsultationInfo;

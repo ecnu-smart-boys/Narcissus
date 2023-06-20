@@ -118,7 +118,7 @@ const startConsult = async () => {
 };
 
 const handleClick = (conversationId: string) => {
-  uni.redirectTo({
+  uni.navigateTo({
     url: `${Pages.DetailRecord}?conversationId=${conversationId}`
   });
 };

@@ -116,7 +116,10 @@
                 class="message"
                 @longpress="showRevokingModal(index)"
               >
-                <share :payload="item.payload" />
+                <share
+                  :payload="item.payload"
+                  :conversation-id="conversationId"
+                />
               </view>
             </view>
           </view>
@@ -125,6 +128,7 @@
           v-if="showEvaluate"
           :conversation-id="conversationId"
           :start-time="startTime"
+          :editable="true"
           @on-submit="handleSubmit"
         ></evaluate>
       </view>
@@ -634,7 +638,6 @@ function heights(e: string) {
 
 .revoke2 {
   color: #999;
-  text-decoration: line-through;
   text-align: center;
 }
 

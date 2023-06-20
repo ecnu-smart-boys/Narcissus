@@ -9,7 +9,9 @@
         <view class="row">
           <text class="label">总共用时：</text>
           <text>{{
-            parseTime((new Date().getTime() - startTime) / 1000)
+            endTime
+              ? parseTime((endTime - startTime) / 1000)
+              : parseTime((new Date().getTime() - startTime) / 1000)
           }}</text>
         </view>
         <view class="row">
@@ -28,15 +30,15 @@
           </view>
         </view>
         <view class="row">
-          <!--        <text class="label">请输入评价内容：</text>-->
           <textarea
             v-model="comment"
+            :disabled="!editable"
             class="comment"
-            placeholder="请输入评价内容"
+            :placeholder="editable ? '请输入评价内容' : ''"
           ></textarea>
         </view>
       </view>
-      <view class="footer">
+      <view v-if="editable" class="footer">
         <button class="submit" @click="submit">提交评价</button>
       </view>
     </view>
@@ -51,6 +53,8 @@ import { parseTime } from "@/utils/time";
 const props = defineProps<{
   conversationId: string;
   startTime: number;
+  endTime?: number;
+  editable: boolean;
 }>();
 
 const emits = defineEmits<{
