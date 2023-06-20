@@ -116,6 +116,63 @@ onLoad(() => {
 });
 
 const submit = async () => {
+  if (userInfo.value.name.length == 0) {
+    await uni.showToast({
+      title: "请输入真实姓名",
+      icon: "error"
+    });
+    return;
+  }
+  if (userInfo.value.gender == 0) {
+    await uni.showToast({
+      title: "请选择性别",
+      icon: "error"
+    });
+    return;
+  }
+  if (userInfo.value.phone.length == 0) {
+    await uni.showToast({
+      title: "请输入联系电话",
+      icon: "error"
+    });
+    return;
+  }
+  if (
+    !/^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$/.test(
+      userInfo.value.phone
+    )
+  ) {
+    await uni.showToast({
+      title: "手机号格式错误",
+      icon: "error"
+    });
+    return;
+  }
+  if (userInfo.value.emergencyPhone.length == 0) {
+    await uni.showToast({
+      title: "请输入紧急联系人电话",
+      icon: "error"
+    });
+    return;
+  }
+  if (
+    !/^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$/.test(
+      userInfo.value.emergencyPhone
+    )
+  ) {
+    await uni.showToast({
+      title: "手机号格式错误",
+      icon: "error"
+    });
+    return;
+  }
+  if (userInfo.value.emergencyContact.length == 0) {
+    await uni.showToast({
+      title: "请输入紧急联系人",
+      icon: "error"
+    });
+    return;
+  }
   try {
     await updateUserInfoWx({
       age: userInfo.value.age,
