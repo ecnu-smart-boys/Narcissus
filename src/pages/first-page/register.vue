@@ -59,7 +59,12 @@
     <view class="register-line">
       <text class="register-label">验证码</text>
       <view class="register-input">
-        <input placeholder="请输入验证码" type="text" maxlength="20" />
+        <input
+          v-model="registerReq.smsCode"
+          placeholder="请输入验证码"
+          type="text"
+          maxlength="20"
+        />
         <button class="captcha" @tap="getCaptcha">验证码</button>
       </view>
     </view>
@@ -97,6 +102,7 @@ import { wxRegister } from "@/apis/weixin/auth";
 import { registerWx } from "@/apis/auth/auth";
 import { Pages } from "@/utils/url";
 import { saveAvatar } from "@/apis/cos/cos";
+import { sendSMS } from "@/apis/sms/sms";
 
 const registerReq: RegisterWxReq = reactive({
   age: 0,
@@ -125,7 +131,7 @@ const submit = () => {
         gender: registerReq.gender,
         name: registerReq.name,
         phone: registerReq.phone,
-        smsCode: "",
+        smsCode: registerReq.smsCode,
         smsCodeId: "",
         code: res.code
       });
@@ -150,9 +156,8 @@ const onChooseAvatar = async (e: any) => {
   registerReq.avatar = JSON.parse(cosUrl).message;
 };
 
-const getCaptcha = () => {
-  // TODO CAPTCHA
-  console.log("getCaptcha");
+const getCaptcha = async () => {
+  await sendSMS();
 };
 
 const handleGenderChange = (e: any) => {
