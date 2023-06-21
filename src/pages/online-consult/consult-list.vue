@@ -22,11 +22,11 @@
       </view>
     </view>
     <view
-      :class="item.state == 1 ? 'status-color-green' : 'status-color-red'"
-      >{{ item.state == 1 ? "空闲" : "忙碌" }}</view
+      :class="item.state === 1 ? 'status-color-green' : 'status-color-red'"
+      >{{ item.state === 1 ? "空闲" : "忙碌" }}</view
     >
   </view>
-  <view v-if="availableConsultant.length == 0" class="no-info-wrapper">
+  <view v-if="availableConsultant.length === 0" class="no-info-wrapper">
     <img src="/static/message.png" class="icon-no-info" />
     <view>暂无在线咨询师</view>
   </view>
@@ -71,7 +71,7 @@ const handleClick = async (item: AvailableConsultant) => {
   await startConversation({
     toId: item.consultantId
   });
-  await uni.redirectTo({
+  await uni.switchTab({
     url: Pages.OnlineConsult
   });
 };
