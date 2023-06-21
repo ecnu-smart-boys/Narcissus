@@ -73,7 +73,7 @@ const submit = async () => {
   isDisabled = true;
   await visitorComment({
     conversationId: props.conversationId,
-    score: star.value,
+    score: star.value-1,
     text: comment.value
   });
   emits("onSubmit");
