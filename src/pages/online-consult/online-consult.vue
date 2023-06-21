@@ -129,7 +129,6 @@
           :conversation-id="conversationId"
           :start-time="startTime"
           :editable="true"
-          :changeable="true"
           @on-submit="handleSubmit"
         ></evaluate>
       </view>
@@ -209,7 +208,7 @@ let imgMsg: string[] = [];
 onLoad(() => {
   const wsTask = uni.connectSocket({
     url:
-      "ws://192.168.31.62:5508/api/ws?x-freud=" +
+      "wss://ecnu.xhpolaris.com/api/ws?x-freud=" +
       uni.getStorageSync("accessToken"),
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     complete: () => {}
