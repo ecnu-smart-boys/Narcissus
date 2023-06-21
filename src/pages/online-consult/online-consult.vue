@@ -159,7 +159,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onLoad, onShow } from "@dcloudio/uni-app";
+import { onHide, onLoad, onShow } from "@dcloudio/uni-app";
 import {
   onMounted,
   onUnmounted,
@@ -200,6 +200,7 @@ let name = ref("咨询师");
 let avatar = ref("/static/default-avatar.png");
 let startTime = ref(0);
 let conversationId = ref("");
+let isEnd = ref(false);
 
 // let isRevokingModalShow = ref(false); // 撤回弹窗是否显示
 // let revokeMessageIndex = ref(null); // 需要撤回的消息在消息列表中的索引
@@ -222,6 +223,7 @@ onLoad(() => {
         } else if (data.type == "endConsultation") {
           shouldStop.value = true;
           showEvaluate.value = true;
+          isEnd.value = true;
           await nextTick(() => {
             scrollTop.value = scrollTop.value + 1;
           });
@@ -233,7 +235,24 @@ onLoad(() => {
   });
 });
 
+onHide(() => {
+  if (isEnd.value) {
+    nextReqMessageID.value = "";
+    isCompleted.value = false;
+    myImg.value = "/static/default-avatar.png";
+    yourImg.value = "/static/default-avatar.png";
+    avatar.value = "/static/default-avatar.png";
+    name.value = "咨询师";
+    startTime.value = 0;
+    conversationId.value = "";
+    showEvaluate.value = false;
+    shouldStop.value = false;
+  }
+  isEnd.value = false;
+});
+
 onShow(async () => {
+  isEnd.value = false;
   let userInfo = uni.getStorageSync("UserInfo");
   myImg.value = userInfo.avatar;
   const state = await conversationState();
@@ -259,7 +278,17 @@ const handleSubmit = async () => {
   }
   setTimeout(() => {
     currentState.value = 0;
-  }, 3000);
+    nextReqMessageID.value = "";
+    isCompleted.value = false;
+    myImg.value = "/static/default-avatar.png";
+    yourImg.value = "/static/default-avatar.png";
+    avatar.value = "/static/default-avatar.png";
+    name.value = "咨询师";
+    startTime.value = 0;
+    conversationId.value = "";
+    showEvaluate.value = false;
+    shouldStop.value = false;
+  }, 500);
 };
 
 watch(
@@ -397,6 +426,7 @@ function showRevokingModal(index: any) {
 async function firstGetMsg() {
   let data = await tim.getMessageList({ conversationID: `C2C${toId.value}` });
   let msg1 = data.data.messageList;
+  msgs.splice(0);
   nextReqMessageID.value = data.data.nextReqMessageID; // 用于续拉，分页续拉时需传入该字段。
   isCompleted.value = data.data.isCompleted; // 表示是否已经拉完所有消息。isCompleted 为 true 时，nextReqMessageID 为 ""。
   for (let i = 0; i < msg1.length; i++) {
