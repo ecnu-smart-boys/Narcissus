@@ -101,6 +101,7 @@
         :end-time="allDetailsResp?.consultationInfo.lastTime"
         :start-time="allDetailsResp?.consultationInfo.startTime"
         :score="allDetailsResp?.visitorScore"
+        :consultant-text="allDetailsResp?.consultantText"
       ></evaluate>
     </view>
   </scroll-view>

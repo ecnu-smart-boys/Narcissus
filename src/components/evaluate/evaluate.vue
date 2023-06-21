@@ -31,7 +31,7 @@
         </view>
         <view class="row">
           <textarea
-            v-model="comment"
+            v-model="changeable ? comment : consultantText"
             :disabled="!editable"
             class="comment"
             :placeholder="editable ? '请输入评价内容' : ''"
@@ -64,7 +64,7 @@ const emits = defineEmits<{
   (event: "onSubmit"): void;
 }>();
 let star = ref(1);
-let comment = ref("");
+let comment = ref(props."");
 
 function setStar(num: any) {
   star.value = num;
