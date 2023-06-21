@@ -1,22 +1,22 @@
 <template>
   <view class="head">
     <chat-top
-      class="head1"
-      :conversation-id="conversationId"
-      :status="0"
-      :name="allDetailsResp?.consultationInfo.consultantName"
       :avatar="yourImg"
-      :start-time="allDetailsResp?.consultationInfo.startTime"
+      :conversation-id="conversationId"
       :end-time="allDetailsResp?.consultationInfo.lastTime"
+      :name="allDetailsResp?.consultationInfo.consultantName"
       :should-stop="true"
+      :start-time="allDetailsResp?.consultationInfo.startTime"
+      :status="0"
       :to-id="allDetailsResp?.consultationInfo.consultationId ?? ''"
+      class="head1"
     ></chat-top>
   </view>
   <scroll-view class="chat" scroll-with-animation="true" scroll-y="true">
     <view :style="{ paddingBottom: inputh + 'rpx' }" class="chat-main">
       <view v-for="(item, index) in allMsg" :key="index" class="chat-ls">
         <view class="chat-time">{{ timestampToTime(item.time) }}</view>
-        <view v-if="item.flow === 'in'">
+        <view v-if="item.flow === 'out'">
           <view v-if="item.isRevoked" class="revoke2">
             <text>对方已撤回一条消息</text>
           </view>
@@ -54,7 +54,7 @@
             </view>
           </view>
         </view>
-        <view v-if="item.flow === 'out'">
+        <view v-if="item.flow === 'in'">
           <view v-if="item.isRevoked" class="revoke2">
             <text>你已撤回一条消息</text>
           </view>
@@ -98,8 +98,8 @@
       <evaluate
         :conversation-id="conversationId"
         :editable="false"
-        :start-time="allDetailsResp?.consultationInfo.startTime"
         :end-time="allDetailsResp?.consultationInfo.lastTime"
+        :start-time="allDetailsResp?.consultationInfo.startTime"
       ></evaluate>
     </view>
   </scroll-view>
