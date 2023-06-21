@@ -50,7 +50,6 @@ import { ref } from "vue";
 import { visitorComment } from "@/apis/auth/auth";
 import { parseTime } from "@/utils/time";
 
-
 const props = defineProps<{
   conversationId: string;
   startTime: number;
@@ -58,6 +57,7 @@ const props = defineProps<{
   editable: boolean;
   changeable: boolean;
   score: number;
+  consultantText: string;
 }>();
 
 const emits = defineEmits<{

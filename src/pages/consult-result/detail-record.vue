@@ -100,6 +100,7 @@
         :editable="false"
         :end-time="allDetailsResp?.consultationInfo.lastTime"
         :start-time="allDetailsResp?.consultationInfo.startTime"
+        :score="allDetailsResp?.visitorScore"
       ></evaluate>
     </view>
   </scroll-view>
