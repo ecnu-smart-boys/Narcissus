@@ -129,6 +129,7 @@
           :conversation-id="conversationId"
           :start-time="startTime"
           :editable="true"
+          :changeable="true"
           @on-submit="handleSubmit"
         ></evaluate>
       </view>

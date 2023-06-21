@@ -19,13 +19,13 @@
           <view v-for="index in 5" :key="index" class="evaluate">
             <image
               :src="
-                star > index
+                (changeable ? star : score + 1) > index
                   ? 'https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/834e737f-0516-4ac7-9ec6-6e38bb245a00.png'
                   : 'https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/19f1ddab-c9d9-4af6-84af-652d3e1e4a3b.png'
               "
               class="img"
               mode="aspectFill"
-              @click="setStar(index + 1)"
+              @click="changeable ? setStar(index + 1) : null"
             ></image>
           </view>
         </view>
@@ -50,11 +50,14 @@ import { ref } from "vue";
 import { visitorComment } from "@/apis/auth/auth";
 import { parseTime } from "@/utils/time";
 
+
 const props = defineProps<{
   conversationId: string;
   startTime: number;
   endTime?: number;
   editable: boolean;
+  changeable: boolean;
+  score: number;
 }>();
 
 const emits = defineEmits<{
@@ -73,7 +76,7 @@ const submit = async () => {
   isDisabled = true;
   await visitorComment({
     conversationId: props.conversationId,
-    score: star.value-1,
+    score: star.value - 1,
     text: comment.value
   });
   emits("onSubmit");
@@ -81,6 +84,7 @@ const submit = async () => {
 };
 
 function timestampToTime(timestamp: any) {
+  console.log(props);
   timestamp = timestamp ? timestamp : null;
   let date = new Date(timestamp); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
   let Y = date.getFullYear() + "-";

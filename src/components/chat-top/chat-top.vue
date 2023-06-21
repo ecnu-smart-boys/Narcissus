@@ -1,7 +1,7 @@
 <template>
   <view class="page">
     <image
-      :src="avatar == '' ? '/static/default-avatar.png' : avatar"
+      :src="avatar === '' ? '/static/default-avatar.png' : avatar"
       class="user-img"
     ></image>
     <view class="info">
