@@ -37,9 +37,19 @@ const props = defineProps<{
 const excerpt = ref("");
 
 const handleClick = () => {
-  uni.navigateTo({
-    url: `${Pages.DetailRecord}?conversationId=${props.conversationId}`
-  });
+  if (props.conversationId != "-1") {
+    uni.navigateTo({
+      url: `${Pages.DetailRecord}?conversationId=${props.conversationId}`
+    });
+  } else {
+    const json: {
+      consultationInfo: ConsultationInfo;
+      messageInfo: MessageInfo[];
+    } = JSON.parse(props.payload.data);
+    uni.navigateTo({
+      url: `${Pages.DetailRecord}?conversationId=${json.consultationInfo.consultationId}`
+    });
+  }
 };
 
 const info = ref<{
@@ -56,16 +66,21 @@ onMounted(async () => {
   info.value = json;
   allMsg.push(...json.messageInfo);
   allMsg.forEach((i) => {
+    const fromName =
+      i.fromId == json.consultationInfo.consultantId
+        ? json.consultationInfo.consultantName
+        : json.consultationInfo.visitorName;
     const data = JSON.parse(i.msgBody)[0] as MessageBackend;
     if (data.MsgType === "TIMTextElem") {
       const payload = data.MsgContent as TextElem;
-      excerpt.value += `${i.fromId}: ${payload.Text}\n`;
+      excerpt.value +=
+        `${fromName}: ${payload.Text}`.replace(/\n/g, " ") + "\n";
     } else if (data.MsgType === "TIMImageElem") {
-      excerpt.value += `${i.fromId}: [图片]\n`;
+      excerpt.value += `${fromName}: [图片]\n`;
     } else if (data.MsgType === "TIMSoundElem") {
-      excerpt.value += `${i.fromId}: [语音]\n`;
+      excerpt.value += `${fromName}: [语音]\n`;
     } else if (data.MsgType === "TIMCustomElem") {
-      excerpt.value += `${i.fromId}: [转发消息]\n`;
+      excerpt.value += `${fromName}: [转发消息]\n`;
     }
   });
 });

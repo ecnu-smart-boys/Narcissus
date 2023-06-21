@@ -59,16 +59,17 @@ const props = defineProps<{
   consultantText?: string;
 }>();
 
+let star = ref(1);
+let comment = ref("");
+
 watchEffect(() => {
   if (!props.editable) {
-    comment.value = <string>props.consultantText;
+    comment.value = props.consultantText ?? "";
   }
 });
 const emits = defineEmits<{
   (event: "onSubmit"): void;
 }>();
-let star = ref(1);
-let comment = ref("");
 
 function setStar(num: any) {
   star.value = num;

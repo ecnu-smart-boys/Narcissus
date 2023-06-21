@@ -90,7 +90,7 @@
             </view>
             <!--              转发记录-->
             <view v-if="item.type === 'TIMCustomElem'" class="message">
-              <share :payload="item.payload"></share>
+              <share :payload="item.payload" conversation-id="-1"></share>
             </view>
           </view>
         </view>
@@ -101,7 +101,7 @@
         :end-time="allDetailsResp?.consultationInfo.lastTime"
         :start-time="allDetailsResp?.consultationInfo.startTime"
         :score="allDetailsResp?.visitorScore"
-        :consultant-text="allDetailsResp?.consultantText"
+        :consultant-text="allDetailsResp?.consultantText ?? ''"
       ></evaluate>
     </view>
   </scroll-view>

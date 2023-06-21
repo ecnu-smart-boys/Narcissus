@@ -126,9 +126,15 @@ export interface SoundElem {
 
 export interface MessageBackend {
   MsgType: string;
-  MsgContent: ImageElem | SoundElem | TextElem;
+  MsgContent: ImageElem | SoundElem | TextElem | CustomElem;
 }
 
 export interface TextElem {
   Text: string;
+}
+
+export interface CustomElem {
+  Data: string;
+  Desc: string;
+  Ext: string;
 }

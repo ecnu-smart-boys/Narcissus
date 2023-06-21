@@ -1,4 +1,5 @@
 import {
+  CustomElem,
   ImageElem,
   MessageBackend,
   MessageInfo,
@@ -59,6 +60,13 @@ export function messageAdapter(
       url: payload.Url,
       size: payload.Size,
       second: payload.Second
+    };
+  } else if (data.MsgType == "TIMCustomElem") {
+    const payload = data.MsgContent as CustomElem;
+    defaultData.payload = {
+      data: payload.Data,
+      description: payload.Desc,
+      extension: payload.Ext
     };
   }
   return defaultData;
