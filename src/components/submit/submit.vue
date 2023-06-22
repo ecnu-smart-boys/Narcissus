@@ -153,7 +153,7 @@ function touchend() {
   clearInterval(timer);
   recorderManager.stop();
   voice.value = "按住说话";
-  recorderManager.onStop(function (res: any) {
+  recorderManager.onStop((res: any) => {
     sendVoiceMessage(res);
   });
 }
@@ -232,7 +232,6 @@ function sendImg(e: string) {
   bottom: 0;
   z-index: 100;
   padding-bottom: 10rpx;
-  height: 100rpx;
 }
 
 .displaynone {
