@@ -349,6 +349,7 @@ async function handleGlobalEvent(payload: any) {
 
 function timestampToTime(timestamp: any) {
   timestamp = timestamp ? timestamp : null;
+  if (String(timestamp).length < 13) timestamp *= 1000;
   let date = new Date(timestamp); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
   let Y = date.getFullYear() + "-";
   let M =

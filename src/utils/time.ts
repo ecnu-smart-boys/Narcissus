@@ -37,6 +37,7 @@ export function parseSecond(time: number): string {
 }
 
 export function parseTimestamp(timestamp: number): string {
+  if (String(timestamp).length < 13) timestamp *= 1000;
   const date = new Date(parseInt(String(timestamp)));
   const Year = date.getFullYear();
   const Moth =
