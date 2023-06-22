@@ -107,7 +107,7 @@ const editPersonalInformation = () => {
 const startConsult = async () => {
   const state = await conversationState();
   if (state.state == 1 || state.state == 2) {
-    await uni.redirectTo({
+    await uni.switchTab({
       url: Pages.OnlineConsult
     });
   } else {

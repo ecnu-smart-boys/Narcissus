@@ -116,10 +116,7 @@
                 class="message"
                 @longpress="showRevokingModal(index)"
               >
-                <share
-                  :payload="item.payload"
-                  :conversation-id="conversationId"
-                />
+                <share :payload="item.payload" />
               </view>
             </view>
           </view>
@@ -128,6 +125,7 @@
           v-if="showEvaluate"
           :conversation-id="conversationId"
           :start-time="startTime"
+          :end-time="endTime"
           :editable="true"
           @on-submit="handleSubmit"
         ></evaluate>
@@ -181,7 +179,7 @@ import {
 } from "@/apis/conversation/conversation";
 import { WebSocketResponse } from "@/apis/schema";
 
-let scrollTop = ref(9999);
+let scrollTop = ref(999999);
 let inputh = ref("60");
 let msgs = reactive<Message[]>([]);
 let animationData = ref({});
@@ -199,12 +197,14 @@ let currentState = ref(0);
 let name = ref("咨询师");
 let avatar = ref("/static/default-avatar.png");
 let startTime = ref(0);
+let endTime = ref(new Date().getTime());
 let conversationId = ref("");
 let isEnd = ref(false);
 
 // let isRevokingModalShow = ref(false); // 撤回弹窗是否显示
 // let revokeMessageIndex = ref(null); // 需要撤回的消息在消息列表中的索引
 let imgMsg: string[] = [];
+let timer: any;
 
 onLoad(() => {
   const wsTask = uni.connectSocket({
@@ -214,6 +214,14 @@ onLoad(() => {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     complete: () => {}
   });
+  clearInterval(timer);
+  timer = setInterval(() => {
+    wsTask.send({
+      data: "",
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      complete: () => {}
+    });
+  }, 1000);
   wsTask.onMessage(async (e) => {
     if (e.data !== "") {
       try {
@@ -222,6 +230,7 @@ onLoad(() => {
           currentState.value = 1;
         } else if (data.type == "endConsultation") {
           shouldStop.value = true;
+          endTime.value = new Date().getTime();
           showEvaluate.value = true;
           isEnd.value = true;
           await nextTick(() => {
@@ -249,6 +258,7 @@ onHide(() => {
     shouldStop.value = false;
   }
   isEnd.value = false;
+  currentState.value = 0;
 });
 
 onShow(async () => {
@@ -268,6 +278,9 @@ onShow(async () => {
     name.value = state.conversation.name;
     conversationId.value = state.conversation.conversationId;
   }
+  await nextTick(() => {
+    scrollTop.value = scrollTop.value + 1;
+  });
 });
 
 const handleSubmit = async () => {
@@ -546,9 +559,9 @@ function heights(e: string) {
 }
 
 .chat {
-  height: 1000rpx;
+  height: calc(100vh - 350rpx);
   background: #eef2f5;
-  margin-top: 220rpx;
+  margin-top: 250rpx;
 
   .loading {
     text-align: center;

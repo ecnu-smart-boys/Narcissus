@@ -90,7 +90,7 @@
             </view>
             <!--              转发记录-->
             <view v-if="item.type === 'TIMCustomElem'" class="message">
-              <share :payload="item.payload" conversation-id="-1"></share>
+              <share :payload="item.payload"></share>
             </view>
           </view>
         </view>
@@ -242,9 +242,9 @@ function platVoice(e: string) {
 }
 
 .chat {
-  height: calc(100% - 220rpx);
+  height: calc(100vh - 250rpx);
   background: #eef2f5;
-  margin-top: 220rpx;
+  margin-top: 250rpx;
 
   .loading {
     text-align: center;

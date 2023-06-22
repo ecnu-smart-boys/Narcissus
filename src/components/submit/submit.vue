@@ -1,49 +1,47 @@
 <template>
-  <view>
-    <view class="submit">
-      <view class="submit-chat">
-        <view class="bt-img" @tap="records">
-          <image :src="toc"></image>
-        </view>
-        <textarea
-          v-model="msg"
-          :class="{ displaynone: isrecord }"
-          adjust-position="true"
-          auto-height="true"
-          class="chat-send btn"
-          confirm-type="send"
-          @confirm="sendMessage"
-          @input="inputs"
-        ></textarea>
-        <view
-          :class="{ displaynone: !isrecord }"
-          class="record btn"
-          @touchend="touchend"
-          @touchstart="touchstart"
-          >{{ voice }}
-        </view>
-        <view class="bt-img" @tap="emoji">
-          <image
-            src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/d44f56f7-9403-4ae9-beee-0ffe8321c964.png"
-          ></image>
-        </view>
-        <view class="bt-img">
-          <image
-            src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/8aebbae4-c217-431c-8faf-9b0e1f339fdc.png"
-            @tap="sendImg('album')"
-          ></image>
-        </view>
+  <view class="submit">
+    <view class="submit-chat">
+      <view class="bt-img" @tap="records">
+        <image :src="toc"></image>
       </view>
-      <view :class="{ displaynone: !isemoji }" class="emoji">
-        <view v-for="(line, i) in emoji1" :key="i" class="emoji-line">
-          <view
-            v-for="(item, index) in line"
-            :key="index"
-            class="emoji-line-item"
-            @tap="clickEmoji(item)"
-          >
-            {{ item }}
-          </view>
+      <textarea
+        v-model="msg"
+        :class="{ displaynone: isrecord }"
+        adjust-position="true"
+        auto-height="true"
+        class="chat-send btn"
+        confirm-type="send"
+        @confirm="sendMessage"
+        @input="inputs"
+      ></textarea>
+      <view
+        :class="{ displaynone: !isrecord }"
+        class="record btn"
+        @touchend="touchend"
+        @touchstart="touchstart"
+        >{{ voice }}
+      </view>
+      <view class="bt-img" @tap="emoji">
+        <image
+          src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/d44f56f7-9403-4ae9-beee-0ffe8321c964.png"
+        ></image>
+      </view>
+      <view class="bt-img">
+        <image
+          src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/8aebbae4-c217-431c-8faf-9b0e1f339fdc.png"
+          @tap="sendImg('album')"
+        ></image>
+      </view>
+    </view>
+    <view :class="{ displaynone: !isemoji }" class="emoji">
+      <view v-for="(line, i) in emoji1" :key="i" class="emoji-line">
+        <view
+          v-for="(item, index) in line"
+          :key="index"
+          class="emoji-line-item"
+          @tap="clickEmoji(item)"
+        >
+          {{ item }}
         </view>
       </view>
     </view>
@@ -234,6 +232,7 @@ function sendImg(e: string) {
   bottom: 0;
   z-index: 100;
   padding-bottom: 10rpx;
+  height: 100rpx;
 }
 
 .displaynone {

@@ -32,24 +32,17 @@ const props = defineProps<{
     description: string;
     extension: string;
   };
-  conversationId: string;
 }>();
 const excerpt = ref("");
 
 const handleClick = () => {
-  if (props.conversationId != "-1") {
-    uni.navigateTo({
-      url: `${Pages.DetailRecord}?conversationId=${props.conversationId}`
-    });
-  } else {
-    const json: {
-      consultationInfo: ConsultationInfo;
-      messageInfo: MessageInfo[];
-    } = JSON.parse(props.payload.data);
-    uni.navigateTo({
-      url: `${Pages.DetailRecord}?conversationId=${json.consultationInfo.consultationId}`
-    });
-  }
+  const json: {
+    consultationInfo: ConsultationInfo;
+    messageInfo: MessageInfo[];
+  } = JSON.parse(props.payload.data);
+  uni.navigateTo({
+    url: `${Pages.DetailRecord}?conversationId=${json.consultationInfo.consultationId}`
+  });
 };
 
 const info = ref<{

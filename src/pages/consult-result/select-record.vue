@@ -9,7 +9,13 @@
       <view class="record-info">
         <checkbox-group @change="checkboxChange">
           <label v-for="item in record" :key="item.conversationId">
-            <view style="display: flex; align-items: center">
+            <view
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              "
+            >
               <view class="record-name">咨询师：{{ item.name }}</view>
               <view class="last-record-time">{{ item.time }}</view>
               <view class="record-checkbox">
