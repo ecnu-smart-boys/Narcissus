@@ -36,6 +36,11 @@ onLoad(async () => {
       await uni.navigateTo({
         url: Pages.Register
       });
+    } else if (err.statusCode == 403) {
+      await uni.showToast({
+        title: "您已被禁用",
+        icon: "error"
+      });
     } else {
       await uni.showToast({
         title: err.toString(),

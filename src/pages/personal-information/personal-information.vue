@@ -123,6 +123,27 @@ const submit = async () => {
     });
     return;
   }
+  if (userInfo.value.name.length > 32) {
+    await uni.showToast({
+      title: "真实姓名不能超过32个字符",
+      icon: "error"
+    });
+    return;
+  }
+  if (/\d/.test(userInfo.value.name)) {
+    await uni.showToast({
+      title: "真实姓名不能含有数字",
+      icon: "error"
+    });
+    return;
+  }
+  if (!/^((?![\\;!@#$%^&*()]).)*$/.test(userInfo.value.name)) {
+    await uni.showToast({
+      title: "真实姓名不能含有特殊字符",
+      icon: "error"
+    });
+    return;
+  }
   if (userInfo.value.gender == 0) {
     await uni.showToast({
       title: "请选择性别",
@@ -169,6 +190,34 @@ const submit = async () => {
   if (userInfo.value.emergencyContact.length == 0) {
     await uni.showToast({
       title: "请输入紧急联系人",
+      icon: "error"
+    });
+    return;
+  }
+  if (userInfo.value.emergencyContact.length > 32) {
+    await uni.showToast({
+      title: "紧急联系人不能超过32个字符",
+      icon: "error"
+    });
+    return;
+  }
+  if (/\d/.test(userInfo.value.emergencyContact)) {
+    await uni.showToast({
+      title: "紧急联系人不能含有数字",
+      icon: "error"
+    });
+    return;
+  }
+  if (!/^((?![\\;!@#$%^&*()]).)*$/.test(userInfo.value.emergencyContact)) {
+    await uni.showToast({
+      title: "紧急联系人不能含有特殊字符",
+      icon: "error"
+    });
+    return;
+  }
+  if (userInfo.value.emergencyPhone == userInfo.value.phone) {
+    await uni.showToast({
+      title: "紧急联系人电话不能与本人电话相同",
       icon: "error"
     });
     return;

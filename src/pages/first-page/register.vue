@@ -125,6 +125,27 @@ const submit = () => {
     });
     return;
   }
+  if (registerReq.name.length > 32) {
+    uni.showToast({
+      title: "真实姓名不能超过32个字符",
+      icon: "error"
+    });
+    return;
+  }
+  if (/\d/.test(registerReq.name)) {
+    uni.showToast({
+      title: "真实姓名不能含有数字",
+      icon: "error"
+    });
+    return;
+  }
+  if (!/^((?![\\;!@#$%^&*()]).)*$/.test(registerReq.name)) {
+    uni.showToast({
+      title: "真实姓名不能含有特殊字符",
+      icon: "error"
+    });
+    return;
+  }
   if (registerReq.gender == 0) {
     uni.showToast({
       title: "请选择性别",
@@ -178,6 +199,34 @@ const submit = () => {
   if (registerReq.emergencyContact.length == 0) {
     uni.showToast({
       title: "请输入紧急联系人",
+      icon: "error"
+    });
+    return;
+  }
+  if (registerReq.emergencyContact.length > 32) {
+    uni.showToast({
+      title: "紧急联系人不能超过32个字符",
+      icon: "error"
+    });
+    return;
+  }
+  if (/\d/.test(registerReq.emergencyContact)) {
+    uni.showToast({
+      title: "紧急联系人不能含有数字",
+      icon: "error"
+    });
+    return;
+  }
+  if (!/^((?![\\;!@#$%^&*()]).)*$/.test(registerReq.emergencyContact)) {
+    uni.showToast({
+      title: "紧急联系人不能含有特殊字符",
+      icon: "error"
+    });
+    return;
+  }
+  if (registerReq.emergencyPhone == registerReq.phone) {
+    uni.showToast({
+      title: "紧急联系人电话不能与本人电话相同",
       icon: "error"
     });
     return;
