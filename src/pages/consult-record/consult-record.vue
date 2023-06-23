@@ -36,7 +36,6 @@ async function getConsultationsInfo() {
   });
   consultations.splice(0);
   consultations.push(...data);
-  consultations.reverse();
 }
 
 const handleClick = (conversationId: string) => {
