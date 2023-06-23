@@ -169,7 +169,11 @@ import {
 } from "vue";
 import Submit from "@/components/submit/submit.vue";
 import ChatTop from "@/components/chat-top/chat-top.vue";
-import tim, { createTextMessage, onMessageReceived } from "@/utils/im";
+import tim, {
+  createTextMessage,
+  onMessageReceived,
+  onMessageRevoked
+} from "@/utils/im";
 import Evaluate from "@/components/evaluate/evaluate.vue";
 import Share from "@/components/share/share.vue";
 import { Message } from "tim-js-sdk";
@@ -318,6 +322,20 @@ watch(
             imgMsg.push(i.payload.imageInfoArray[0].url);
           }
         });
+        nextTick(() => {
+          scrollTop.value = scrollTop.value + 1;
+        });
+      });
+      onMessageRevoked((data) => {
+        for (let i = 0; i < msgs.length; i++) {
+          if (msgs[0].ID == data[0].ID) {
+            msgs.splice(i, 1, {
+              ...msgs[i],
+              isRevoked: true
+            });
+            break;
+          }
+        }
         nextTick(() => {
           scrollTop.value = scrollTop.value + 1;
         });

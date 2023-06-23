@@ -77,7 +77,6 @@ const handleSend = async () => {
     .filter((i) => i.checked)
     .map((i) => getVisitorConsultationMsg(i.conversationId));
   const data = await Promise.all(conversationIds);
-  console.log(toId);
   const jsonMessages = data
     .map((i) => {
       return JSON.stringify({
@@ -97,10 +96,17 @@ const handleSend = async () => {
       });
     })
     .map((i) => tim.sendMessage(i));
-  await Promise.all(jsonMessages);
-  await uni.switchTab({
-    url: Pages.OnlineConsult
-  });
+  try {
+    await Promise.all(jsonMessages);
+    await uni.switchTab({
+      url: Pages.OnlineConsult
+    });
+  } catch (e) {
+    await uni.showToast({
+      title: "部分历史记录发送失败",
+      icon: "error"
+    });
+  }
 };
 </script>
 

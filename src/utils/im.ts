@@ -74,10 +74,22 @@ export function createAudioMessage(toUserId: string, file: any) {
   });
 }
 
+let receiveId = "";
+
 export function onMessageReceived(callback: (messageList: any[]) => void) {
   tim.on(TIM.EVENT.MESSAGE_RECEIVED, (event: { data: any }) => {
+    if (receiveId == event.data[0].ID && event.data[0].flow == "in") return;
+    if (event.data[0].flow == "in") {
+      receiveId = event.data[0].ID;
+    }
     const messageList = event.data;
-    console.log(messageList);
+    callback(messageList);
+  });
+}
+
+export function onMessageRevoked(callback: (messageList: any[]) => void) {
+  tim.on(TIM.EVENT.MESSAGE_REVOKED, (event: { data: any }) => {
+    const messageList = event.data;
     callback(messageList);
   });
 }
