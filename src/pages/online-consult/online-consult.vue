@@ -231,6 +231,7 @@ onLoad(() => {
       try {
         const data = JSON.parse(e.data) as WebSocketResponse;
         if (data.type == "start") {
+          conversationId.value = data.content.conversationId;
           currentState.value = 1;
         } else if (data.type == "endConsultation") {
           shouldStop.value = true;
@@ -281,6 +282,10 @@ onShow(async () => {
     yourImg.value = avatar.value;
     name.value = state.conversation.name;
     conversationId.value = state.conversation.conversationId;
+  }
+  if (state.state == 2) {
+    msgs.splice(0);
+    imgMsg.splice(0);
   }
   await nextTick(() => {
     scrollTop.value = scrollTop.value + 1;

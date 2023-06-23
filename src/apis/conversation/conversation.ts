@@ -73,3 +73,12 @@ export function conversationState(): Promise<ConversationState> {
     }
   });
 }
+export function cancelWaiting() {
+  return request({
+    url: `/conversation/cancelWaiting`,
+    method: "POST",
+    header: {
+      "x-freud": uni.getStorageSync("accessToken")
+    }
+  });
+}

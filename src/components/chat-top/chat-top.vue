@@ -27,6 +27,15 @@
         <view class="tiaozhuan">发送记录</view>
       </view>
     </view>
+    <view v-if="status == 2" class="right">
+      <view class="shang" @tap="cancelQueue">
+        <image
+          class="zixun"
+          src="https://mp-32c7feb5-a197-4820-b874-2ef762f317e6.cdn.bspapp.com/cloudstorage/5ae39900-330c-4676-ac90-6608e4451ea4.png"
+        ></image>
+        <view class="tiaozhuan">取消排队</view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -34,6 +43,7 @@
 import { onUnmounted, ref, watchEffect } from "vue";
 import { Pages } from "@/utils/url";
 import { parseTime } from "@/utils/time";
+import { cancelWaiting } from "@/apis/conversation/conversation";
 
 const props = defineProps<{
   status: number; // 1 正常会话，2 排队，0 会话结束
@@ -90,9 +100,16 @@ onUnmounted(() => {
   clearInterval(timer);
 });
 
-const selectRecord = function () {
+const selectRecord = () => {
   uni.navigateTo({
     url: `${Pages.SelectRecord}?toId=${props.toId}`
+  });
+};
+
+const cancelQueue = async () => {
+  await cancelWaiting();
+  await uni.switchTab({
+    url: Pages.Index
   });
 };
 </script>

@@ -25,17 +25,23 @@ export function messageAdapter(
     time: message.time,
     type: "TIMTextElem"
   };
+  defaultData.from = message.fromId;
+  defaultData.to = message.toId;
+  defaultData.flow = message.fromId == myId ? "out" : "in";
+  if (message.msgBody == "") {
+    return defaultData;
+  }
   try {
     datas = JSON.parse(message.msgBody);
   } catch (ignored) {
     // 默认采用空白文本
     return defaultData;
   }
+  if (datas == null || datas.length == 0) {
+    return defaultData;
+  }
   const data = datas[0];
   defaultData.type = data.MsgType;
-  defaultData.from = message.fromId;
-  defaultData.to = message.toId;
-  defaultData.flow = message.fromId == myId ? "out" : "in";
   if (data.MsgType == "TIMTextElem") {
     const payload = data.MsgContent as TextElem;
     defaultData.payload = {
